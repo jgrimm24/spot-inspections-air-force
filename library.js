@@ -115,8 +115,6 @@ function renderReport(record) {
           <dt>Responsible Contact</dt><dd>${display(record.responsibleContact)}</dd>
           <dt>Follow-up Due</dt><dd>${display(record.followUpDue, "Not entered")}</dd>
           <dt>Corrected</dt><dd>${display(record.corrected)}</dd>
-          <dt>Closure Date</dt><dd>${display(record.closureDate, "Not entered")}</dd>
-          <dt>Closure Verified By</dt><dd>${display(record.closureVerifiedBy, "Not entered")}</dd>
         </dl>
       </section>
     `
@@ -286,8 +284,6 @@ function exportVisibleInspections() {
     "Responsible Contact",
     "Follow-up Due",
     "Corrected",
-    "Closure Date",
-    "Closure Verified By",
     "Reviewer",
     "Review Date",
     "Disposition",
@@ -319,8 +315,6 @@ function exportVisibleInspections() {
       record.responsibleContact,
       record.followUpDue,
       record.corrected,
-      record.closureDate,
-      record.closureVerifiedBy,
       record.reviewer,
       record.reviewDate,
       record.disposition,

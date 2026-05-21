@@ -39,8 +39,6 @@ const fields = [
   "responsibleName",
   "responsibleContact",
   "followUpDue",
-  "closureDate",
-  "closureVerifiedBy",
   "reviewer",
   "reviewDate",
   "disposition",
@@ -49,7 +47,29 @@ const fields = [
 ];
 
 const radioGroups = ["hasFinding", "hasPositiveFinding", "corrected"];
-const today = new Date().toISOString().slice(0, 10);
+
+function currentTimeValue() {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+}
+
+function formatDateValue(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function currentDateValue() {
+  return formatDateValue(new Date());
+}
+
+function addDays(startDateValue, days) {
+  if (!startDateValue) return "";
+
+  const date = new Date(`${startDateValue}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return "";
+
+  date.setDate(date.getDate() + days);
+  return formatDateValue(date);
+}
 
 function getUnitMemory() {
   const saved = localStorage.getItem(UNIT_MEMORY_KEY);
@@ -89,8 +109,8 @@ function emptyRecord() {
     responsibleDiscipline: "",
     inspectionType: "",
     inspectionTypeTier2: "",
-    inspectionDate: today,
-    inspectionTime: "",
+    inspectionDate: currentDateValue(),
+    inspectionTime: currentTimeValue(),
     inspectorEmail: "",
     inspectorName: "",
     workArea: "",
@@ -102,10 +122,8 @@ function emptyRecord() {
     cause: "",
     responsibleName: "",
     responsibleContact: "",
-    followUpDue: "",
+    followUpDue: addDays(currentDateValue(), 30),
     corrected: "",
-    closureDate: "",
-    closureVerifiedBy: "",
     reviewer: "",
     reviewDate: "",
     disposition: "Draft",
@@ -144,10 +162,17 @@ function saveRecord() {
 
 function loadRecord() {
   const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return emptyRecord();
+  if (!saved) {
+    return emptyRecord();
+  }
 
   try {
-    return { ...emptyRecord(), ...JSON.parse(saved) };
+    const record = { ...emptyRecord(), ...JSON.parse(saved) };
+    return {
+      ...record,
+      inspectionTime: record.inspectionTime || currentTimeValue(),
+      followUpDue: addDays(record.inspectionDate, 30)
+    };
   } catch {
     return emptyRecord();
   }
@@ -213,6 +238,15 @@ function renderMetrics(record) {
   statusMetric.textContent = record.disposition || "Draft";
 }
 
+function syncCalculatedDates(record) {
+  const followUpDue = addDays(record.inspectionDate, 30);
+  const followUpDueInput = document.querySelector("#followUpDue");
+  if (followUpDueInput.value !== followUpDue) {
+    followUpDueInput.value = followUpDue;
+    record.followUpDue = followUpDue;
+  }
+}
+
 function renderReport(record) {
   const positiveFindingHtml = hasPositiveFinding(record)
     ? `
@@ -235,8 +269,6 @@ function renderReport(record) {
           <dt>Responsible Contact</dt><dd>${display(record.responsibleContact)}</dd>
           <dt>Follow-up Due</dt><dd>${display(record.followUpDue, "Not entered")}</dd>
           <dt>Corrected</dt><dd>${display(record.corrected)}</dd>
-          <dt>Closure Date</dt><dd>${display(record.closureDate, "Not entered")}</dd>
-          <dt>Closure Verified By</dt><dd>${display(record.closureVerifiedBy, "Not entered")}</dd>
         </dl>
       </section>
     `
@@ -329,6 +361,7 @@ async function saveCurrentInspectionToLibrary() {
 
 function update() {
   const record = getRecordFromForm();
+  syncCalculatedDates(record);
   updateHazardSection(record);
   saveRecord();
   renderMetrics(record);

@@ -200,7 +200,7 @@
             <div class="question-grid">
               <label>
                 <span>7. Time <em>*</em></span>
-                <input id="inspectionTime" name="inspectionTime" type="time" required />
+                <input id="inspectionTime" name="inspectionTime" type="text" inputmode="numeric" pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$" placeholder="HH:MM" required />
               </label>
               <label>
                 <span>8. Inspector email address (used for input confirmation) <em>*</em></span>
@@ -300,7 +300,7 @@
               </label>
               <label>
                 <span>19. Follow-up due date</span>
-                <input id="followUpDue" name="followUpDue" type="date" />
+                <input id="followUpDue" name="followUpDue" type="date" readonly />
               </label>
             </div>
 
@@ -315,17 +315,6 @@
                 No
               </label>
             </fieldset>
-
-            <div class="question-grid">
-              <label>
-                <span>21. Closure date</span>
-                <input id="closureDate" name="closureDate" type="date" />
-              </label>
-              <label>
-                <span>22. Closure verified by</span>
-                <input id="closureVerifiedBy" name="closureVerifiedBy" type="text" placeholder="Enter your answer" />
-              </label>
-            </div>
           </section>
 
           <section class="form-section">
