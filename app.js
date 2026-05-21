@@ -9,7 +9,6 @@ const positiveFindingField = document.querySelector("#positiveFindingField");
 const reportPreview = document.querySelector("#reportPreview");
 const findingMetric = document.querySelector("#findingMetric");
 const correctedMetric = document.querySelector("#correctedMetric");
-const statusMetric = document.querySelector("#statusMetric");
 const textareaModal = document.querySelector("#textareaModal");
 const textareaModalTitle = document.querySelector("#textareaModalTitle");
 const modalTextarea = document.querySelector("#modalTextarea");
@@ -41,9 +40,7 @@ const fields = [
   "followUpDue",
   "reviewer",
   "reviewDate",
-  "disposition",
   "followUpLog",
-  "reviewNotes",
 ];
 
 const radioGroups = ["hasFinding", "hasPositiveFinding", "corrected"];
@@ -126,9 +123,7 @@ function emptyRecord() {
     corrected: "",
     reviewer: "",
     reviewDate: "",
-    disposition: "Draft",
     followUpLog: "",
-    reviewNotes: "",
   };
 }
 
@@ -235,7 +230,6 @@ function updateHazardSection(record) {
 function renderMetrics(record) {
   findingMetric.textContent = record.hasFinding || "No";
   correctedMetric.textContent = isFindingRecord(record) ? record.corrected || "No" : "N/A";
-  statusMetric.textContent = record.disposition || "Draft";
 }
 
 function syncCalculatedDates(record) {
@@ -304,10 +298,8 @@ function renderReport(record) {
       <dl>
         <dt>Reviewer</dt><dd>${display(record.reviewer)}</dd>
         <dt>Review Date</dt><dd>${display(record.reviewDate)}</dd>
-        <dt>Disposition</dt><dd>${display(record.disposition)}</dd>
       </dl>
       <p><strong>Follow-up Log:</strong> ${display(record.followUpLog)}</p>
-      <p>${display(record.reviewNotes)}</p>
     </section>
   `;
 }

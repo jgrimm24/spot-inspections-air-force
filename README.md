@@ -9,7 +9,7 @@ This project standardizes how spot inspections are documented from opening scope
 3. Record whether a hazard, risk, deficiency, unsafe work practice, or positive finding was identified.
 4. If a finding exists, document the hazard/discrepancy, cause, corrective action, responsible person, and responsible contact.
 5. Track follow-up due dates, 30-day follow-up actions, correction status, closure date, and closure verification until closure.
-6. Capture supervisor review, disposition, and notes.
+6. Capture supervisor review and follow-up updates.
 7. Save completed spot inspections to the shared library, then filter archived inspections by unit.
 8. Print or copy the report preview for records management and closeout.
 

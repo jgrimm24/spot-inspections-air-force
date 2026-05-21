@@ -150,10 +150,8 @@ function renderReport(record) {
       <dl>
         <dt>Reviewer</dt><dd>${display(record.reviewer)}</dd>
         <dt>Review Date</dt><dd>${display(record.reviewDate)}</dd>
-        <dt>Disposition</dt><dd>${display(record.disposition)}</dd>
       </dl>
       <p><strong>Follow-up Log:</strong> ${display(record.followUpLog)}</p>
-      <p>${display(record.reviewNotes)}</p>
     </section>
   `;
 }
@@ -286,9 +284,7 @@ function exportVisibleInspections() {
     "Corrected",
     "Reviewer",
     "Review Date",
-    "Disposition",
     "Follow-up Log",
-    "Review Notes",
     "Saved At"
   ];
 
@@ -317,9 +313,7 @@ function exportVisibleInspections() {
       record.corrected,
       record.reviewer,
       record.reviewDate,
-      record.disposition,
       record.followUpLog,
-      record.reviewNotes,
       entry.savedAt
     ];
   });
