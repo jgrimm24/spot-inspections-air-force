@@ -8,9 +8,18 @@ const libraryList = document.querySelector("#libraryList");
 const libraryReportPreview = document.querySelector("#libraryReportPreview");
 const refreshLibrary = document.querySelector("#refreshLibrary");
 const exportCsv = document.querySelector("#exportCsv");
+const followUpEditor = document.querySelector("#followUpEditor");
+const followUpEditorTitle = document.querySelector("#followUpEditorTitle");
+const followUpForm = document.querySelector("#followUpForm");
+const followUpReviewer = document.querySelector("#followUpReviewer");
+const followUpReviewDate = document.querySelector("#followUpReviewDate");
+const followUpLogEdit = document.querySelector("#followUpLogEdit");
+const saveFollowUpEdit = document.querySelector("#saveFollowUpEdit");
+const cancelFollowUpEdit = document.querySelector("#cancelFollowUpEdit");
 
 let inspections = [];
 let selectedInspectionId = "";
+let editingInspectionId = "";
 
 function apiUrl(path) {
   return `${API_BASE}${path}`;
@@ -46,6 +55,11 @@ function formatSavedDate(value) {
   return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
 
+function currentDateValue() {
+  const date = new Date();
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 function uniqueUnits() {
   return [...new Set(inspections.map((entry) => entry.record?.unit).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 }
@@ -74,7 +88,10 @@ function entryText(entry) {
     record.workArea,
     record.hazard,
     record.correctiveAction,
-    record.cause
+    record.cause,
+    record.reviewer,
+    record.reviewDate,
+    record.followUpLog
   ].filter(Boolean).join(" ").toLowerCase();
 }
 
@@ -91,6 +108,12 @@ function filteredInspections() {
 function clearReportPreview() {
   selectedInspectionId = "";
   libraryReportPreview.innerHTML = "<p>Select a completed inspection to preview it here.</p>";
+}
+
+function closeFollowUpEditor() {
+  editingInspectionId = "";
+  followUpForm.reset();
+  followUpEditor.hidden = true;
 }
 
 function renderReport(record) {
@@ -187,6 +210,7 @@ function renderLibrary() {
         </dl>
         <div class="library-actions">
           <button class="secondary-button library-action" data-action="view" data-id="${entry.id}" type="button">View</button>
+          <button class="secondary-button library-action" data-action="follow-up" data-id="${entry.id}" type="button">Update Follow-up</button>
           <button class="secondary-button danger-button library-action" data-action="delete" data-id="${entry.id}" type="button">Delete</button>
         </div>
       </article>
@@ -198,6 +222,7 @@ async function loadLibrary() {
   libraryStatus.textContent = "Loading inspections...";
   libraryList.innerHTML = '<div class="empty-library">Loading shared library...</div>';
   clearReportPreview();
+  closeFollowUpEditor();
 
   try {
     const response = await fetch(apiUrl("/api/inspections"));
@@ -243,7 +268,66 @@ async function deleteInspection(entry) {
   if (entry.id === selectedInspectionId) {
     clearReportPreview();
   }
+  if (entry.id === editingInspectionId) {
+    closeFollowUpEditor();
+  }
   await loadLibrary();
+}
+
+function openFollowUpEditor(entry) {
+  const record = entry.record || {};
+  editingInspectionId = entry.id;
+  followUpEditorTitle.textContent = `Update ${record.unit || "Spot Inspection"}`;
+  followUpReviewer.value = record.reviewer || "";
+  followUpReviewDate.value = record.reviewDate || currentDateValue();
+  followUpLogEdit.value = record.followUpLog || "";
+  followUpEditor.hidden = false;
+  followUpEditor.scrollIntoView({ behavior: "smooth", block: "start" });
+  followUpLogEdit.focus();
+}
+
+async function saveFollowUpUpdate(event) {
+  event.preventDefault();
+
+  const entry = inspections.find((item) => item.id === editingInspectionId);
+  if (!entry) return;
+
+  saveFollowUpEdit.disabled = true;
+  saveFollowUpEdit.textContent = "Saving...";
+
+  try {
+    const response = await fetch(apiUrl("/api/inspections"), {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        path: entry.path,
+        recordUpdates: {
+          reviewer: followUpReviewer.value,
+          reviewDate: followUpReviewDate.value,
+          followUpLog: followUpLogEdit.value
+        }
+      })
+    });
+    const result = await readApiResponse(response);
+    if (!response.ok) {
+      throw new Error(result.error || `Unable to save follow-up update (${response.status}).`);
+    }
+
+    const index = inspections.findIndex((item) => item.id === entry.id);
+    if (index >= 0) {
+      inspections[index] = result.inspection;
+    }
+    libraryStatus.textContent = "Follow-up updated";
+    renderLibrary();
+    renderReport(result.inspection.record || {});
+    selectedInspectionId = result.inspection.id;
+    closeFollowUpEditor();
+  } catch (error) {
+    window.alert(error instanceof Error ? error.message : "Unable to save follow-up update.");
+  } finally {
+    saveFollowUpEdit.disabled = false;
+    saveFollowUpEdit.textContent = "Save Follow-up";
+  }
 }
 
 function csvValue(value) {
@@ -340,6 +424,8 @@ libraryUnitFilter.addEventListener("change", updateFilters);
 librarySearch.addEventListener("input", updateFilters);
 refreshLibrary.addEventListener("click", loadLibrary);
 exportCsv.addEventListener("click", exportVisibleInspections);
+followUpForm.addEventListener("submit", saveFollowUpUpdate);
+cancelFollowUpEdit.addEventListener("click", closeFollowUpEditor);
 
 libraryList.addEventListener("click", (event) => {
   const button = event.target.closest(".library-action");
@@ -356,6 +442,10 @@ libraryList.addEventListener("click", (event) => {
 
   if (button.dataset.action === "delete") {
     deleteInspection(entry);
+  }
+
+  if (button.dataset.action === "follow-up") {
+    openFollowUpEditor(entry);
   }
 });
 

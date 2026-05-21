@@ -57,6 +57,35 @@
           <p>Select a completed inspection to preview it here.</p>
         </article>
       </section>
+
+      <section class="report-panel follow-up-editor" id="followUpEditor" aria-label="Follow-up update" hidden>
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow">30-Day Update</p>
+            <h2 id="followUpEditorTitle">Update Follow-up</h2>
+          </div>
+          <button class="secondary-button" id="cancelFollowUpEdit" type="button">Cancel</button>
+        </div>
+        <form id="followUpForm">
+          <div class="question-grid">
+            <label>
+              <span>Reviewer</span>
+              <input id="followUpReviewer" name="followUpReviewer" type="text" placeholder="Enter reviewer name" />
+            </label>
+            <label>
+              <span>Review Date</span>
+              <input id="followUpReviewDate" name="followUpReviewDate" type="date" />
+            </label>
+          </div>
+          <label>
+            <span>Follow-up log / 30-day updates</span>
+            <textarea id="followUpLogEdit" name="followUpLogEdit" rows="5" placeholder="Document 30-day follow-up actions, status, and any closure details."></textarea>
+          </label>
+          <div class="modal-actions">
+            <button class="primary-button" id="saveFollowUpEdit" type="submit">Save Follow-up</button>
+          </div>
+        </form>
+      </section>
     </main>
 
     <script>

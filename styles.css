@@ -604,6 +604,11 @@ td select {
   gap: 8px;
 }
 
+.follow-up-editor form {
+  display: grid;
+  gap: 18px;
+}
+
 .empty-library {
   display: grid;
   gap: 6px;

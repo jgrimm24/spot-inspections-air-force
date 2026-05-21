@@ -11,7 +11,8 @@ This project standardizes how spot inspections are documented from opening scope
 5. Track follow-up due dates, 30-day follow-up actions, correction status, closure date, and closure verification until closure.
 6. Capture supervisor review and follow-up updates.
 7. Save completed spot inspections to the shared library, then filter archived inspections by unit.
-8. Print or copy the report preview for records management and closeout.
+8. Update 30-day follow-up actions from the shared library when returning to a saved inspection.
+9. Print or copy the report preview for records management and closeout.
 
 ## Draft DAFI 91-202 Alignment
 

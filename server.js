@@ -29,7 +29,7 @@ function sendJson(res, statusCode, payload) {
   res.writeHead(statusCode, {
     "Content-Type": "application/json; charset=utf-8",
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
+    "Access-Control-Allow-Methods": "GET,POST,PATCH,DELETE,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, X-Library-Delete-Token"
   });
   res.end(JSON.stringify(payload));
@@ -244,6 +244,38 @@ async function deleteInspection(payload, requestDeleteToken) {
   });
 }
 
+async function updateInspection(payload) {
+  requireGitHubToken();
+
+  const targetPath = validateLibraryPath(payload?.path);
+  const currentEntry = await readGitHubJsonFile(targetPath);
+  if (!currentEntry?.record) {
+    throw new Error("The saved inspection record could not be loaded for update.");
+  }
+
+  const updates = payload?.recordUpdates || {};
+  const updatedRecord = {
+    ...currentEntry.record,
+    reviewer: String(updates.reviewer || "").trim(),
+    reviewDate: String(updates.reviewDate || "").trim(),
+    followUpLog: String(updates.followUpLog || "").trim()
+  };
+
+  const updatedEntry = {
+    ...currentEntry,
+    updatedAt: new Date().toISOString(),
+    record: updatedRecord
+  };
+
+  const result = await writeGitHubFile(
+    targetPath,
+    JSON.stringify(updatedEntry, null, 2),
+    `Update follow-up for ${updatedRecord.unit || "spot inspection"} [skip render]`
+  );
+
+  return { ...updatedEntry, path: targetPath, sha: result?.content?.sha || "" };
+}
+
 function serveStaticFile(requestUrl, res) {
   const requestPath = requestUrl.pathname === "/" ? "/index.html" : requestUrl.pathname;
   const safePath = path.normalize(decodeURIComponent(requestPath)).replace(/^(\.\.[/\\])+/, "");
@@ -275,7 +307,7 @@ http.createServer(async (req, res) => {
   if (req.method === "OPTIONS") {
     res.writeHead(204, {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
+      "Access-Control-Allow-Methods": "GET,POST,PATCH,DELETE,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, X-Library-Delete-Token"
     });
     res.end();
@@ -292,6 +324,13 @@ http.createServer(async (req, res) => {
       const body = await readRequestBody(req);
       const payload = JSON.parse(body || "{}");
       sendJson(res, 200, { ok: true, inspection: await saveInspection(payload) });
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/inspections" && req.method === "PATCH") {
+      const body = await readRequestBody(req);
+      const payload = JSON.parse(body || "{}");
+      sendJson(res, 200, { ok: true, inspection: await updateInspection(payload) });
       return;
     }
 
