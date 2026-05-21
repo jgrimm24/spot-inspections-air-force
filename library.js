@@ -14,6 +14,17 @@ function apiUrl(path) {
   return `${API_BASE}${path}`;
 }
 
+async function readApiResponse(response) {
+  const text = await response.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return {
+      error: `Unexpected response from ${response.url} (${response.status} ${response.statusText || "HTTP error"}).`
+    };
+  }
+}
+
 function escapeHtml(value) {
   return String(value || "")
     .replaceAll("&", "&amp;")
@@ -185,9 +196,9 @@ async function loadLibrary() {
 
   try {
     const response = await fetch(apiUrl("/api/inspections"));
-    const result = await response.json().catch(() => ({}));
+    const result = await readApiResponse(response);
     if (!response.ok) {
-      throw new Error(result.error || "Unable to load completed spot inspections.");
+      throw new Error(result.error || `Unable to load completed spot inspections (${response.status}).`);
     }
 
     inspections = Array.isArray(result.inspections) ? result.inspections : [];
@@ -218,9 +229,9 @@ async function deleteInspection(entry) {
     headers,
     body: JSON.stringify({ path: entry.path, sha: entry.sha })
   });
-  const result = await response.json().catch(() => ({}));
+  const result = await readApiResponse(response);
   if (!response.ok) {
-    window.alert(result.error || "Unable to delete inspection.");
+    window.alert(result.error || `Unable to delete inspection (${response.status}).`);
     return;
   }
 

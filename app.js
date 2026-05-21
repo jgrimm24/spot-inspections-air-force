@@ -285,6 +285,17 @@ function apiUrl(path) {
   return `${base}${path}`;
 }
 
+async function readApiResponse(response) {
+  const text = await response.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return {
+      error: `Unexpected response from ${response.url} (${response.status} ${response.statusText || "HTTP error"}).`
+    };
+  }
+}
+
 async function saveCurrentInspectionToLibrary() {
   const record = getRecordFromForm();
   rememberUnit(record.unit);
@@ -298,10 +309,10 @@ async function saveCurrentInspectionToLibrary() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ record, reportText: plainReportText() })
     });
-    const result = await response.json().catch(() => ({}));
+    const result = await readApiResponse(response);
 
     if (!response.ok) {
-      throw new Error(result.error || "Unable to save completed inspection.");
+      throw new Error(result.error || `Unable to save completed inspection (${response.status}).`);
     }
 
     saveCompleted.textContent = "Saved";
