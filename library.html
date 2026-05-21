@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Completed Spot Inspections</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Archive</p>
+        <h1>Completed Spot Inspections</h1>
+      </div>
+      <div class="header-actions">
+        <a class="header-link" href="index.html">Back to Builder</a>
+        <button class="primary-button" id="refreshLibrary" type="button">Refresh</button>
+      </div>
+    </header>
+
+    <main class="library-page">
+      <section class="form-section">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow">Shared Library</p>
+            <h2>Filter and Review</h2>
+          </div>
+          <p class="library-status" id="libraryStatus">Loading inspections...</p>
+        </div>
+
+        <div class="library-toolbar">
+          <label>
+            <span>Filter by Unit</span>
+            <select id="libraryUnitFilter">
+              <option value="">All units</option>
+            </select>
+          </label>
+          <label>
+            <span>Search</span>
+            <input id="librarySearch" type="search" placeholder="Search unit, area, discipline, inspector, or finding" />
+          </label>
+          <p id="libraryCount">0 inspections</p>
+        </div>
+
+        <div class="library-list" id="libraryList"></div>
+      </section>
+
+      <section class="report-panel" aria-label="Inspection report">
+        <div class="section-heading">
+          <p class="eyebrow">Selected Record</p>
+          <h2>Report Preview</h2>
+        </div>
+        <article id="libraryReportPreview" class="report-preview">
+          <p>Select a completed inspection to preview it here.</p>
+        </article>
+      </section>
+    </main>
+
+    <script src="library.js"></script>
+  </body>
+</html>

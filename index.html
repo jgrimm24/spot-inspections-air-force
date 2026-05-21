@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Spot Inspection Documentation</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Standardized Process</p>
+        <h1>Spot Inspection Documentation</h1>
+      </div>
+      <div class="header-actions">
+        <button class="header-button" id="saveCompleted" type="button">Save Completed</button>
+        <button class="header-button" id="openLibrary" type="button">Library</button>
+        <button class="header-button" id="printReport" type="button">Print</button>
+        <button class="primary-button" id="newInspection" type="button">New Inspection</button>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <aside class="process-panel" aria-label="Inspection process">
+        <h2>Process</h2>
+        <ol class="process-list">
+          <li class="active">
+            <span>1</span>
+            <div>
+              <strong>Spot Inspection</strong>
+              <small>Unit, type, date, time</small>
+            </div>
+          </li>
+          <li>
+            <span>2</span>
+            <div>
+              <strong>Scope</strong>
+              <small>Area, equipment, process</small>
+            </div>
+          </li>
+          <li>
+            <span>3</span>
+            <div>
+              <strong>Identify</strong>
+              <small>Hazard or risk decision</small>
+            </div>
+          </li>
+          <li>
+            <span>4</span>
+            <div>
+              <strong>Correct</strong>
+              <small>Action, cause, closure</small>
+            </div>
+          </li>
+          <li>
+            <span>5</span>
+            <div>
+              <strong>Review</strong>
+              <small>Supervisor disposition</small>
+            </div>
+          </li>
+          <li>
+            <span>6</span>
+            <div>
+              <strong>Archive</strong>
+              <small>Report-ready record</small>
+            </div>
+          </li>
+        </ol>
+
+        <section class="metric-stack" aria-label="Inspection metrics">
+          <div>
+            <strong id="findingMetric">No</strong>
+            <span>Finding</span>
+          </div>
+          <div>
+            <strong id="correctedMetric">N/A</strong>
+            <span>Corrected</span>
+          </div>
+          <div>
+            <strong id="statusMetric">Draft</strong>
+            <span>Status</span>
+          </div>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <form class="inspection-form" id="inspectionForm">
+          <section class="form-section">
+            <div class="section-heading">
+              <p class="eyebrow">Section 1</p>
+              <h2>Spot Inspection</h2>
+            </div>
+
+            <div class="question-grid">
+              <label>
+                <span>1. Unit <em>*</em></span>
+                <input id="unit" name="unit" type="text" list="unitMemory" placeholder="Start typing unit" required autocomplete="off" />
+                <datalist id="unitMemory"></datalist>
+              </label>
+
+              <label>
+                <span>2. Functional Area <em>*</em></span>
+                <select id="functionalArea" name="functionalArea" required>
+                  <option value="">Select functional area</option>
+                  <option>Aerial Port</option>
+                  <option>Civil Engineering - Carpentry</option>
+                  <option>Civil Engineering - Electrician</option>
+                  <option>Civil Engineering - Explosive Ordnance Disposal</option>
+                  <option>Civil Engineering - Fire Department</option>
+                  <option>Civil Engineering - HVAC</option>
+                  <option>Civil Engineering - Other</option>
+                  <option>Civil Engineering - Plumbing</option>
+                  <option>Civil Engineering - Road &amp; Grounds</option>
+                  <option>Civil Engineering - Sheet Metal</option>
+                  <option>Civil Engineering - Sign Shop</option>
+                  <option>Communications</option>
+                  <option>Comptroller</option>
+                  <option>Contracting</option>
+                  <option>Corrosion Control Facility</option>
+                  <option>Intelligence</option>
+                  <option>Logistics - Fuels</option>
+                  <option>Logistics - Supply</option>
+                  <option>Logistics - Vehicle Maintenance</option>
+                  <option>Logistics - Vehicle Operations</option>
+                  <option>Logistics Readiness</option>
+                  <option>Maintenance - AGE</option>
+                  <option>Maintenance - Aircraft</option>
+                  <option>Maintenance - Engines</option>
+                  <option>Maintenance - Fuel Cell</option>
+                  <option>Maintenance - Other</option>
+                  <option>Maintenance - PMEL</option>
+                  <option>Maintenance - Sheet Metal</option>
+                  <option>Maintenance - Space</option>
+                  <option>Maintenance - Weapons/Munitions</option>
+                  <option>Medical</option>
+                  <option>Operations - Aircrew</option>
+                  <option>Operations - Airfield Management</option>
+                  <option>Operations - Cyber</option>
+                  <option>Operations - Life Support</option>
+                  <option>Operations - Other</option>
+                  <option>Operations - Space</option>
+                  <option>Operations - Weapons/Munitions</option>
+                  <option>Other, Describe</option>
+                  <option>Personnel</option>
+                  <option>Research and Development</option>
+                  <option>Safety</option>
+                  <option>Security Forces</option>
+                  <option>Services</option>
+                  <option>Storage - Weapons/Munitions</option>
+                  <option>Test and Evaluation</option>
+                  <option>Training</option>
+                  <option>Weather</option>
+                  <option>Wing Staff Agencies</option>
+                </select>
+              </label>
+
+              <label>
+                <span>3. Responsible Discipline <em>*</em></span>
+                <select id="responsibleDiscipline" name="responsibleDiscipline" required>
+                  <option value="">Select discipline</option>
+                  <option>Aviation Safety</option>
+                  <option>Occupational Safety</option>
+                  <option>Weapons Safety</option>
+                  <option>Space Safety</option>
+                </select>
+              </label>
+
+            </div>
+
+            <div class="question-grid">
+              <label>
+                <span>4. Inspection Type Tier 1 <em>*</em></span>
+                <select id="inspectionType" name="inspectionType" required>
+                  <option value="">Select your answer</option>
+                  <option>Safety spot inspection</option>
+                  <option>Facility inspection</option>
+                  <option>Equipment inspection</option>
+                  <option>Process observation</option>
+                  <option>Follow-up inspection</option>
+                  <option>Other</option>
+                </select>
+              </label>
+
+              <label>
+                <span>5. Inspection Type Tier 2 <em>*</em></span>
+                <select id="inspectionTypeTier2" name="inspectionTypeTier2" required>
+                  <option value="">Select inspection type</option>
+                  <option>Facility/Location</option>
+                  <option>Hazard Validation</option>
+                  <option>Program</option>
+                </select>
+              </label>
+              <label>
+                <span>6. Date <em>*</em></span>
+                <input id="inspectionDate" name="inspectionDate" type="date" required />
+              </label>
+            </div>
+
+            <div class="question-grid">
+              <label>
+                <span>7. Time <em>*</em></span>
+                <input id="inspectionTime" name="inspectionTime" type="time" required />
+              </label>
+              <label>
+                <span>8. Inspector email address (used for input confirmation) <em>*</em></span>
+                <input id="inspectorEmail" name="inspectorEmail" type="email" placeholder="Enter your answer" required />
+              </label>
+              <label>
+                <span>9. Inspector name <em>*</em></span>
+                <input id="inspectorName" name="inspectorName" type="text" placeholder="Enter your answer" required />
+              </label>
+            </div>
+
+            <label class="wide-field">
+              <span>10. Area, equipment, processes, or procedures reviewed <em>*</em></span>
+              <textarea id="workArea" name="workArea" rows="3" placeholder="Example: CTK tool accountability, hangar bay housekeeping, admin area procedures" required></textarea>
+            </label>
+
+            <fieldset class="radio-group">
+              <legend>11. Did you identify a hazard, risk, deficiency, or unsafe work practice? <em>*</em></legend>
+              <label>
+                <input type="radio" name="hasFinding" value="Yes" />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="hasFinding" value="No" />
+                No
+              </label>
+            </fieldset>
+
+            <fieldset class="radio-group">
+              <legend>12. Did you identify a positive finding or noteworthy safe practice?</legend>
+              <label>
+                <input type="radio" name="hasPositiveFinding" value="Yes" />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="hasPositiveFinding" value="No" />
+                No
+              </label>
+            </fieldset>
+
+            <label id="positiveFindingField">
+              <span>13. Positive finding / safe practice observed</span>
+              <textarea id="positiveFinding" name="positiveFinding" rows="3" placeholder="Enter your answer"></textarea>
+            </label>
+          </section>
+
+          <section class="form-section" id="hazardSection">
+            <div class="section-heading">
+              <p class="eyebrow">Section 2</p>
+              <h2>Hazard / Risk Identification</h2>
+            </div>
+
+            <label>
+              <span>14. What was the hazard/discrepancy/unsafe work practice? <em>*</em></span>
+              <textarea id="hazard" name="hazard" rows="3" placeholder="Enter your answer"></textarea>
+            </label>
+
+            <label>
+              <span>15. Recommendations / corrective action taken or planned <em>*</em></span>
+              <textarea id="correctiveAction" name="correctiveAction" rows="3" placeholder="Enter your answer"></textarea>
+            </label>
+
+            <label>
+              <span>16. Causes of deficiency and/or hazard <em>*</em></span>
+              <select id="cause" name="cause">
+                <option value="">Select cause</option>
+                <option>ADWSR</option>
+                <option>CoS</option>
+                <option>Commander Oversight</option>
+                <option>External Organization Inaction</option>
+                <option>FSNCO</option>
+                <option>FSO</option>
+                <option>Facility Manager Oversight</option>
+                <option>Lack of Effective Training</option>
+                <option>Leadership Failed to Implement Corrective Actions</option>
+                <option>MAJCOM Oversight</option>
+                <option>MSR Oversight</option>
+                <option>NCI/NCE Monitor Oversight</option>
+                <option>Natural Event</option>
+                <option>OSM</option>
+                <option>Resources Unavailable</option>
+                <option>Supervisor Oversight</option>
+                <option>USR Oversight</option>
+                <option>Unaware of Requirements</option>
+                <option>WSM</option>
+              </select>
+            </label>
+
+            <div class="question-grid">
+              <label>
+                <span>17. Responsible person name <em>*</em></span>
+                <input id="responsibleName" name="responsibleName" type="text" placeholder="Enter your answer" />
+              </label>
+              <label>
+                <span>18. Responsible person phone and/or email <em>*</em></span>
+                <input id="responsibleContact" name="responsibleContact" type="text" placeholder="Enter phone and/or email" />
+              </label>
+              <label>
+                <span>19. Follow-up due date</span>
+                <input id="followUpDue" name="followUpDue" type="date" />
+              </label>
+            </div>
+
+            <fieldset class="radio-group">
+              <legend>20. Has the deficiency and/or hazard been corrected? <em>*</em></legend>
+              <label>
+                <input type="radio" name="corrected" value="Yes" />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="corrected" value="No" />
+                No
+              </label>
+            </fieldset>
+
+            <div class="question-grid">
+              <label>
+                <span>21. Closure date</span>
+                <input id="closureDate" name="closureDate" type="date" />
+              </label>
+              <label>
+                <span>22. Closure verified by</span>
+                <input id="closureVerifiedBy" name="closureVerifiedBy" type="text" placeholder="Enter your answer" />
+              </label>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <div class="section-heading">
+              <p class="eyebrow">Section 3</p>
+              <h2>Review and Closeout</h2>
+            </div>
+            <div class="question-grid">
+              <label>
+                <span>Reviewer</span>
+                <input id="reviewer" name="reviewer" type="text" placeholder="Enter your answer" />
+              </label>
+              <label>
+                <span>Review Date</span>
+                <input id="reviewDate" name="reviewDate" type="date" />
+              </label>
+              <label>
+                <span>Disposition</span>
+                <select id="disposition" name="disposition">
+                  <option>Draft</option>
+                  <option>Returned for clarification</option>
+                  <option>Accepted with open actions</option>
+                  <option>Closed</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              <span>Follow-up log / 30-day updates</span>
+              <textarea id="followUpLog" name="followUpLog" rows="3" placeholder="Document 30-day follow-up actions until closure, if required."></textarea>
+            </label>
+            <label>
+              <span>Review Notes</span>
+              <textarea id="reviewNotes" name="reviewNotes" rows="3" placeholder="Enter your answer"></textarea>
+            </label>
+          </section>
+        </form>
+
+        <section class="report-panel" aria-label="Inspection report">
+          <div class="section-heading split-heading">
+            <div>
+              <p class="eyebrow">Archive</p>
+              <h2>Report Preview</h2>
+            </div>
+            <button class="secondary-button" id="copyReport" type="button">Copy Report</button>
+          </div>
+          <article id="reportPreview" class="report-preview"></article>
+        </section>
+      </section>
+    </main>
+
+    <div class="modal-backdrop" id="textareaModal" hidden>
+      <section class="textarea-modal" role="dialog" aria-modal="true" aria-labelledby="textareaModalTitle">
+        <div class="modal-heading">
+          <h2 id="textareaModalTitle">Edit Field</h2>
+          <button class="modal-close" id="modalClose" type="button">Close</button>
+        </div>
+        <textarea id="modalTextarea" rows="12"></textarea>
+        <div class="modal-actions">
+          <button class="secondary-button" id="modalCancel" type="button">Cancel</button>
+          <button class="primary-button" id="modalSave" type="button">Save</button>
+        </div>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "spot-inspection-library",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Spot inspection documentation app with shared completed-inspection library",
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
