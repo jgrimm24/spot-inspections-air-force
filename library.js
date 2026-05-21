@@ -7,8 +7,10 @@ const libraryCount = document.querySelector("#libraryCount");
 const libraryList = document.querySelector("#libraryList");
 const libraryReportPreview = document.querySelector("#libraryReportPreview");
 const refreshLibrary = document.querySelector("#refreshLibrary");
+const exportCsv = document.querySelector("#exportCsv");
 
 let inspections = [];
+let selectedInspectionId = "";
 
 function apiUrl(path) {
   return `${API_BASE}${path}`;
@@ -86,6 +88,11 @@ function filteredInspections() {
   });
 }
 
+function clearReportPreview() {
+  selectedInspectionId = "";
+  libraryReportPreview.innerHTML = "<p>Select a completed inspection to preview it here.</p>";
+}
+
 function renderReport(record) {
   const positiveFindingHtml = record.hasPositiveFinding === "Yes"
     ? `
@@ -157,6 +164,7 @@ function renderLibrary() {
   renderUnitFilter();
   const visibleEntries = filteredInspections();
   libraryCount.textContent = `${visibleEntries.length} inspection${visibleEntries.length === 1 ? "" : "s"}`;
+  exportCsv.disabled = !visibleEntries.length;
 
   if (!visibleEntries.length) {
     libraryList.innerHTML = `
@@ -193,6 +201,7 @@ function renderLibrary() {
 async function loadLibrary() {
   libraryStatus.textContent = "Loading inspections...";
   libraryList.innerHTML = '<div class="empty-library">Loading shared library...</div>';
+  clearReportPreview();
 
   try {
     const response = await fetch(apiUrl("/api/inspections"));
@@ -235,12 +244,114 @@ async function deleteInspection(entry) {
     return;
   }
 
+  if (entry.id === selectedInspectionId) {
+    clearReportPreview();
+  }
   await loadLibrary();
 }
 
-libraryUnitFilter.addEventListener("change", renderLibrary);
-librarySearch.addEventListener("input", renderLibrary);
+function csvValue(value) {
+  return `"${String(value || "").replaceAll('"', '""')}"`;
+}
+
+function csvRow(values) {
+  return values.map(csvValue).join(",");
+}
+
+function exportVisibleInspections() {
+  const visibleEntries = filteredInspections();
+  if (!visibleEntries.length) {
+    window.alert("No inspections match the current filter.");
+    return;
+  }
+
+  const headers = [
+    "Unit",
+    "Functional Area",
+    "Responsible Discipline",
+    "Inspection Type",
+    "Inspection Type Tier 2",
+    "Inspection Date",
+    "Inspection Time",
+    "Inspector Name",
+    "Inspector Email",
+    "Activity / Work Area",
+    "Finding Identified",
+    "Positive Finding",
+    "Positive Finding Notes",
+    "Hazard / Discrepancy",
+    "Corrective Action",
+    "Cause",
+    "Responsible Person",
+    "Responsible Contact",
+    "Follow-up Due",
+    "Corrected",
+    "Closure Date",
+    "Closure Verified By",
+    "Reviewer",
+    "Review Date",
+    "Disposition",
+    "Follow-up Log",
+    "Review Notes",
+    "Saved At"
+  ];
+
+  const rows = visibleEntries.map((entry) => {
+    const record = entry.record || {};
+    return [
+      record.unit,
+      record.functionalArea,
+      record.responsibleDiscipline,
+      record.inspectionType,
+      record.inspectionTypeTier2,
+      record.inspectionDate,
+      record.inspectionTime,
+      record.inspectorName,
+      record.inspectorEmail,
+      record.workArea,
+      record.hasFinding,
+      record.hasPositiveFinding,
+      record.positiveFinding,
+      record.hazard,
+      record.correctiveAction,
+      record.cause,
+      record.responsibleName,
+      record.responsibleContact,
+      record.followUpDue,
+      record.corrected,
+      record.closureDate,
+      record.closureVerifiedBy,
+      record.reviewer,
+      record.reviewDate,
+      record.disposition,
+      record.followUpLog,
+      record.reviewNotes,
+      entry.savedAt
+    ];
+  });
+
+  const csv = [csvRow(headers), ...rows.map(csvRow)].join("\r\n");
+  const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  const unit = libraryUnitFilter.value ? libraryUnitFilter.value : "all-units";
+  const slug = unit.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "inspections";
+  link.href = URL.createObjectURL(blob);
+  link.download = `spot-inspections-${slug}-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+}
+
+function updateFilters() {
+  clearReportPreview();
+  renderLibrary();
+}
+
+libraryUnitFilter.addEventListener("change", updateFilters);
+librarySearch.addEventListener("input", updateFilters);
 refreshLibrary.addEventListener("click", loadLibrary);
+exportCsv.addEventListener("click", exportVisibleInspections);
 
 libraryList.addEventListener("click", (event) => {
   const button = event.target.closest(".library-action");
@@ -250,6 +361,7 @@ libraryList.addEventListener("click", (event) => {
   if (!entry) return;
 
   if (button.dataset.action === "view") {
+    selectedInspectionId = entry.id;
     renderReport(entry.record || {});
     libraryReportPreview.scrollIntoView({ behavior: "smooth", block: "start" });
   }

@@ -548,6 +548,13 @@ td select {
   font-weight: 800;
 }
 
+.library-toolbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
 .library-list {
   display: grid;
   gap: 12px;
@@ -657,6 +664,11 @@ td select {
   }
 
   .library-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .library-toolbar-actions {
     align-items: stretch;
     flex-direction: column;
   }

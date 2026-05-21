@@ -39,7 +39,10 @@
             <span>Search</span>
             <input id="librarySearch" type="search" placeholder="Search unit, area, discipline, inspector, or finding" />
           </label>
-          <p id="libraryCount">0 inspections</p>
+          <div class="library-toolbar-actions">
+            <p id="libraryCount">0 inspections</p>
+            <button class="secondary-button" id="exportCsv" type="button">Export CSV</button>
+          </div>
         </div>
 
         <div class="library-list" id="libraryList"></div>
