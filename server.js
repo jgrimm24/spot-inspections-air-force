@@ -11,6 +11,9 @@ const githubRepo = process.env.GITHUB_REPO || "spot-inspections-air-force";
 const githubBranch = process.env.GITHUB_BRANCH || "main";
 const libraryPath = process.env.GITHUB_LIBRARY_PATH || "Spot-Inspection-Library";
 const deleteToken = process.env.LIBRARY_DELETE_TOKEN || "";
+const resendApiKey = process.env.RESEND_API_KEY || "";
+const resendFromEmail = process.env.RESEND_FROM_EMAIL || "";
+const publicLibraryUrl = process.env.PUBLIC_LIBRARY_URL || "https://jgrimm24.github.io/spot-inspections-air-force/library.html";
 const maxBodySize = 8 * 1024 * 1024;
 
 const mimeTypes = {
@@ -118,6 +121,18 @@ function requireGitHubToken() {
   }
 }
 
+function escapeHtml(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function isEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+}
+
 async function fetchExistingFileSha(targetPath) {
   const response = await fetch(`https://api.github.com/repos/${githubOwner}/${githubRepo}/contents/${encodeGitHubPath(targetPath)}?ref=${encodeURIComponent(githubBranch)}`, {
     headers: createGitHubHeaders()
@@ -217,6 +232,76 @@ async function saveInspection(payload) {
   );
 
   return { ...entry, path: targetPath };
+}
+
+async function sendInspectionEmail(entry) {
+  if (!resendApiKey || !resendFromEmail) {
+    return { sent: false, message: "Email is not configured." };
+  }
+
+  const record = entry.record || {};
+  const recipient = String(record.inspectorEmail || "").trim();
+  if (!isEmail(recipient)) {
+    return { sent: false, message: "Inspector email is missing or invalid." };
+  }
+
+  const libraryUrl = `${publicLibraryUrl}?v=${Date.now()}`;
+  const subject = `Spot inspection saved: ${record.unit || "Unit not documented"} ${record.inspectionDate || ""}`.trim();
+  const html = `
+    <div style="font-family: Arial, sans-serif; color: #172330; line-height: 1.5;">
+      <h2>Spot inspection saved</h2>
+      <p>Your completed spot inspection has been saved to the shared library.</p>
+      <table cellpadding="6" cellspacing="0" style="border-collapse: collapse;">
+        <tr><td><strong>Inspection ID</strong></td><td>${escapeHtml(entry.id)}</td></tr>
+        <tr><td><strong>Unit</strong></td><td>${escapeHtml(record.unit)}</td></tr>
+        <tr><td><strong>Date</strong></td><td>${escapeHtml(record.inspectionDate)}</td></tr>
+        <tr><td><strong>Inspector</strong></td><td>${escapeHtml(record.inspectorName)}</td></tr>
+        <tr><td><strong>Work area</strong></td><td>${escapeHtml(record.workArea)}</td></tr>
+        <tr><td><strong>Follow-up due</strong></td><td>${escapeHtml(record.followUpDue)}</td></tr>
+      </table>
+      <p>
+        To add a 30-day follow-up later, open the shared library, search for this unit or inspection details,
+        and select <strong>Update Follow-up</strong>.
+      </p>
+      <p><a href="${escapeHtml(libraryUrl)}">Open the spot inspection library</a></p>
+    </div>
+  `;
+  const text = [
+    "Spot inspection saved",
+    "",
+    "Your completed spot inspection has been saved to the shared library.",
+    `Inspection ID: ${entry.id}`,
+    `Unit: ${record.unit || ""}`,
+    `Date: ${record.inspectionDate || ""}`,
+    `Inspector: ${record.inspectorName || ""}`,
+    `Work area: ${record.workArea || ""}`,
+    `Follow-up due: ${record.followUpDue || ""}`,
+    "",
+    "To add a 30-day follow-up later, open the shared library, search for this unit or inspection details, and select Update Follow-up.",
+    libraryUrl
+  ].join("\n");
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${resendApiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from: resendFromEmail,
+      to: [recipient],
+      subject,
+      html,
+      text
+    })
+  });
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    return { sent: false, message: result.message || "Resend could not send the confirmation email." };
+  }
+
+  return { sent: true, id: result.id || "" };
 }
 
 async function deleteInspection(payload, requestDeleteToken) {
@@ -323,7 +408,17 @@ http.createServer(async (req, res) => {
     if (requestUrl.pathname === "/api/inspections" && req.method === "POST") {
       const body = await readRequestBody(req);
       const payload = JSON.parse(body || "{}");
-      sendJson(res, 200, { ok: true, inspection: await saveInspection(payload) });
+      const inspection = await saveInspection(payload);
+      let email = { sent: false, message: "Email was not attempted." };
+      try {
+        email = await sendInspectionEmail(inspection);
+      } catch (error) {
+        email = {
+          sent: false,
+          message: error instanceof Error ? error.message : "Confirmation email could not be sent."
+        };
+      }
+      sendJson(res, 200, { ok: true, inspection, email });
       return;
     }
 
