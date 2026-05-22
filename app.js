@@ -7,8 +7,6 @@ const unitMemoryList = document.querySelector("#unitMemory");
 const hazardSection = document.querySelector("#hazardSection");
 const positiveFindingField = document.querySelector("#positiveFindingField");
 const reportPreview = document.querySelector("#reportPreview");
-const findingMetric = document.querySelector("#findingMetric");
-const correctedMetric = document.querySelector("#correctedMetric");
 const textareaModal = document.querySelector("#textareaModal");
 const textareaModalTitle = document.querySelector("#textareaModalTitle");
 const modalTextarea = document.querySelector("#modalTextarea");
@@ -227,11 +225,6 @@ function updateHazardSection(record) {
   document.querySelector("#positiveFinding").required = hasPositiveFinding(record);
 }
 
-function renderMetrics(record) {
-  findingMetric.textContent = record.hasFinding || "No";
-  correctedMetric.textContent = isFindingRecord(record) ? record.corrected || "No" : "N/A";
-}
-
 function syncCalculatedDates(record) {
   const followUpDue = addDays(record.inspectionDate, 30);
   const followUpDueInput = document.querySelector("#followUpDue");
@@ -361,7 +354,6 @@ function update() {
   syncCalculatedDates(record);
   updateHazardSection(record);
   saveRecord();
-  renderMetrics(record);
   renderReport(record);
 }
 

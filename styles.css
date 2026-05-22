@@ -80,7 +80,6 @@ button {
 
 .app-shell {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
   gap: 24px;
   padding: 24px clamp(16px, 4vw, 40px) 40px;
 }
@@ -91,7 +90,6 @@ button {
   padding: 24px clamp(16px, 4vw, 40px) 40px;
 }
 
-.process-panel,
 .form-section,
 .report-panel {
   background: var(--panel);
@@ -99,87 +97,10 @@ button {
   border-radius: var(--radius);
 }
 
-.process-panel {
-  align-self: start;
-  position: sticky;
-  top: 20px;
-  padding: 18px;
-}
-
-.process-panel h2,
 .section-heading h2 {
   margin: 0;
   font-size: 1.15rem;
   letter-spacing: 0;
-}
-
-.process-list {
-  display: grid;
-  gap: 10px;
-  margin: 18px 0;
-  padding: 0;
-  list-style: none;
-}
-
-.process-list li {
-  display: grid;
-  grid-template-columns: 32px 1fr;
-  gap: 10px;
-  align-items: center;
-  padding: 10px;
-  border: 1px solid transparent;
-  border-radius: var(--radius);
-  color: var(--muted);
-}
-
-.process-list li.active {
-  border-color: var(--nav-soft);
-  background: #f5f8fa;
-  color: var(--ink);
-}
-
-.process-list span {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--nav-soft);
-  color: var(--nav);
-  font-weight: 800;
-}
-
-.process-list strong,
-.metric-stack strong {
-  display: block;
-}
-
-.process-list small,
-.metric-stack span {
-  color: var(--muted);
-}
-
-.metric-stack {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.metric-stack div {
-  min-width: 0;
-  padding: 10px;
-  border-radius: var(--radius);
-  background: #f5f8fa;
-}
-
-.metric-stack strong {
-  font-size: 1rem;
-}
-
-.metric-stack span {
-  display: block;
-  margin-top: 2px;
-  font-size: 0.73rem;
 }
 
 .workspace,
@@ -627,14 +548,6 @@ td select {
 }
 
 @media (max-width: 920px) {
-  .app-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .process-panel {
-    position: static;
-  }
-
   .field-grid,
   .question-grid,
   .compact-grid {
@@ -663,8 +576,7 @@ td select {
 
   .field-grid,
   .question-grid,
-  .compact-grid,
-  .metric-stack {
+  .compact-grid {
     grid-template-columns: 1fr;
   }
 
@@ -685,7 +597,6 @@ td select {
   }
 
   .app-header,
-  .process-panel,
   .inspection-form,
   .report-panel .section-heading {
     display: none;
