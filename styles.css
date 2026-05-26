@@ -82,7 +82,7 @@ button {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 24px;
-  padding: 24px clamp(16px, 4vw, 40px) 40px;
+  padding: 24px clamp(16px, 4vw, 40px) 96px;
 }
 
 .library-page {
@@ -241,6 +241,26 @@ textarea:focus {
   background: transparent;
   color: #fff;
   padding: 0 14px;
+}
+
+.floating-save {
+  position: fixed;
+  right: clamp(16px, 4vw, 32px);
+  bottom: clamp(16px, 4vw, 28px);
+  z-index: 20;
+  min-height: 50px;
+  border: 1px solid #0e4b43;
+  border-radius: var(--radius);
+  background: var(--accent);
+  box-shadow: 0 8px 22px rgba(23, 33, 43, 0.24);
+  color: #fff;
+  padding: 0 20px;
+  font-weight: 800;
+}
+
+.floating-save:disabled {
+  cursor: default;
+  opacity: 0.82;
 }
 
 .header-link {
@@ -598,6 +618,7 @@ td select {
   }
 
   .app-header,
+  .floating-save,
   .inspection-form,
   .report-panel .section-heading {
     display: none;

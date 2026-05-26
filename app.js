@@ -14,6 +14,7 @@ const modalClose = document.querySelector("#modalClose");
 const modalCancel = document.querySelector("#modalCancel");
 const modalSave = document.querySelector("#modalSave");
 const saveCompleted = document.querySelector("#saveCompleted");
+const saveCompletedFloating = document.querySelector("#saveCompletedFloating");
 const openLibrary = document.querySelector("#openLibrary");
 
 let activeTextarea = null;
@@ -313,12 +314,18 @@ async function readApiResponse(response) {
   }
 }
 
+function setSaveButtonState({ disabled, text }) {
+  [saveCompleted, saveCompletedFloating].forEach((button) => {
+    button.disabled = disabled;
+    button.textContent = text;
+  });
+}
+
 async function saveCurrentInspectionToLibrary() {
   const record = getRecordFromForm();
   rememberUnit(record.unit);
 
-  saveCompleted.disabled = true;
-  saveCompleted.textContent = "Saving...";
+  setSaveButtonState({ disabled: true, text: "Saving..." });
 
   try {
     const response = await fetch(apiUrl("/api/inspections"), {
@@ -332,19 +339,17 @@ async function saveCurrentInspectionToLibrary() {
       throw new Error(result.error || `Unable to save completed inspection (${response.status}).`);
     }
 
-    saveCompleted.textContent = "Saved";
+    setSaveButtonState({ disabled: true, text: "Saved" });
     if (result.email?.sent) {
       window.alert(`Inspection saved. Confirmation email sent to ${record.inspectorEmail}.`);
     } else if (result.email?.message) {
       window.alert(`Inspection saved, but confirmation email was not sent: ${result.email.message}`);
     }
     window.setTimeout(() => {
-      saveCompleted.textContent = "Save Completed";
-      saveCompleted.disabled = false;
+      setSaveButtonState({ disabled: false, text: "Save Completed" });
     }, 1400);
   } catch (error) {
-    saveCompleted.textContent = "Save Completed";
-    saveCompleted.disabled = false;
+    setSaveButtonState({ disabled: false, text: "Save Completed" });
     window.alert(error instanceof Error ? error.message : "Unable to save completed inspection.");
   }
 }
@@ -428,6 +433,12 @@ document.addEventListener("keydown", (event) => {
 });
 
 saveCompleted.addEventListener("click", saveCurrentInspectionToLibrary);
+saveCompletedFloating.addEventListener("click", saveCurrentInspectionToLibrary);
+
+new IntersectionObserver(([entry]) => {
+  saveCompletedFloating.hidden = entry.isIntersecting;
+}, { threshold: 0.25 }).observe(saveCompleted);
+
 openLibrary.addEventListener("click", () => {
   window.location.href = "library.html";
 });
