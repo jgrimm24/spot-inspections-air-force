@@ -20,6 +20,7 @@ const cancelFollowUpEdit = document.querySelector("#cancelFollowUpEdit");
 let inspections = [];
 let selectedInspectionId = "";
 let editingInspectionId = "";
+const exportSelection = new Set();
 
 function apiUrl(path) {
   return `${API_BASE}${path}`;
@@ -105,6 +106,10 @@ function filteredInspections() {
   });
 }
 
+function selectedInspections() {
+  return inspections.filter((entry) => exportSelection.has(entry.id));
+}
+
 function clearReportPreview() {
   selectedInspectionId = "";
   libraryReportPreview.innerHTML = "<p>Select a completed inspection to preview it here.</p>";
@@ -182,8 +187,11 @@ function renderReport(record) {
 function renderLibrary() {
   renderUnitFilter();
   const visibleEntries = filteredInspections();
-  libraryCount.textContent = `${visibleEntries.length} inspection${visibleEntries.length === 1 ? "" : "s"}`;
-  exportCsv.disabled = !visibleEntries.length;
+  const selectedCount = exportSelection.size;
+  const visibleCountText = `${visibleEntries.length} inspection${visibleEntries.length === 1 ? "" : "s"}`;
+  libraryCount.textContent = selectedCount ? `${selectedCount} selected / ${visibleCountText}` : visibleCountText;
+  exportCsv.textContent = selectedCount ? `Export Selected (${selectedCount})` : "Export CSV";
+  exportCsv.disabled = !selectedCount && !visibleEntries.length;
 
   if (!visibleEntries.length) {
     libraryList.innerHTML = `
@@ -199,6 +207,9 @@ function renderLibrary() {
     const record = entry.record || {};
     return `
       <article class="library-card">
+        <label class="library-select" title="Select for export">
+          <input class="library-select-input" data-id="${entry.id}" type="checkbox" ${exportSelection.has(entry.id) ? "checked" : ""} aria-label="Select ${display(record.unit)} for export" />
+        </label>
         <div>
           <h3>${display(record.unit)}</h3>
           <p>${display(record.workArea)} - ${display(record.inspectionDate)} - ${display(record.inspectionTypeTier2)}</p>
@@ -232,6 +243,10 @@ async function loadLibrary() {
     }
 
     inspections = Array.isArray(result.inspections) ? result.inspections : [];
+    const currentIds = new Set(inspections.map((entry) => entry.id));
+    Array.from(exportSelection).forEach((id) => {
+      if (!currentIds.has(id)) exportSelection.delete(id);
+    });
     libraryStatus.textContent = "Library loaded";
     renderLibrary();
   } catch (error) {
@@ -339,8 +354,9 @@ function csvRow(values) {
 }
 
 function exportVisibleInspections() {
-  const visibleEntries = filteredInspections();
-  if (!visibleEntries.length) {
+  const selectedEntries = selectedInspections();
+  const exportEntries = selectedEntries.length ? selectedEntries : filteredInspections();
+  if (!exportEntries.length) {
     window.alert("No inspections match the current filter.");
     return;
   }
@@ -372,7 +388,7 @@ function exportVisibleInspections() {
     "Saved At"
   ];
 
-  const rows = visibleEntries.map((entry) => {
+  const rows = exportEntries.map((entry) => {
     const record = entry.record || {};
     return [
       record.unit,
@@ -447,6 +463,18 @@ libraryList.addEventListener("click", (event) => {
   if (button.dataset.action === "follow-up") {
     openFollowUpEditor(entry);
   }
+});
+
+libraryList.addEventListener("change", (event) => {
+  const checkbox = event.target.closest(".library-select-input");
+  if (!checkbox) return;
+
+  if (checkbox.checked) {
+    exportSelection.add(checkbox.dataset.id);
+  } else {
+    exportSelection.delete(checkbox.dataset.id);
+  }
+  renderLibrary();
 });
 
 loadLibrary();

@@ -497,6 +497,11 @@ td select {
   gap: 12px;
 }
 
+.library-toolbar-actions p,
+.library-toolbar-actions button {
+  white-space: nowrap;
+}
+
 .library-list {
   display: grid;
   gap: 12px;
@@ -504,13 +509,30 @@ td select {
 
 .library-card {
   display: grid;
-  grid-template-columns: minmax(220px, 1.4fr) minmax(260px, 1fr) auto;
+  grid-template-columns: 28px minmax(220px, 1.4fr) minmax(260px, 1fr) auto;
   gap: 16px;
   align-items: center;
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: #fff;
+}
+
+.library-select {
+  display: grid;
+  width: 28px;
+  height: 42px;
+  place-items: center;
+  margin: 0;
+  cursor: pointer;
+}
+
+.library-select-input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--accent);
 }
 
 .library-card h3,
@@ -576,11 +598,16 @@ td select {
   }
 
   .library-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: 28px 1fr;
   }
 
   .library-actions {
+    grid-column: 2;
     justify-content: flex-start;
+  }
+
+  .library-card dl {
+    grid-column: 2;
   }
 }
 
