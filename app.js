@@ -98,6 +98,13 @@ const assessmentItemsByBranch = {
     "Voluntary Protection Program (VPP)",
     "Weight Handling",
   ],
+  "Occupational Safety|Effectiveness of Mishap Prevention Programs": [
+    "Hazard Abatement Program",
+    "Hazard Reporting Procedures",
+    "Mishap Response and Reporting Procedures",
+    "Other Describe (Unique)",
+    "Unsafe Unhealthful Reporting",
+  ],
 };
 
 const fields = [
