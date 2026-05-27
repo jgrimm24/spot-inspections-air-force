@@ -1,9 +1,12 @@
 const STORAGE_KEY = "spotInspectionRecord";
 const UNIT_MEMORY_KEY = "spotInspectionUnitMemory";
+const EMAIL_MEMORY_KEY = "spotInspectionEmailMemory";
 
 const form = document.querySelector("#inspectionForm");
 const unitInput = document.querySelector("#unit");
 const unitMemoryList = document.querySelector("#unitMemory");
+const inspectorEmailInput = document.querySelector("#inspectorEmail");
+const inspectorEmailMemoryList = document.querySelector("#inspectorEmailMemory");
 const hazardSection = document.querySelector("#hazardSection");
 const positiveFindingField = document.querySelector("#positiveFindingField");
 const assessmentItemInput = document.querySelector("#assessmentItem");
@@ -215,6 +218,37 @@ function rememberUnit(value) {
   memory.unshift(unit);
   localStorage.setItem(UNIT_MEMORY_KEY, JSON.stringify(memory.slice(0, 25)));
   renderUnitMemory();
+}
+
+function getEmailMemory() {
+  const saved = localStorage.getItem(EMAIL_MEMORY_KEY);
+  if (!saved) return [];
+
+  try {
+    return JSON.parse(saved).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function renderEmailMemory() {
+  inspectorEmailMemoryList.textContent = "";
+  getEmailMemory().forEach((email) => {
+    const option = document.createElement("option");
+    option.value = email;
+    inspectorEmailMemoryList.appendChild(option);
+  });
+}
+
+function rememberEmail(value) {
+  const email = value.trim();
+  if (!email || !inspectorEmailInput.checkValidity()) return;
+
+  const normalized = email.toLocaleLowerCase();
+  const memory = getEmailMemory().filter((item) => item.toLocaleLowerCase() !== normalized);
+  memory.unshift(email);
+  localStorage.setItem(EMAIL_MEMORY_KEY, JSON.stringify(memory.slice(0, 25)));
+  renderEmailMemory();
 }
 
 function emptyRecord() {
@@ -477,6 +511,7 @@ function setSaveButtonState({ disabled, text }) {
 async function saveCurrentInspectionToLibrary() {
   const record = getRecordFromForm();
   rememberUnit(record.unit);
+  rememberEmail(record.inspectorEmail);
 
   setSaveButtonState({ disabled: true, text: "Saving..." });
 
@@ -558,6 +593,14 @@ unitInput.addEventListener("change", () => {
   rememberUnit(unitInput.value);
 });
 
+inspectorEmailInput.addEventListener("blur", () => {
+  rememberEmail(inspectorEmailInput.value);
+});
+
+inspectorEmailInput.addEventListener("change", () => {
+  rememberEmail(inspectorEmailInput.value);
+});
+
 form.querySelectorAll("textarea").forEach((textarea) => {
   textarea.readOnly = true;
   textarea.classList.add("popup-textarea");
@@ -615,4 +658,5 @@ document.querySelector("#copyReport").addEventListener("click", async (event) =>
 });
 
 renderUnitMemory();
+renderEmailMemory();
 renderRecord(loadRecord());
