@@ -46,6 +46,10 @@ const aviationAssessmentItems = {
     "Tool Accountability",
     "Training",
   ],
+  "Effectiveness of Mishap Prevention Programs": [
+    "Mishap Reporting",
+    "Other Describe (Unique)",
+  ],
 };
 
 const fields = [
