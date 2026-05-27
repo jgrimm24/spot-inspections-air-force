@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Spot Inspection Documentation</title>
-    <link rel="stylesheet" href="styles.css?v=20260526-1" />
+    <link rel="stylesheet" href="styles.css?v=20260526-2" />
   </head>
   <body>
     <header class="app-header">
@@ -106,8 +106,18 @@
             </div>
 
             <div class="question-grid">
+              <label id="assessmentAreaField" hidden>
+                <span>4. Assessment Area <em>*</em></span>
+                <select id="assessmentArea" name="assessmentArea">
+                  <option value="">Select assessment area</option>
+                  <option>Commander and Supervisory Support (SMS)</option>
+                  <option>Compliance with Program Directives</option>
+                  <option>Effectiveness of Mishap Prevention Programs</option>
+                </select>
+              </label>
+
               <label>
-                <span>4. Inspection Type Tier 1 <em>*</em></span>
+                <span>5. Inspection Type Tier 1 <em>*</em></span>
                 <select id="inspectionType" name="inspectionType" required>
                   <option value="">Select your answer</option>
                   <option>Safety spot inspection</option>
@@ -120,7 +130,7 @@
               </label>
 
               <label>
-                <span>5. Inspection Type Tier 2 <em>*</em></span>
+                <span>6. Inspection Type Tier 2 <em>*</em></span>
                 <select id="inspectionTypeTier2" name="inspectionTypeTier2" required>
                   <option value="">Select inspection type</option>
                   <option>Facility/Location</option>
@@ -129,33 +139,33 @@
                 </select>
               </label>
               <label>
-                <span>6. Date <em>*</em></span>
+                <span>7. Date <em>*</em></span>
                 <input id="inspectionDate" name="inspectionDate" type="date" required />
               </label>
             </div>
 
             <div class="question-grid">
               <label>
-                <span>7. Time <em>*</em></span>
+                <span>8. Time <em>*</em></span>
                 <input id="inspectionTime" name="inspectionTime" type="text" inputmode="numeric" pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$" placeholder="HH:MM" required />
               </label>
               <label>
-                <span>8. Inspector email address (used for input confirmation) <em>*</em></span>
+                <span>9. Inspector email address (used for input confirmation) <em>*</em></span>
                 <input id="inspectorEmail" name="inspectorEmail" type="email" placeholder="Enter your answer" required />
               </label>
               <label>
-                <span>9. Inspector name <em>*</em></span>
+                <span>10. Inspector name <em>*</em></span>
                 <input id="inspectorName" name="inspectorName" type="text" placeholder="Enter your answer" required />
               </label>
             </div>
 
             <label class="wide-field">
-              <span>10. Area, equipment, processes, or procedures reviewed <em>*</em></span>
+              <span>11. Area, equipment, processes, or procedures reviewed <em>*</em></span>
               <textarea id="workArea" name="workArea" rows="3" placeholder="Example: CTK tool accountability, hangar bay housekeeping, admin area procedures" required></textarea>
             </label>
 
             <fieldset class="radio-group">
-              <legend>11. Did you identify a hazard, risk, deficiency, or unsafe work practice? <em>*</em></legend>
+              <legend>12. Did you identify a hazard, risk, deficiency, or unsafe work practice? <em>*</em></legend>
               <label>
                 <input type="radio" name="hasFinding" value="Yes" />
                 Yes
@@ -167,7 +177,7 @@
             </fieldset>
 
             <fieldset class="radio-group">
-              <legend>12. Did you identify a positive finding or noteworthy safe practice?</legend>
+              <legend>13. Did you identify a positive finding or noteworthy safe practice?</legend>
               <label>
                 <input type="radio" name="hasPositiveFinding" value="Yes" />
                 Yes
@@ -179,7 +189,7 @@
             </fieldset>
 
             <label id="positiveFindingField">
-              <span>13. Positive finding / safe practice observed</span>
+              <span>14. Positive finding / safe practice observed</span>
               <textarea id="positiveFinding" name="positiveFinding" rows="3" placeholder="Enter your answer"></textarea>
             </label>
           </section>
@@ -191,17 +201,17 @@
             </div>
 
             <label>
-              <span>14. What was the hazard/discrepancy/unsafe work practice? <em>*</em></span>
+              <span>15. What was the hazard/discrepancy/unsafe work practice? <em>*</em></span>
               <textarea id="hazard" name="hazard" rows="3" placeholder="Enter your answer"></textarea>
             </label>
 
             <label>
-              <span>15. Recommendations / corrective action taken or planned <em>*</em></span>
+              <span>16. Recommendations / corrective action taken or planned <em>*</em></span>
               <textarea id="correctiveAction" name="correctiveAction" rows="3" placeholder="Enter your answer"></textarea>
             </label>
 
             <label>
-              <span>16. Causes of deficiency and/or hazard <em>*</em></span>
+              <span>17. Causes of deficiency and/or hazard <em>*</em></span>
               <select id="cause" name="cause">
                 <option value="">Select cause</option>
                 <option>ADWSR</option>
@@ -228,21 +238,21 @@
 
             <div class="question-grid">
               <label>
-                <span>17. Responsible person name <em>*</em></span>
+                <span>18. Responsible person name <em>*</em></span>
                 <input id="responsibleName" name="responsibleName" type="text" placeholder="Enter your answer" />
               </label>
               <label>
-                <span>18. Responsible person phone and/or email <em>*</em></span>
+                <span>19. Responsible person phone and/or email <em>*</em></span>
                 <input id="responsibleContact" name="responsibleContact" type="text" placeholder="Enter phone and/or email" />
               </label>
               <label>
-                <span>19. Follow-up due date</span>
+                <span>20. Follow-up due date</span>
                 <input id="followUpDue" name="followUpDue" type="date" readonly />
               </label>
             </div>
 
             <fieldset class="radio-group">
-              <legend>20. Has the deficiency and/or hazard been corrected? <em>*</em></legend>
+              <legend>21. Has the deficiency and/or hazard been corrected? <em>*</em></legend>
               <label>
                 <input type="radio" name="corrected" value="Yes" />
                 Yes
@@ -308,6 +318,6 @@
     <script>
       window.SPOT_INSPECTION_API_URL = "https://spot-inspections-air-force.onrender.com";
     </script>
-    <script src="app.js?v=20260526-1"></script>
+    <script src="app.js?v=20260526-2"></script>
   </body>
 </html>
