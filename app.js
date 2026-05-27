@@ -131,6 +131,12 @@ const assessmentItemsByBranch = {
     "Training",
     "Transportation",
   ],
+  "Weapons Safety|Effectiveness of Mishap Prevention Programs": [
+    "Dissemination of Safety Information",
+    "Mishap/Flagword Reporting",
+    "Other Describe (Unique)",
+    "Risk Assessments",
+  ],
 };
 
 const fields = [
