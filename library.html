@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Completed Spot Inspections</title>
-    <link rel="stylesheet" href="styles.css?v=20260526-2" />
+    <link rel="stylesheet" href="styles.css?v=20260527-1" />
   </head>
   <body>
     <header class="app-header">
@@ -46,6 +46,44 @@
         </div>
 
         <div class="library-list" id="libraryList"></div>
+
+        <section class="monthly-tally" aria-label="Running monthly inspection tally">
+          <div class="monthly-tally-heading">
+            <div>
+              <p class="eyebrow">Populated by Spot Inspections</p>
+              <h3>Running Monthly Tally</h3>
+              <p class="monthly-tally-scope" id="monthlyTallyScope"></p>
+            </div>
+            <label class="fiscal-year-filter">
+              <span>Fiscal Year</span>
+              <select id="libraryFiscalYear"></select>
+            </label>
+          </div>
+          <div class="monthly-tally-table-wrap">
+            <table class="monthly-tally-table">
+              <thead>
+                <tr>
+                  <th scope="col">Discipline</th>
+                  <th scope="col">Oct</th>
+                  <th scope="col">Nov</th>
+                  <th scope="col">Dec</th>
+                  <th scope="col">Jan</th>
+                  <th scope="col">Feb</th>
+                  <th scope="col">Mar</th>
+                  <th scope="col">Apr</th>
+                  <th scope="col">May</th>
+                  <th scope="col">Jun</th>
+                  <th scope="col">Jul</th>
+                  <th scope="col">Aug</th>
+                  <th scope="col">Sep</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody id="monthlyTallyBody"></tbody>
+            </table>
+          </div>
+          <p class="monthly-tally-note">Totals update from completed inspections. The Unit filter applies to the tally; Search filters the report list only.</p>
+        </section>
       </section>
 
       <section class="report-panel" aria-label="Inspection report">
@@ -91,6 +129,6 @@
     <script>
       window.SPOT_INSPECTION_API_URL = "https://spot-inspections-air-force.onrender.com";
     </script>
-    <script src="library.js?v=20260526-4"></script>
+    <script src="library.js?v=20260527-1"></script>
   </body>
 </html>

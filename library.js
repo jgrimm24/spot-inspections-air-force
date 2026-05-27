@@ -5,6 +5,9 @@ const libraryUnitFilter = document.querySelector("#libraryUnitFilter");
 const librarySearch = document.querySelector("#librarySearch");
 const libraryCount = document.querySelector("#libraryCount");
 const libraryList = document.querySelector("#libraryList");
+const libraryFiscalYear = document.querySelector("#libraryFiscalYear");
+const monthlyTallyScope = document.querySelector("#monthlyTallyScope");
+const monthlyTallyBody = document.querySelector("#monthlyTallyBody");
 const libraryReportPreview = document.querySelector("#libraryReportPreview");
 const refreshLibrary = document.querySelector("#refreshLibrary");
 const exportCsv = document.querySelector("#exportCsv");
@@ -21,6 +24,8 @@ let inspections = [];
 let selectedInspectionId = "";
 let editingInspectionId = "";
 const exportSelection = new Set();
+const tallyDisciplines = ["Occupational Safety", "Aviation Safety", "Weapons Safety"];
+const fiscalYearMonths = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 function apiUrl(path) {
   return `${API_BASE}${path}`;
@@ -59,6 +64,81 @@ function formatSavedDate(value) {
 function currentDateValue() {
   const date = new Date();
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function fiscalYearForDate(value) {
+  const match = String(value || "").match(/^(\d{4})-(\d{2})/);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  return month >= 10 ? year + 1 : year;
+}
+
+function currentFiscalYear() {
+  return fiscalYearForDate(currentDateValue());
+}
+
+function renderFiscalYearFilter() {
+  const current = Number(libraryFiscalYear.value);
+  const years = new Set([currentFiscalYear()]);
+  inspections.forEach((entry) => {
+    const fiscalYear = fiscalYearForDate(entry.record?.inspectionDate);
+    if (fiscalYear) years.add(fiscalYear);
+  });
+  const orderedYears = [...years].sort((a, b) => b - a);
+  const selectedYear = orderedYears.includes(current) ? current : orderedYears[0];
+  libraryFiscalYear.innerHTML = orderedYears
+    .map((year) => `<option value="${year}">FY ${year}</option>`)
+    .join("");
+  libraryFiscalYear.value = String(selectedYear);
+}
+
+function renderMonthlyTally() {
+  renderFiscalYearFilter();
+  const selectedYear = Number(libraryFiscalYear.value);
+  const selectedUnit = libraryUnitFilter.value;
+  const tallyEntries = inspections.filter((entry) => {
+    const record = entry.record || {};
+    return (!selectedUnit || record.unit === selectedUnit)
+      && fiscalYearForDate(record.inspectionDate) === selectedYear;
+  });
+  const disciplines = [...new Set([
+    ...tallyDisciplines,
+    ...tallyEntries.map((entry) => entry.record?.responsibleDiscipline).filter(Boolean)
+  ])];
+
+  const rows = disciplines.map((discipline) => {
+    const counts = fiscalYearMonths.map((month) => tallyEntries.filter((entry) => {
+      const date = String(entry.record?.inspectionDate || "");
+      return entry.record?.responsibleDiscipline === discipline && Number(date.slice(5, 7)) === month;
+    }).length);
+    return { discipline, counts, total: counts.reduce((sum, count) => sum + count, 0) };
+  });
+  const columnTotals = fiscalYearMonths.map((_, index) => rows.reduce((sum, row) => sum + row.counts[index], 0));
+  const grandTotal = columnTotals.reduce((sum, count) => sum + count, 0);
+  const countCell = (count) => count
+    ? `<span class="tally-value">${count}</span>`
+    : '<span class="tally-empty" aria-label="No inspections">&ndash;</span>';
+
+  monthlyTallyBody.innerHTML = [
+    ...rows.map((row) => `
+      <tr>
+        <th scope="row">${escapeHtml(row.discipline)}</th>
+        ${row.counts.map(countCell).map((cell) => `<td>${cell}</td>`).join("")}
+        <td class="tally-total">${row.total}</td>
+      </tr>
+    `),
+    `
+      <tr class="tally-summary">
+        <th scope="row">Total</th>
+        ${columnTotals.map((count) => `<td>${count}</td>`).join("")}
+        <td>${grandTotal}</td>
+      </tr>
+    `
+  ].join("");
+
+  const scope = selectedUnit || "All units";
+  monthlyTallyScope.textContent = `FY ${selectedYear} | ${scope} | ${grandTotal} completed inspection${grandTotal === 1 ? "" : "s"}`;
 }
 
 function uniqueUnits() {
@@ -190,6 +270,7 @@ function renderReport(record) {
 
 function renderLibrary() {
   renderUnitFilter();
+  renderMonthlyTally();
   const visibleEntries = filteredInspections();
   const selectedCount = exportSelection.size;
   const visibleCountText = `${visibleEntries.length} inspection${visibleEntries.length === 1 ? "" : "s"}`;
@@ -446,6 +527,7 @@ function updateFilters() {
 
 libraryUnitFilter.addEventListener("change", updateFilters);
 librarySearch.addEventListener("input", updateFilters);
+libraryFiscalYear.addEventListener("change", renderMonthlyTally);
 refreshLibrary.addEventListener("click", loadLibrary);
 exportCsv.addEventListener("click", exportVisibleInspections);
 followUpForm.addEventListener("submit", saveFollowUpUpdate);
