@@ -22,6 +22,31 @@ const saveCompletedFloating = document.querySelector("#saveCompletedFloating");
 const openLibrary = document.querySelector("#openLibrary");
 
 let activeTextarea = null;
+let activeAssessmentItemKey = "";
+
+const aviationAssessmentItems = {
+  "Commander and Supervisory Support (SMS)": [
+    "Awards Program",
+    "Commander (CC) Involvement",
+    "Other Describe (Unique)",
+    "Squadron Flight Safety Officer (SAFSO)",
+    "Supervisor Responsibilities",
+  ],
+  "Compliance with Program Directives": [
+    "Airfield Driving Program",
+    "Bird/Wildlife Aircraft Strike Hazard (BASH)",
+    "Controlled Movement Area Violations (CMAVs)",
+    "Dropped Object Prevention Program (DOPP)",
+    "Foreign Object Damage (FOD)",
+    "Hazardous Air Traffic Reporting (HATR) Program",
+    "Midair Collision Avoidance (MACA) Program",
+    "Other Describe (Unique)",
+    "Product Quality Deficiency Reporting System",
+    "Snow/Ice Plans and Removal",
+    "Tool Accountability",
+    "Training",
+  ],
+};
 
 const fields = [
   "unit",
@@ -181,6 +206,8 @@ function loadRecord() {
 }
 
 function renderRecord(record) {
+  updateAssessmentItem(record);
+
   fields.forEach((field) => {
     document.querySelector(`#${field}`).value = record[field] ?? "";
   });
@@ -246,8 +273,24 @@ function updateAssessmentArea(record) {
 }
 
 function updateAssessmentItem(record) {
-  const showAssessmentItem = record.responsibleDiscipline === "Aviation Safety"
-    && record.assessmentArea === "Commander and Supervisory Support (SMS)";
+  const itemKey = record.responsibleDiscipline === "Aviation Safety" ? record.assessmentArea : "";
+  const options = aviationAssessmentItems[itemKey] || [];
+  const showAssessmentItem = options.length > 0;
+
+  if (activeAssessmentItemKey !== itemKey) {
+    const selectedValue = record.assessmentItem || "";
+    assessmentItemInput.innerHTML = '<option value="">Select assessment item</option>';
+    options.forEach((value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      assessmentItemInput.appendChild(option);
+    });
+    assessmentItemInput.value = options.includes(selectedValue) ? selectedValue : "";
+    record.assessmentItem = assessmentItemInput.value;
+    activeAssessmentItemKey = itemKey;
+  }
+
   assessmentItemField.hidden = !showAssessmentItem;
   assessmentItemInput.required = showAssessmentItem;
 
