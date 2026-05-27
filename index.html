@@ -106,9 +106,9 @@
             </div>
 
             <div class="question-grid">
-              <label id="assessmentAreaField" hidden>
+              <label id="assessmentAreaField">
                 <span>4. Assessment Area <em>*</em></span>
-                <select id="assessmentArea" name="assessmentArea">
+                <select id="assessmentArea" name="assessmentArea" required>
                   <option value="">Select assessment area</option>
                   <option>Commander and Supervisory Support (SMS)</option>
                   <option>Compliance with Program Directives</option>
@@ -116,9 +116,9 @@
                 </select>
               </label>
 
-              <label id="assessmentItemField" hidden>
+              <label id="assessmentItemField">
                 <span>5. Assessment Item <em>*</em></span>
-                <select id="assessmentItem" name="assessmentItem">
+                <select id="assessmentItem" name="assessmentItem" disabled>
                   <option value="">Select assessment item</option>
                 </select>
               </label>
@@ -325,6 +325,6 @@
     <script>
       window.SPOT_INSPECTION_API_URL = "https://spot-inspections-air-force.onrender.com";
     </script>
-    <script src="app.js?v=20260526-11"></script>
+    <script src="app.js?v=20260527-1"></script>
   </body>
 </html>

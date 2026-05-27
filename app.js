@@ -6,9 +6,6 @@ const unitInput = document.querySelector("#unit");
 const unitMemoryList = document.querySelector("#unitMemory");
 const hazardSection = document.querySelector("#hazardSection");
 const positiveFindingField = document.querySelector("#positiveFindingField");
-const assessmentAreaField = document.querySelector("#assessmentAreaField");
-const assessmentAreaInput = document.querySelector("#assessmentArea");
-const assessmentItemField = document.querySelector("#assessmentItemField");
 const assessmentItemInput = document.querySelector("#assessmentItem");
 const reportPreview = document.querySelector("#reportPreview");
 const textareaModal = document.querySelector("#textareaModal");
@@ -352,17 +349,6 @@ function updateHazardSection(record) {
   document.querySelector("#positiveFinding").required = hasPositiveFinding(record);
 }
 
-function updateAssessmentArea(record) {
-  const disciplineSelected = Boolean(record.responsibleDiscipline);
-  assessmentAreaField.hidden = !disciplineSelected;
-  assessmentAreaInput.required = disciplineSelected;
-
-  if (!disciplineSelected && assessmentAreaInput.value) {
-    assessmentAreaInput.value = "";
-    record.assessmentArea = "";
-  }
-}
-
 function updateAssessmentItem(record) {
   const itemKey = `${record.responsibleDiscipline}|${record.assessmentArea}`;
   const options = assessmentItemsByBranch[itemKey] || [];
@@ -382,7 +368,7 @@ function updateAssessmentItem(record) {
     activeAssessmentItemKey = itemKey;
   }
 
-  assessmentItemField.hidden = !showAssessmentItem;
+  assessmentItemInput.disabled = !showAssessmentItem;
   assessmentItemInput.required = showAssessmentItem;
 
   if (!showAssessmentItem && assessmentItemInput.value) {
@@ -524,7 +510,6 @@ async function saveCurrentInspectionToLibrary() {
 function update() {
   const record = getRecordFromForm();
   syncCalculatedDates(record);
-  updateAssessmentArea(record);
   updateAssessmentItem(record);
   updateHazardSection(record);
   saveRecord();
