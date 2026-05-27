@@ -8,6 +8,8 @@ const hazardSection = document.querySelector("#hazardSection");
 const positiveFindingField = document.querySelector("#positiveFindingField");
 const assessmentAreaField = document.querySelector("#assessmentAreaField");
 const assessmentAreaInput = document.querySelector("#assessmentArea");
+const assessmentItemField = document.querySelector("#assessmentItemField");
+const assessmentItemInput = document.querySelector("#assessmentItem");
 const reportPreview = document.querySelector("#reportPreview");
 const textareaModal = document.querySelector("#textareaModal");
 const textareaModalTitle = document.querySelector("#textareaModalTitle");
@@ -26,6 +28,7 @@ const fields = [
   "functionalArea",
   "responsibleDiscipline",
   "assessmentArea",
+  "assessmentItem",
   "inspectionType",
   "inspectionTypeTier2",
   "inspectionDate",
@@ -107,6 +110,7 @@ function emptyRecord() {
     functionalArea: "",
     responsibleDiscipline: "",
     assessmentArea: "",
+    assessmentItem: "",
     inspectionType: "",
     inspectionTypeTier2: "",
     inspectionDate: currentDateValue(),
@@ -241,6 +245,18 @@ function updateAssessmentArea(record) {
   }
 }
 
+function updateAssessmentItem(record) {
+  const showAssessmentItem = record.responsibleDiscipline === "Aviation Safety"
+    && record.assessmentArea === "Commander and Supervisory Support (SMS)";
+  assessmentItemField.hidden = !showAssessmentItem;
+  assessmentItemInput.required = showAssessmentItem;
+
+  if (!showAssessmentItem && assessmentItemInput.value) {
+    assessmentItemInput.value = "";
+    record.assessmentItem = "";
+  }
+}
+
 function syncCalculatedDates(record) {
   const followUpDue = addDays(record.inspectionDate, 30);
   const followUpDueInput = document.querySelector("#followUpDue");
@@ -290,6 +306,7 @@ function renderReport(record) {
         <dt>Functional Area</dt><dd>${display(record.functionalArea)}</dd>
         <dt>Responsible Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
         <dt>Assessment Area</dt><dd>${display(record.assessmentArea)}</dd>
+        <dt>Assessment Item</dt><dd>${display(record.assessmentItem)}</dd>
         <dt>Type</dt><dd>${display(record.inspectionType)}</dd>
         <dt>Type Tier 2</dt><dd>${display(record.inspectionTypeTier2)}</dd>
         <dt>Date</dt><dd>${display(record.inspectionDate)}</dd>
@@ -374,6 +391,7 @@ function update() {
   const record = getRecordFromForm();
   syncCalculatedDates(record);
   updateAssessmentArea(record);
+  updateAssessmentItem(record);
   updateHazardSection(record);
   saveRecord();
   renderReport(record);
