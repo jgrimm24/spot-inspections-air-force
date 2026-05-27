@@ -24,15 +24,15 @@ const openLibrary = document.querySelector("#openLibrary");
 let activeTextarea = null;
 let activeAssessmentItemKey = "";
 
-const aviationAssessmentItems = {
-  "Commander and Supervisory Support (SMS)": [
+const assessmentItemsByBranch = {
+  "Aviation Safety|Commander and Supervisory Support (SMS)": [
     "Awards Program",
     "Commander (CC) Involvement",
     "Other Describe (Unique)",
     "Squadron Flight Safety Officer (SAFSO)",
     "Supervisor Responsibilities",
   ],
-  "Compliance with Program Directives": [
+  "Aviation Safety|Compliance with Program Directives": [
     "Airfield Driving Program",
     "Bird/Wildlife Aircraft Strike Hazard (BASH)",
     "Controlled Movement Area Violations (CMAVs)",
@@ -46,9 +46,22 @@ const aviationAssessmentItems = {
     "Tool Accountability",
     "Training",
   ],
-  "Effectiveness of Mishap Prevention Programs": [
+  "Aviation Safety|Effectiveness of Mishap Prevention Programs": [
     "Mishap Reporting",
     "Other Describe (Unique)",
+  ],
+  "Occupational Safety|Commander and Supervisory Support (SMS)": [
+    "Awards Program",
+    "Commander (CC) Involvement",
+    "Completion of Supervisor Safety Training by New Supervisors",
+    "Councils and Committees",
+    "Motorcycle Safety Representative (MSR) Responsibilities",
+    "Organization and Staffing",
+    "Other Describe (Unique)",
+    "Safety Assurance",
+    "Safety Promotion Support",
+    "Supervisor Responsibilities",
+    "Unit Safety Representative (USR) Responsibilities",
   ],
 };
 
@@ -277,8 +290,8 @@ function updateAssessmentArea(record) {
 }
 
 function updateAssessmentItem(record) {
-  const itemKey = record.responsibleDiscipline === "Aviation Safety" ? record.assessmentArea : "";
-  const options = aviationAssessmentItems[itemKey] || [];
+  const itemKey = `${record.responsibleDiscipline}|${record.assessmentArea}`;
+  const options = assessmentItemsByBranch[itemKey] || [];
   const showAssessmentItem = options.length > 0;
 
   if (activeAssessmentItemKey !== itemKey) {
