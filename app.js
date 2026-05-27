@@ -112,6 +112,25 @@ const assessmentItemsByBranch = {
     "Other Describe (Unique)",
     "Supervisor Responsibilities",
   ],
+  "Weapons Safety|Compliance with Program Directives": [
+    "Assessment and Inspections",
+    "Explosive",
+    "Explosives Site Plans",
+    "Explosives Storage/Operations",
+    "Facility Licenses",
+    "Fire Prevention",
+    "Grounding/Lightning Protection",
+    "Hazards of Electromagnetic Radiation to Ordnance",
+    "Installation Explosives Map",
+    "Laser",
+    "NCI/NCE Program",
+    "Nuclear Surety",
+    "Other Describe (Unique)",
+    "Roles and Responsibilities",
+    "Supplements and Operating Instructions",
+    "Training",
+    "Transportation",
+  ],
 };
 
 const fields = [
