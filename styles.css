@@ -484,6 +484,12 @@ td select {
   margin: 0;
 }
 
+.filter-helper {
+  color: var(--accent-dark);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
 .library-toolbar p {
   margin: 0;
   color: var(--muted);
@@ -608,6 +614,10 @@ td select {
 .monthly-tally-note {
   margin-top: 11px;
   font-size: 0.82rem;
+}
+
+.monthly-tally-note strong {
+  color: var(--accent-dark);
 }
 
 .library-card {
