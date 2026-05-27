@@ -105,6 +105,13 @@ const assessmentItemsByBranch = {
     "Other Describe (Unique)",
     "Unsafe Unhealthful Reporting",
   ],
+  "Weapons Safety|Commander and Supervisory Support (SMS)": [
+    "Additional Duty Weapons Safety Responsibilities (ADWSR)",
+    "Awards Program",
+    "Commander (CC) Involvement",
+    "Other Describe (Unique)",
+    "Supervisor Responsibilities",
+  ],
 };
 
 const fields = [
