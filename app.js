@@ -141,6 +141,13 @@ const assessmentItemsByBranch = {
   ],
 };
 
+function assessmentDisciplineKey(value) {
+  if (value === "Aviation Safety/SAFSO/Range Safety Officer") return "Aviation Safety";
+  if (value === "Occupational Safety/USR/Supervisor" || value === "MSR") return "Occupational Safety";
+  if (value === "Weapons Safety/ADWSR") return "Weapons Safety";
+  return value;
+}
+
 const fields = [
   "unit",
   "functionalArea",
@@ -386,7 +393,7 @@ function updateHazardSection(record) {
 }
 
 function updateAssessmentItem(record) {
-  const itemKey = `${record.responsibleDiscipline}|${record.assessmentArea}`;
+  const itemKey = `${assessmentDisciplineKey(record.responsibleDiscipline)}|${record.assessmentArea}`;
   const options = assessmentItemsByBranch[itemKey] || [];
   const showAssessmentItem = options.length > 0;
 

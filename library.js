@@ -27,7 +27,20 @@ let inspections = [];
 let selectedInspectionId = "";
 let editingInspectionId = "";
 const exportSelection = new Set();
-const tallyDisciplines = ["Occupational Safety", "Aviation Safety", "Weapons Safety"];
+const tallyDisciplines = [
+  "Aviation Safety/SAFSO/Range Safety Officer",
+  "Occupational Safety/USR/Supervisor",
+  "Weapons Safety/ADWSR",
+  "MSR",
+  "Space Safety"
+];
+const tallyDisciplineAliases = {
+  "Aviation Safety/SAFSO/Range Safety Officer": ["Aviation Safety/SAFSO/Range Safety Officer", "Aviation Safety"],
+  "Occupational Safety/USR/Supervisor": ["Occupational Safety/USR/Supervisor", "Occupational Safety"],
+  "Weapons Safety/ADWSR": ["Weapons Safety/ADWSR", "Weapons Safety"],
+  MSR: ["MSR"],
+  "Space Safety": ["Space Safety"]
+};
 const fiscalYearMonths = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 function apiUrl(path) {
@@ -190,13 +203,16 @@ function renderMonthlyTally() {
   });
   const disciplines = [...new Set([
     ...tallyDisciplines,
-    ...tallyEntries.map((entry) => entry.record?.responsibleDiscipline).filter(Boolean)
+    ...tallyEntries
+      .map((entry) => entry.record?.responsibleDiscipline)
+      .filter((discipline) => discipline && !Object.values(tallyDisciplineAliases).some((aliases) => aliases.includes(discipline)))
   ])];
 
   const rows = disciplines.map((discipline) => {
+    const aliases = tallyDisciplineAliases[discipline] || [discipline];
     const counts = fiscalYearMonths.map((month) => tallyEntries.filter((entry) => {
       const date = String(entry.record?.inspectionDate || "");
-      return entry.record?.responsibleDiscipline === discipline && Number(date.slice(5, 7)) === month;
+      return aliases.includes(entry.record?.responsibleDiscipline) && Number(date.slice(5, 7)) === month;
     }).length);
     return { discipline, counts, total: counts.reduce((sum, count) => sum + count, 0) };
   });
