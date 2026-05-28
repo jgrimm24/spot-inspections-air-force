@@ -19,10 +19,12 @@ const modalCancel = document.querySelector("#modalCancel");
 const modalSave = document.querySelector("#modalSave");
 const saveCompleted = document.querySelector("#saveCompleted");
 const saveCompletedFloating = document.querySelector("#saveCompletedFloating");
+const openEmailDraft = document.querySelector("#openEmailDraft");
 const openLibrary = document.querySelector("#openLibrary");
 
 let activeTextarea = null;
 let activeAssessmentItemKey = "";
+let lastSavedInspection = null;
 
 const assessmentItemsByBranch = {
   "Aviation Safety|Commander and Supervisory Support (SMS)": [
@@ -490,6 +492,39 @@ function apiUrl(path) {
   return `${base}${path}`;
 }
 
+function absolutePageUrl(pageName) {
+  return new URL(pageName, window.location.href).href;
+}
+
+function createMailtoUrl(entry) {
+  const record = entry?.record || {};
+  const to = String(record.inspectorEmail || "").trim();
+  const subject = `Spot inspection saved - ${record.unit || "Unit not documented"} - ${record.inspectionDate || ""}`.trim();
+  const body = [
+    "A completed spot inspection was saved.",
+    "",
+    `Inspection ID: ${entry?.id || "Not documented"}`,
+    `Unit: ${record.unit || "Not documented"}`,
+    `Responsible Discipline: ${record.responsibleDiscipline || "Not documented"}`,
+    `Assessment Area: ${record.assessmentArea || "Not documented"}`,
+    `Assessment Item: ${record.assessmentItem || "Not documented"}`,
+    `Inspection Date: ${record.inspectionDate || "Not documented"}`,
+    `Follow-up Due: ${record.followUpDue || "Not applicable"}`,
+    `Finding Identified: ${record.hasFinding || "Not documented"}`,
+    "",
+    `Library: ${absolutePageUrl("library.html")}`,
+    "",
+    "Use the Library & Tracker page to search for this inspection and update follow-up actions."
+  ].join("\n");
+
+  return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function setEmailDraftAction(entry) {
+  lastSavedInspection = entry || null;
+  openEmailDraft.hidden = !lastSavedInspection;
+}
+
 async function readApiResponse(response) {
   const text = await response.text();
   try {
@@ -527,6 +562,7 @@ async function saveCurrentInspectionToLibrary() {
       throw new Error(result.error || `Unable to save completed inspection (${response.status}).`);
     }
 
+    setEmailDraftAction(result.inspection || { record });
     setSaveButtonState({ disabled: true, text: "Saved" });
     if (result.email?.sent) {
       window.alert(`Inspection saved. Confirmation email sent to ${record.inspectorEmail}.`);
@@ -535,6 +571,7 @@ async function saveCurrentInspectionToLibrary() {
       setSaveButtonState({ disabled: false, text: "Save Completed" });
     }, 1400);
   } catch (error) {
+    setEmailDraftAction(null);
     setSaveButtonState({ disabled: false, text: "Save Completed" });
     window.alert(error instanceof Error ? error.message : "Unable to save completed inspection.");
   }
@@ -629,6 +666,10 @@ document.addEventListener("keydown", (event) => {
 
 saveCompleted.addEventListener("click", saveCurrentInspectionToLibrary);
 saveCompletedFloating.addEventListener("click", saveCurrentInspectionToLibrary);
+openEmailDraft.addEventListener("click", () => {
+  if (!lastSavedInspection) return;
+  window.location.href = createMailtoUrl(lastSavedInspection);
+});
 
 new IntersectionObserver(([entry]) => {
   saveCompletedFloating.hidden = entry.isIntersecting;
@@ -640,6 +681,7 @@ openLibrary.addEventListener("click", () => {
 
 document.querySelector("#newInspection").addEventListener("click", () => {
   localStorage.removeItem(STORAGE_KEY);
+  setEmailDraftAction(null);
   renderRecord(emptyRecord());
 });
 
