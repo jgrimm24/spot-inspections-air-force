@@ -11,6 +11,7 @@ const githubRepo = process.env.GITHUB_REPO || "spot-inspections-air-force";
 const githubBranch = process.env.GITHUB_BRANCH || "main";
 const libraryPath = process.env.GITHUB_LIBRARY_PATH || "Spot-Inspection-Library";
 const deleteToken = process.env.LIBRARY_DELETE_TOKEN || "";
+const sendConfirmationEmails = process.env.SEND_CONFIRMATION_EMAILS === "true";
 const resendApiKey = process.env.RESEND_API_KEY || "";
 const resendFromEmail = process.env.RESEND_FROM_EMAIL || "";
 const publicLibraryUrl = process.env.PUBLIC_LIBRARY_URL || "https://jgrimm24.github.io/spot-inspections-air-force/library.html";
@@ -409,14 +410,16 @@ http.createServer(async (req, res) => {
       const body = await readRequestBody(req);
       const payload = JSON.parse(body || "{}");
       const inspection = await saveInspection(payload);
-      let email = { sent: false, message: "Email was not attempted." };
-      try {
-        email = await sendInspectionEmail(inspection);
-      } catch (error) {
-        email = {
-          sent: false,
-          message: error instanceof Error ? error.message : "Confirmation email could not be sent."
-        };
+      const email = { sent: false, disabled: !sendConfirmationEmails };
+      if (sendConfirmationEmails) {
+        try {
+          Object.assign(email, await sendInspectionEmail(inspection), { disabled: false });
+        } catch (error) {
+          Object.assign(email, {
+            disabled: false,
+            message: error instanceof Error ? error.message : "Confirmation email could not be sent."
+          });
+        }
       }
       sendJson(res, 200, { ok: true, inspection, email });
       return;

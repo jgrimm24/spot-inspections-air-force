@@ -530,8 +530,6 @@ async function saveCurrentInspectionToLibrary() {
     setSaveButtonState({ disabled: true, text: "Saved" });
     if (result.email?.sent) {
       window.alert(`Inspection saved. Confirmation email sent to ${record.inspectorEmail}.`);
-    } else if (result.email?.message) {
-      window.alert(`Inspection saved, but confirmation email was not sent: ${result.email.message}`);
     }
     window.setTimeout(() => {
       setSaveButtonState({ disabled: false, text: "Save Completed" });

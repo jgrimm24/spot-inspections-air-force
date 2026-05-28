@@ -57,8 +57,9 @@ Set these Render environment variables:
 - `GITHUB_BRANCH`: usually `main`
 - `GITHUB_LIBRARY_PATH`: folder where completed inspection JSON files are saved, default `Spot-Inspection-Library`
 - `LIBRARY_DELETE_TOKEN`: optional delete code for removing records
-- `RESEND_API_KEY`: optional Resend API key for save-confirmation emails
-- `RESEND_FROM_EMAIL`: optional sender, for example `Spot Inspections <onboarding@resend.dev>`
+- `SEND_CONFIRMATION_EMAILS`: optional, set to `true` only when email sending is approved
+- `RESEND_API_KEY`: optional Resend API key, used only when `SEND_CONFIRMATION_EMAILS=true`
+- `RESEND_FROM_EMAIL`: optional sender, used only when `SEND_CONFIRMATION_EMAILS=true`
 - `PUBLIC_LIBRARY_URL`: optional public library page URL for confirmation emails
 
 The service exposes:
