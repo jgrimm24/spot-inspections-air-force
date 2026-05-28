@@ -344,6 +344,7 @@ async function updateInspection(payload) {
     ...currentEntry.record,
     reviewer: String(updates.reviewer || "").trim(),
     reviewDate: String(updates.reviewDate || "").trim(),
+    corrected: String(updates.corrected || currentEntry.record.corrected || "").trim(),
     followUpLog: String(updates.followUpLog || "").trim()
   };
 

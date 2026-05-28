@@ -3,6 +3,8 @@ const API_BASE = String(window.SPOT_INSPECTION_API_URL || "").trim().replace(/\/
 const libraryStatus = document.querySelector("#libraryStatus");
 const libraryUnitFilter = document.querySelector("#libraryUnitFilter");
 const librarySearch = document.querySelector("#librarySearch");
+const followUpStatusFilter = document.querySelector("#followUpStatusFilter");
+const followUpSummary = document.querySelector("#followUpSummary");
 const libraryCount = document.querySelector("#libraryCount");
 const libraryList = document.querySelector("#libraryList");
 const libraryFiscalYear = document.querySelector("#libraryFiscalYear");
@@ -16,6 +18,7 @@ const followUpEditorTitle = document.querySelector("#followUpEditorTitle");
 const followUpForm = document.querySelector("#followUpForm");
 const followUpReviewer = document.querySelector("#followUpReviewer");
 const followUpReviewDate = document.querySelector("#followUpReviewDate");
+const followUpCorrected = document.querySelector("#followUpCorrected");
 const followUpLogEdit = document.querySelector("#followUpLogEdit");
 const saveFollowUpEdit = document.querySelector("#saveFollowUpEdit");
 const cancelFollowUpEdit = document.querySelector("#cancelFollowUpEdit");
@@ -64,6 +67,89 @@ function formatSavedDate(value) {
 function currentDateValue() {
   const date = new Date();
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function dateFromValue(value) {
+  if (!value) return null;
+  const date = new Date(`${value}T00:00:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function daysUntil(value) {
+  const dueDate = dateFromValue(value);
+  if (!dueDate) return null;
+  const today = dateFromValue(currentDateValue());
+  return Math.ceil((dueDate.getTime() - today.getTime()) / 86400000);
+}
+
+function followUpStatus(entry) {
+  const record = entry.record || {};
+  if (record.hasFinding !== "Yes") {
+    return {
+      key: "not-required",
+      label: "No Follow-up Required",
+      tone: "neutral",
+      sort: 5,
+      detail: "No finding"
+    };
+  }
+
+  if (record.corrected === "Yes") {
+    return {
+      key: "closed",
+      label: "Closed",
+      tone: "closed",
+      sort: 4,
+      detail: record.reviewDate ? `Reviewed ${record.reviewDate}` : "Corrected"
+    };
+  }
+
+  const remaining = daysUntil(record.followUpDue);
+  if (remaining === null) {
+    return {
+      key: "open",
+      label: "Open",
+      tone: "open",
+      sort: 3,
+      detail: "No due date"
+    };
+  }
+
+  if (remaining < 0) {
+    return {
+      key: "overdue",
+      label: "Overdue",
+      tone: "overdue",
+      sort: 0,
+      detail: `${Math.abs(remaining)} day${Math.abs(remaining) === 1 ? "" : "s"} overdue`
+    };
+  }
+
+  if (remaining <= 7) {
+    return {
+      key: "due-soon",
+      label: "Due Soon",
+      tone: "due-soon",
+      sort: 1,
+      detail: remaining === 0 ? "Due today" : `Due in ${remaining} day${remaining === 1 ? "" : "s"}`
+    };
+  }
+
+  return {
+    key: "open",
+    label: "Open",
+    tone: "open",
+    sort: 2,
+    detail: `Due ${record.followUpDue}`
+  };
+}
+
+function statusMatchesFilter(status, filterValue) {
+  if (!filterValue) return true;
+  if (filterValue === "open") {
+    return ["open", "due-soon", "overdue"].includes(status.key);
+  }
+  return status.key === filterValue;
 }
 
 function fiscalYearForDate(value) {
@@ -181,10 +267,17 @@ function entryText(entry) {
 function filteredInspections() {
   const unit = libraryUnitFilter.value;
   const query = librarySearch.value.trim().toLowerCase();
+  const statusFilter = followUpStatusFilter.value;
   return inspections.filter((entry) => {
+    const status = followUpStatus(entry);
     const unitMatches = !unit || entry.record?.unit === unit;
     const queryMatches = !query || entryText(entry).includes(query);
-    return unitMatches && queryMatches;
+    return unitMatches && queryMatches && statusMatchesFilter(status, statusFilter);
+  }).sort((a, b) => {
+    const statusA = followUpStatus(a);
+    const statusB = followUpStatus(b);
+    if (statusA.sort !== statusB.sort) return statusA.sort - statusB.sort;
+    return String(a.record?.followUpDue || "9999-99-99").localeCompare(String(b.record?.followUpDue || "9999-99-99"));
   });
 }
 
@@ -268,9 +361,38 @@ function renderReport(record) {
   `;
 }
 
+function renderFollowUpSummary() {
+  const counts = {
+    open: 0,
+    "due-soon": 0,
+    overdue: 0,
+    closed: 0,
+    "not-required": 0
+  };
+
+  inspections.forEach((entry) => {
+    const status = followUpStatus(entry);
+    counts[status.key] += 1;
+  });
+
+  followUpSummary.innerHTML = [
+    { label: "Open", value: counts.open + counts["due-soon"] + counts.overdue, key: "open" },
+    { label: "Due within 7 days", value: counts["due-soon"], key: "due-soon" },
+    { label: "Overdue", value: counts.overdue, key: "overdue" },
+    { label: "Closed", value: counts.closed, key: "closed" },
+    { label: "No follow-up required", value: counts["not-required"], key: "not-required" }
+  ].map((item) => `
+    <button class="follow-up-summary-item" data-status-filter="${item.key}" type="button">
+      <strong>${item.value}</strong>
+      <span>${item.label}</span>
+    </button>
+  `).join("");
+}
+
 function renderLibrary() {
   renderUnitFilter();
   renderMonthlyTally();
+  renderFollowUpSummary();
   const visibleEntries = filteredInspections();
   const selectedCount = exportSelection.size;
   const visibleCountText = `${visibleEntries.length} inspection${visibleEntries.length === 1 ? "" : "s"}`;
@@ -290,18 +412,21 @@ function renderLibrary() {
 
   libraryList.innerHTML = visibleEntries.map((entry) => {
     const record = entry.record || {};
+    const status = followUpStatus(entry);
     return `
       <article class="library-card">
         <label class="library-select" title="Select for export">
           <input class="library-select-input" data-id="${entry.id}" type="checkbox" ${exportSelection.has(entry.id) ? "checked" : ""} aria-label="Select ${display(record.unit)} for export" />
         </label>
         <div>
+          <span class="follow-up-badge follow-up-badge-${status.tone}">${escapeHtml(status.label)}</span>
           <h3>${display(record.unit)}</h3>
           <p>${display(record.workArea)} - ${display(record.inspectionDate)} - ${display(record.inspectionTypeTier2)}</p>
         </div>
         <dl>
           <dt>Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
           <dt>Finding</dt><dd>${display(record.hasFinding)}</dd>
+          <dt>Follow-up</dt><dd>${escapeHtml(status.detail)}</dd>
           <dt>Saved</dt><dd>${formatSavedDate(entry.savedAt)}</dd>
         </dl>
         <div class="library-actions">
@@ -380,6 +505,7 @@ function openFollowUpEditor(entry) {
   followUpEditorTitle.textContent = `Update ${record.unit || "Spot Inspection"}`;
   followUpReviewer.value = record.reviewer || "";
   followUpReviewDate.value = record.reviewDate || currentDateValue();
+  followUpCorrected.value = record.corrected || "";
   followUpLogEdit.value = record.followUpLog || "";
   followUpEditor.hidden = false;
   followUpEditor.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -404,6 +530,7 @@ async function saveFollowUpUpdate(event) {
         recordUpdates: {
           reviewer: followUpReviewer.value,
           reviewDate: followUpReviewDate.value,
+          corrected: followUpCorrected.value,
           followUpLog: followUpLogEdit.value
         }
       })
@@ -468,6 +595,8 @@ function exportVisibleInspections() {
     "Responsible Person",
     "Responsible Contact",
     "Follow-up Due",
+    "Follow-up Status",
+    "Follow-up Status Detail",
     "Corrected",
     "Reviewer",
     "Review Date",
@@ -477,6 +606,7 @@ function exportVisibleInspections() {
 
   const rows = exportEntries.map((entry) => {
     const record = entry.record || {};
+    const status = followUpStatus(entry);
     return [
       record.unit,
       record.functionalArea,
@@ -499,6 +629,8 @@ function exportVisibleInspections() {
       record.responsibleName,
       record.responsibleContact,
       record.followUpDue,
+      status.label,
+      status.detail,
       record.corrected,
       record.reviewer,
       record.reviewDate,
@@ -527,11 +659,19 @@ function updateFilters() {
 
 libraryUnitFilter.addEventListener("change", updateFilters);
 librarySearch.addEventListener("input", updateFilters);
+followUpStatusFilter.addEventListener("change", updateFilters);
 libraryFiscalYear.addEventListener("change", renderMonthlyTally);
 refreshLibrary.addEventListener("click", loadLibrary);
 exportCsv.addEventListener("click", exportVisibleInspections);
 followUpForm.addEventListener("submit", saveFollowUpUpdate);
 cancelFollowUpEdit.addEventListener("click", closeFollowUpEditor);
+
+followUpSummary.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-status-filter]");
+  if (!button) return;
+  followUpStatusFilter.value = button.dataset.statusFilter || "";
+  updateFilters();
+});
 
 libraryList.addEventListener("click", (event) => {
   const button = event.target.closest(".library-action");

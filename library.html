@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Completed Spot Inspections</title>
-    <link rel="stylesheet" href="styles.css?v=20260527-2" />
+    <link rel="stylesheet" href="styles.css?v=20260527-3" />
   </head>
   <body>
     <header class="app-header">
@@ -40,11 +40,24 @@
             <span>Search</span>
             <input id="librarySearch" type="search" placeholder="Search unit, area, discipline, inspector, or finding" />
           </label>
+          <label>
+            <span>Follow-up Status</span>
+            <select id="followUpStatusFilter">
+              <option value="">All statuses</option>
+              <option value="open">Open follow-ups</option>
+              <option value="due-soon">Due within 7 days</option>
+              <option value="overdue">Overdue</option>
+              <option value="closed">Closed</option>
+              <option value="not-required">No follow-up required</option>
+            </select>
+          </label>
           <div class="library-toolbar-actions">
             <p id="libraryCount">0 inspections</p>
             <button class="secondary-button" id="exportCsv" type="button">Export CSV</button>
           </div>
         </div>
+
+        <div class="follow-up-summary" id="followUpSummary" aria-label="Follow-up summary"></div>
 
         <div class="library-list" id="libraryList"></div>
 
@@ -115,6 +128,14 @@
               <span>Review Date</span>
               <input id="followUpReviewDate" name="followUpReviewDate" type="date" />
             </label>
+            <label>
+              <span>Corrected / Closed</span>
+              <select id="followUpCorrected" name="followUpCorrected">
+                <option value="">Select status</option>
+                <option>No</option>
+                <option>Yes</option>
+              </select>
+            </label>
           </div>
           <label>
             <span>Follow-up log / 30-day updates</span>
@@ -130,6 +151,6 @@
     <script>
       window.SPOT_INSPECTION_API_URL = "https://spot-inspections-air-force.onrender.com";
     </script>
-    <script src="library.js?v=20260527-1"></script>
+    <script src="library.js?v=20260527-2"></script>
   </body>
 </html>
