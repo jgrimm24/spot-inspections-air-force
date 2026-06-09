@@ -267,6 +267,7 @@ function entryText(entry) {
     record.responsibleDiscipline,
     record.assessmentArea,
     record.assessmentItem,
+    record.inspectionFocus,
     record.inspectionType,
     record.inspectionTypeTier2,
     record.inspectorName,
@@ -353,6 +354,7 @@ function renderReport(record) {
         <dt>Responsible Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
         <dt>Assessment Area</dt><dd>${display(record.assessmentArea)}</dd>
         <dt>Assessment Item</dt><dd>${display(record.assessmentItem)}</dd>
+        <dt>Possible Inspection Focus</dt><dd>${display(record.inspectionFocus)}</dd>
         <dt>Type</dt><dd>${display(record.inspectionType)}</dd>
         <dt>Type Tier 2</dt><dd>${display(record.inspectionTypeTier2)}</dd>
         <dt>Date</dt><dd>${display(record.inspectionDate)}</dd>
@@ -595,6 +597,7 @@ function exportVisibleInspections() {
     "Responsible Discipline",
     "Assessment Area",
     "Assessment Item",
+    "Possible Inspection Focus",
     "Inspection Type",
     "Inspection Type Tier 2",
     "Inspection Date",
@@ -629,6 +632,7 @@ function exportVisibleInspections() {
       record.responsibleDiscipline,
       record.assessmentArea,
       record.assessmentItem,
+      record.inspectionFocus,
       record.inspectionType,
       record.inspectionTypeTier2,
       record.inspectionDate,

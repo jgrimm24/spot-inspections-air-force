@@ -10,6 +10,7 @@ const inspectorEmailMemoryList = document.querySelector("#inspectorEmailMemory")
 const hazardSection = document.querySelector("#hazardSection");
 const positiveFindingField = document.querySelector("#positiveFindingField");
 const assessmentItemInput = document.querySelector("#assessmentItem");
+const inspectionFocusInput = document.querySelector("#inspectionFocus");
 const reportPreview = document.querySelector("#reportPreview");
 const textareaModal = document.querySelector("#textareaModal");
 const textareaModalTitle = document.querySelector("#textareaModalTitle");
@@ -24,6 +25,7 @@ const openLibrary = document.querySelector("#openLibrary");
 
 let activeTextarea = null;
 let activeAssessmentItemKey = "";
+let activeInspectionFocusKey = "";
 let lastSavedInspection = null;
 
 const assessmentItemsByBranch = {
@@ -148,12 +150,47 @@ function assessmentDisciplineKey(value) {
   return value;
 }
 
+const inspectionFocusByAssessmentItem = {
+  "Hazardous Energy Control": [
+    "21.2.1 - Does the shop have a hazardous energy control program with procedures, training, and periodic inspections?",
+    "21.2.2 - If tagout-only devices are used, is equivalent protection to lockout documented?",
+    "21.3.1.1 - Can authorized employees identify hazardous energy sources, type, magnitude, and isolation/control methods?",
+    "21.3.1.2 - Do affected employees understand the purpose and use of the energy control procedure?",
+    "21.3.1.3 - Are other employees instructed not to restart or reenergize locked/tagged equipment?",
+    "21.3.1.4 - If tagout is used, do employees understand the limitations of tags?",
+    "21.3.1.5 - Has retraining occurred after job, equipment, process, procedure, or knowledge gaps changed?",
+    "21.3.1.6 - Is hazardous energy control training documented with employee names and training dates?",
+    "21.4.1 - Has the shop hazardous energy control program periodic inspection been accomplished at least annually?",
+    "21.4.1.1 - Does the inspection identify equipment and machinery covered by the program?",
+    "21.4.1.2 - Does the inspection verify training is current and properly documented?",
+    "21.4.1.3 - Were hazardous energy control procedures reviewed with authorized employees, including demonstration of required practices?",
+    "21.4.1.4 - Where lockout is used, did inspectors and authorized employees review responsibilities under the procedure?",
+    "21.4.1.5 - Where tagout is used, did employees review responsibilities and tag limitations?",
+    "21.4.1.6 - Was an out-brief conducted as appropriate and were findings documented in the written report?",
+    "21.4.2 - Did a qualified occupational safety inspector review annual self-inspection reports during the safety assessment?",
+    "21.5.1 - Are lockout/tagout devices singularly identified and marked to identify the employee applying them?",
+    "21.5.2 - Are lockout/tagout devices durable enough for the expected environment and exposure?",
+    "21.5.3 - Are lockout devices singularly keyed, controlled by authorized employees, and standardized by color, shape, or size?",
+    "21.5.4 - Are AF Form 983, DoD tags, or commercial equivalent tags available and used with energy-isolating devices?",
+    "21.5.5 - Are lockout devices strong enough to resist removal and tagout attachment devices non-reusable, self-locking, and rated at least 50 pounds?",
+    "21.6 - Are equipment-specific hazardous energy control procedures developed and documented unless exempted?",
+    "Figure 21.1 - Do procedures address notification, preparation, shutdown, isolation, LOTO application, stored-energy release, verification, and keeping devices in place?",
+    "Figure 21.2 - Before release from LOTO, are affected employees notified, the area cleared, guards replaced, controls neutral, and devices removed only by authorized employees?",
+    "21.6.1 - For group LOTO, is one authorized employee assigned primary responsibility and continuity of protection maintained?",
+    "21.6.2 - Are employees prohibited from attaching or removing another person's LOTO device except under the allowed exception?",
+    "21.6.3 - Are written shift-change or personnel-change procedures used to maintain hazardous energy control protection?",
+    "21.7.2 - For complex LOTO, is a written plan of execution used when multiple energy sources, crews, locations, employers, disconnects, sequences, or work periods are involved?",
+    "21.8 - Are contractor hazardous energy control responsibilities specified and coordinated?"
+  ]
+};
+
 const fields = [
   "unit",
   "functionalArea",
   "responsibleDiscipline",
   "assessmentArea",
   "assessmentItem",
+  "inspectionFocus",
   "inspectionType",
   "inspectionTypeTier2",
   "inspectionDate",
@@ -267,6 +304,7 @@ function emptyRecord() {
     responsibleDiscipline: "",
     assessmentArea: "",
     assessmentItem: "",
+    inspectionFocus: "",
     inspectionType: "",
     inspectionTypeTier2: "",
     inspectionDate: currentDateValue(),
@@ -342,6 +380,8 @@ function renderRecord(record) {
   fields.forEach((field) => {
     document.querySelector(`#${field}`).value = record[field] ?? "";
   });
+
+  updateInspectionFocus(record);
 
   radioGroups.forEach((group) => {
     setRadioValue(group, record[group]);
@@ -420,6 +460,35 @@ function updateAssessmentItem(record) {
   }
 }
 
+function updateInspectionFocus(record) {
+  const focusOptions = inspectionFocusByAssessmentItem[record.assessmentItem] || [];
+  const showInspectionFocus = focusOptions.length > 0;
+  const focusKey = record.assessmentItem || "";
+
+  if (activeInspectionFocusKey !== focusKey) {
+    const selectedValue = record.inspectionFocus || "";
+    inspectionFocusInput.innerHTML = showInspectionFocus
+      ? '<option value="">Select a possible inspection focus</option>'
+      : '<option value="">Select Hazardous Energy Control in Box 5 first</option>';
+    focusOptions.forEach((value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      inspectionFocusInput.appendChild(option);
+    });
+    inspectionFocusInput.value = focusOptions.includes(selectedValue) ? selectedValue : "";
+    record.inspectionFocus = inspectionFocusInput.value;
+    activeInspectionFocusKey = focusKey;
+  }
+
+  inspectionFocusInput.disabled = !showInspectionFocus;
+
+  if (!showInspectionFocus && inspectionFocusInput.value) {
+    inspectionFocusInput.value = "";
+    record.inspectionFocus = "";
+  }
+}
+
 function syncCalculatedDates(record) {
   const followUpDue = addDays(record.inspectionDate, 30);
   const followUpDueInput = document.querySelector("#followUpDue");
@@ -470,6 +539,7 @@ function renderReport(record) {
         <dt>Responsible Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
         <dt>Assessment Area</dt><dd>${display(record.assessmentArea)}</dd>
         <dt>Assessment Item</dt><dd>${display(record.assessmentItem)}</dd>
+        <dt>Possible Inspection Focus</dt><dd>${display(record.inspectionFocus)}</dd>
         <dt>Type</dt><dd>${display(record.inspectionType)}</dd>
         <dt>Type Tier 2</dt><dd>${display(record.inspectionTypeTier2)}</dd>
         <dt>Date</dt><dd>${display(record.inspectionDate)}</dd>
@@ -515,6 +585,7 @@ function createMailtoUrl(entry) {
     `Responsible Discipline: ${record.responsibleDiscipline || "Not documented"}`,
     `Assessment Area: ${record.assessmentArea || "Not documented"}`,
     `Assessment Item: ${record.assessmentItem || "Not documented"}`,
+    `Possible Inspection Focus: ${record.inspectionFocus || "Not documented"}`,
     `Inspection Date: ${record.inspectionDate || "Not documented"}`,
     `Follow-up Due: ${record.followUpDue || "Not applicable"}`,
     `Finding Identified: ${record.hasFinding || "Not documented"}`,
@@ -588,6 +659,7 @@ function update() {
   const record = getRecordFromForm();
   syncCalculatedDates(record);
   updateAssessmentItem(record);
+  updateInspectionFocus(record);
   updateHazardSection(record);
   saveRecord();
   renderReport(record);
