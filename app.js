@@ -641,6 +641,17 @@ const inspectionFocusAliases = {
   "Weight Handling": "Material Handling Equipment (MHE)"
 };
 
+function unlearnTopicSearchTerm(term) {
+  const normalizedTerm = normalizeSearchText(term);
+  const remaining = getLearnedTopicSearches()
+    .filter((entry) => normalizeSearchText(entry.term) !== normalizedTerm);
+  saveLearnedTopicSearches(remaining);
+  renderTopicSearchResults();
+  topicSearchResults.insertAdjacentHTML("afterbegin", `
+    <p><strong>Unlearned:</strong> "${escapeHtml(term)}" was removed from this browser's search memory.</p>
+  `);
+}
+
 const topicSearchKeywords = {
   "Aerial Work Platform Safety": [
     "aerial lift",
@@ -1181,11 +1192,14 @@ function renderTopicSearchResults() {
   }
 
   topicSearchResults.innerHTML = topicSearchMatches.map((match, index) => `
-    <button class="topic-result" data-topic-index="${index}" type="button">
-      <strong>${match.learned ? '<span class="learned-topic-label">Learned</span> ' : ""}${escapeHtml(match.title)}</strong>
-      <span>${escapeHtml(match.detail)}</span>
-      <small>${escapeHtml(match.responsibleDiscipline)} | ${escapeHtml(match.assessmentArea)}</small>
-    </button>
+    <article class="topic-result-card">
+      <button class="topic-result" data-topic-index="${index}" type="button">
+        <strong>${match.learned ? '<span class="learned-topic-label">Learned</span> ' : ""}${escapeHtml(match.title)}</strong>
+        <span>${escapeHtml(match.detail)}</span>
+        <small>${escapeHtml(match.responsibleDiscipline)} | ${escapeHtml(match.assessmentArea)}</small>
+      </button>
+      ${match.learned ? `<button class="topic-unlearn" data-topic-term="${escapeHtml(match.term)}" type="button">Unlearn</button>` : ""}
+    </article>
   `).join("");
   updateTopicTeachState();
 }
@@ -1540,6 +1554,12 @@ form.addEventListener("change", update);
 topicSearchInput.addEventListener("input", renderTopicSearchResults);
 
 topicSearchResults.addEventListener("click", (event) => {
+  const unlearnButton = event.target.closest("[data-topic-term]");
+  if (unlearnButton) {
+    unlearnTopicSearchTerm(unlearnButton.dataset.topicTerm || "");
+    return;
+  }
+
   const button = event.target.closest("[data-topic-index]");
   if (!button) return;
 

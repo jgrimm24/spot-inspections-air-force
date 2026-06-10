@@ -158,6 +158,13 @@ button {
   font-weight: 700;
 }
 
+.topic-result-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: stretch;
+}
+
 .topic-result {
   display: grid;
   gap: 4px;
@@ -170,8 +177,19 @@ button {
   text-align: left;
 }
 
+.topic-unlearn {
+  border: 1px solid #e1b5b8;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--danger);
+  padding: 0 12px;
+  font-weight: 800;
+}
+
 .topic-result:hover,
-.topic-result:focus {
+.topic-result:focus,
+.topic-unlearn:hover,
+.topic-unlearn:focus {
   border-color: var(--accent);
   outline: 3px solid rgba(31, 122, 109, 0.14);
 }
