@@ -1181,7 +1181,7 @@ function renderTopicSearchResults() {
   updateTopicTeachState();
 
   if (!query) {
-    topicSearchResults.innerHTML = "<p>Search by what you plan to inspect, then choose a suggestion to fill Boxes 3-6.</p>";
+    topicSearchResults.innerHTML = "<p>Search by what you plan to inspect. Click a suggestion and the app will fill Boxes 3-6 automatically.</p>";
     return;
   }
 
