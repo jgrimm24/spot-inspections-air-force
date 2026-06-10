@@ -639,6 +639,11 @@ td select {
   color: #a9b2b9;
 }
 
+.monthly-tally-empty {
+  color: var(--muted);
+  font-weight: 700;
+}
+
 .tally-total {
   font-weight: 800;
 }

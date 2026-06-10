@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Completed Spot Inspections</title>
-    <link rel="stylesheet" href="styles.css?v=20260527-3" />
+    <link rel="stylesheet" href="styles.css?v=20260610-1" />
   </head>
   <body>
     <header class="app-header">
@@ -32,9 +32,9 @@
           <label>
             <span>Filter by Unit</span>
             <select id="libraryUnitFilter">
-              <option value="">All units</option>
+              <option value="">Select a unit</option>
             </select>
-            <small class="filter-helper">Select a unit to update the monthly tracker below.</small>
+            <small class="filter-helper">Select a unit to load that unit's records and monthly tracker.</small>
           </label>
           <label>
             <span>Search</span>
@@ -96,7 +96,7 @@
               <tbody id="monthlyTallyBody"></tbody>
             </table>
           </div>
-          <p class="monthly-tally-note"><strong>To view one unit's tracker:</strong> use the Filter by Unit menu above. Search filters the report list only and does not change these totals.</p>
+          <p class="monthly-tally-note"><strong>To view the tracker:</strong> select a specific unit above. Search filters the report list only and does not change these totals.</p>
         </section>
       </section>
 
@@ -151,6 +151,6 @@
     <script>
       window.SPOT_INSPECTION_API_URL = "https://spot-inspections-air-force.onrender.com";
     </script>
-    <script src="library.js?v=20260608-1"></script>
+    <script src="library.js?v=20260610-1"></script>
   </body>
 </html>

@@ -196,9 +196,19 @@ function renderMonthlyTally() {
   renderFiscalYearFilter();
   const selectedYear = Number(libraryFiscalYear.value);
   const selectedUnit = libraryUnitFilter.value;
+  if (!selectedUnit) {
+    monthlyTallyBody.innerHTML = `
+      <tr>
+        <td colspan="14" class="monthly-tally-empty">Select a unit above to view that unit's monthly tracker.</td>
+      </tr>
+    `;
+    monthlyTallyScope.textContent = `FY ${selectedYear} | Select a unit to view tracker totals`;
+    return;
+  }
+
   const tallyEntries = inspections.filter((entry) => {
     const record = entry.record || {};
-    return (!selectedUnit || record.unit === selectedUnit)
+    return record.unit === selectedUnit
       && fiscalYearForDate(record.inspectionDate) === selectedYear;
   });
   const disciplines = [...new Set([
@@ -239,8 +249,7 @@ function renderMonthlyTally() {
     `
   ].join("");
 
-  const scope = selectedUnit || "All units";
-  monthlyTallyScope.textContent = `FY ${selectedYear} | ${scope} | ${grandTotal} completed inspection${grandTotal === 1 ? "" : "s"}`;
+  monthlyTallyScope.textContent = `FY ${selectedYear} | ${selectedUnit} | ${grandTotal} completed inspection${grandTotal === 1 ? "" : "s"}`;
 }
 
 function uniqueUnits() {
@@ -249,7 +258,7 @@ function uniqueUnits() {
 
 function renderUnitFilter() {
   const current = libraryUnitFilter.value;
-  libraryUnitFilter.innerHTML = '<option value="">All units</option>';
+  libraryUnitFilter.innerHTML = '<option value="">Select a unit</option>';
   uniqueUnits().forEach((unit) => {
     const option = document.createElement("option");
     option.value = unit;
@@ -283,11 +292,13 @@ function entryText(entry) {
 
 function filteredInspections() {
   const unit = libraryUnitFilter.value;
+  if (!unit) return [];
+
   const query = librarySearch.value.trim().toLowerCase();
   const statusFilter = followUpStatusFilter.value;
   return inspections.filter((entry) => {
     const status = followUpStatus(entry);
-    const unitMatches = !unit || entry.record?.unit === unit;
+    const unitMatches = entry.record?.unit === unit;
     const queryMatches = !query || entryText(entry).includes(query);
     return unitMatches && queryMatches && statusMatchesFilter(status, statusFilter);
   }).sort((a, b) => {
@@ -300,6 +311,20 @@ function filteredInspections() {
 
 function selectedInspections() {
   return inspections.filter((entry) => exportSelection.has(entry.id));
+}
+
+function pruneExportSelectionForUnit(unit) {
+  if (!unit) {
+    exportSelection.clear();
+    return;
+  }
+
+  const unitEntryIds = new Set(inspections
+    .filter((entry) => entry.record?.unit === unit)
+    .map((entry) => entry.id));
+  Array.from(exportSelection).forEach((id) => {
+    if (!unitEntryIds.has(id)) exportSelection.delete(id);
+  });
 }
 
 function clearReportPreview() {
@@ -380,6 +405,17 @@ function renderReport(record) {
 }
 
 function renderFollowUpSummary() {
+  const selectedUnit = libraryUnitFilter.value;
+  if (!selectedUnit) {
+    followUpSummary.innerHTML = `
+      <div class="empty-library">
+        <strong>Select a unit to load follow-up totals.</strong>
+        <span>This keeps the library from opening with every unit's records at once.</span>
+      </div>
+    `;
+    return;
+  }
+
   const counts = {
     open: 0,
     "due-soon": 0,
@@ -388,7 +424,9 @@ function renderFollowUpSummary() {
     "not-required": 0
   };
 
-  inspections.forEach((entry) => {
+  inspections
+    .filter((entry) => entry.record?.unit === selectedUnit)
+    .forEach((entry) => {
     const status = followUpStatus(entry);
     counts[status.key] += 1;
   });
@@ -412,11 +450,25 @@ function renderLibrary() {
   renderMonthlyTally();
   renderFollowUpSummary();
   const visibleEntries = filteredInspections();
+  const selectedUnit = libraryUnitFilter.value;
+  pruneExportSelectionForUnit(selectedUnit);
   const selectedCount = exportSelection.size;
   const visibleCountText = `${visibleEntries.length} inspection${visibleEntries.length === 1 ? "" : "s"}`;
-  libraryCount.textContent = selectedCount ? `${selectedCount} selected / ${visibleCountText}` : visibleCountText;
+  libraryCount.textContent = selectedUnit
+    ? (selectedCount ? `${selectedCount} selected / ${visibleCountText}` : visibleCountText)
+    : "Select a unit";
   exportCsv.textContent = selectedCount ? `Export Selected (${selectedCount})` : "Export CSV";
-  exportCsv.disabled = !selectedCount && !visibleEntries.length;
+  exportCsv.disabled = !selectedUnit || (!selectedCount && !visibleEntries.length);
+
+  if (!selectedUnit) {
+    libraryList.innerHTML = `
+      <div class="empty-library">
+        <strong>Select a unit to view completed inspections.</strong>
+        <span>The library and tracker will stay blank until a specific unit is selected.</span>
+      </div>
+    `;
+    return;
+  }
 
   if (!visibleEntries.length) {
     libraryList.innerHTML = `
@@ -674,6 +726,9 @@ function exportVisibleInspections() {
 
 function updateFilters() {
   clearReportPreview();
+  if (!libraryUnitFilter.value) {
+    exportSelection.clear();
+  }
   renderLibrary();
 }
 
