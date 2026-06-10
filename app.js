@@ -215,6 +215,14 @@ const inspectionFocusByAssessmentItem = {
     "29.8 - Are vehicle and support equipment batteries installed and maintained safely?",
     "29.9 - Are aircraft battery and electrical system requirements followed where applicable?"
   ],
+  "CBRNE": [
+    "Are CBRNE-related procedures available and understood by affected personnel?",
+    "Are required CBRNE training records current for personnel assigned to the task or program?",
+    "Is required CBRNE equipment available, inspected, serviceable, and stored correctly?",
+    "Are PPE, detection, decontamination, or response supplies matched to the identified hazard?",
+    "Are signs, labels, access controls, or notifications used where CBRNE hazards or equipment are present?",
+    "Are emergency actions, reporting procedures, and communication paths understood by personnel?"
+  ],
   "Civil Engineering": [
     "25.2 - Are supervisors ensuring personnel follow civil engineering safety requirements for assigned work?",
     "25.3 - Is compressed air used safely and within approved limits?",
@@ -425,6 +433,14 @@ const inspectionFocusByAssessmentItem = {
     "18.8 - Are fuel storage systems controlled and maintained?",
     "18.9 - Are fuel servicing operations performed with bonding, grounding, spill control, and emergency controls?"
   ],
+  "Indoor Environmental Quality (IEQ)": [
+    "Are occupant complaints, odors, moisture, temperature, or ventilation concerns documented and routed for evaluation?",
+    "Are visible water intrusion, mold-like growth, damaged ceiling tiles, or damp materials corrected promptly?",
+    "Are ventilation supply and return areas unobstructed?",
+    "Are chemicals, cleaners, or materials stored in a way that prevents unnecessary indoor air quality concerns?",
+    "Are housekeeping practices preventing dust, clutter, pest attractants, and blocked airflow?",
+    "Has Bioenvironmental Engineering, Civil Engineering, or Safety been contacted when IEQ concerns require technical evaluation?"
+  ],
   "Interior Spray Finishing": [
     "27.2 - Are spray finishing safety requirements followed for the materials and process in use?",
     "27.3 - Are health and environmental controls in place for paint, solvent, and coating exposures?",
@@ -434,6 +450,22 @@ const inspectionFocusByAssessmentItem = {
     "27.7 - Is electrical equipment suitable for the spray finishing area classification?",
     "27.9 - Are paint spray booths inspected, maintained, and used correctly?",
     "27.16 - Are aerosol spray paint cans stored, used, and disposed safely?"
+  ],
+  "Laser": [
+    "Are laser classifications, hazards, and operating procedures identified for the equipment in use?",
+    "Are laser warning signs, labels, and controlled areas established where required?",
+    "Are operators trained and authorized for the laser system or operation?",
+    "Is required laser eye protection available, marked for the wavelength and optical density, and serviceable?",
+    "Are beam paths, reflections, interlocks, shutters, and barriers controlled to prevent unintended exposure?",
+    "Are alignment, maintenance, or open-beam operations controlled by written procedures?"
+  ],
+  "Local National Safety Program": [
+    "Are local national safety requirements identified and incorporated into workplace procedures where applicable?",
+    "Are affected personnel trained on local requirements, host-nation rules, or translated procedures as needed?",
+    "Are supervisors verifying local national employees understand hazard controls and reporting procedures?",
+    "Are required safety records, briefings, or inspections maintained for local national work areas?",
+    "Are differences between DAF and local requirements elevated when they affect safe operations?",
+    "Are communication methods effective for mixed-language or host-nation workforce hazards?"
   ],
   "Material Handling Equipment (MHE)": [
     "12.2 - Are general material handling equipment requirements followed for the equipment being used?",
@@ -471,6 +503,14 @@ const inspectionFocusByAssessmentItem = {
     "5.4 - Are fire protection systems and controls available and serviceable in NDI areas?",
     "5.4 - Are required postings, shielding, ventilation, or access controls in place?"
   ],
+  "Occupational Health/Industrial Hygiene (IH)": [
+    "Are occupational health hazards identified for chemicals, noise, heat, radiation, biological agents, or other exposures?",
+    "Are Bioenvironmental Engineering surveys, recommendations, or exposure assessments available where required?",
+    "Are engineering controls, administrative controls, and PPE implemented for identified exposure hazards?",
+    "Are personnel enrolled in required medical surveillance or occupational health programs where applicable?",
+    "Are exposure controls reviewed when processes, materials, equipment, or work practices change?",
+    "Are supervisors documenting and correcting occupational health deficiencies?"
+  ],
   "Personal Protective Equipment (PPE)": [
     "14.2 - Have personnel received PPE training on when PPE is required, what PPE is required, how to use it, limitations, care, maintenance, and disposal?",
     "14.2 - Is PPE training documented and is retraining completed when workplace conditions, PPE, or employee knowledge changes?",
@@ -507,6 +547,14 @@ const inspectionFocusByAssessmentItem = {
     "33.5 - Are personnel trained for PSM-covered processes before working independently?",
     "Table 33.1 - Has the PSM decision flow been used to determine whether the process is covered?"
   ],
+  "Recreational Off Duty Safety (RODS)": [
+    "Are seasonal or high-risk off-duty safety messages being shared with unit personnel?",
+    "Are supervisors discussing off-duty risk factors during relevant periods such as holidays, travel, or seasonal activities?",
+    "Are personnel encouraged to use risk management before recreational or off-duty activities?",
+    "Are mishap trends or local hazards used to tailor off-duty safety messaging?",
+    "Are motorcycle, traffic, water, winter, heat, or sports safety topics addressed when applicable?",
+    "Is unit leadership reinforcing reporting and lessons learned from off-duty mishaps?"
+  ],
   "Services Operations": [
     "4.2 - Are laundry operations controlled for heat, chemical, ergonomic, machine, and housekeeping hazards?",
     "4.3 - Are lodging operations inspected for housekeeping, storage, electrical, and emergency access hazards?",
@@ -522,6 +570,22 @@ const inspectionFocusByAssessmentItem = {
     "15.5 - Are wheeled vehicle egress assistance trainer requirements followed where applicable?",
     "15.6 - Are aircraft flight or high-value training systems controlled for motion, electrical, fire, egress, and emergency hazards?",
     "15.7 - Are upgrades or modifications to existing training systems reviewed for safety impacts?"
+  ],
+  "Tracking Motorcycle Riders in MUSTT": [
+    "Are motorcycle riders identified and tracked in MUSTT or the required tracking system?",
+    "Are rider training dates and motorcycle safety requirements current?",
+    "Are supervisors and commanders reviewing rider status and overdue training?",
+    "Are new riders identified during in-processing, newcomer briefings, or supervisor updates?",
+    "Are riders briefed on PPE, licensing, training, and local riding requirements?",
+    "Are discrepancies in rider tracking corrected and documented?"
+  ],
+  "Voluntary Protection Program (VPP)": [
+    "Is leadership visibly supporting hazard reporting, employee involvement, and continuous safety improvement?",
+    "Are personnel aware of how to report hazards and participate in safety improvement efforts?",
+    "Are hazard reports, inspections, and corrective actions tracked to closure?",
+    "Are trend data, mishap data, or inspection results used to target prevention efforts?",
+    "Are employees involved in identifying hazards and recommending controls?",
+    "Are VPP or safety excellence activities documented and communicated to the workforce?"
   ],
   "Walking-Working Surfaces": [
     "7.1 - Are walking-working surfaces clean, dry, orderly, and free of slip, trip, and fall hazards?",
@@ -550,6 +614,30 @@ const inspectionFocusByAssessmentItem = {
     "20.10 - Is DAF Form 592 or the required hot work permit completed when required?"
   ]
 };
+
+const inspectionFocusAliases = {
+  "Ergonomics": "General Work Procedures",
+  "Hazard Communication Plan (HAZCOM)": "Flammables and Combustibles",
+  "Hazardous Material": "Flammables and Combustibles",
+  "Hearing Conservation": "Personal Protective Equipment (PPE)",
+  "High Risk Activities/High Risk Training (HRT)": "DAFMAN 91-203 Introduction and JHA",
+  "Job Safety Training Outline (JSTO)": "DAFMAN 91-203 Introduction and JHA",
+  "Material Handling": "Material Handling Equipment (MHE)",
+  "Non-Ionizing Radiation": "Communication Cable, Antenna, and Communication Systems",
+  "Respiratory Protection": "Personal Protective Equipment (PPE)",
+  "Risk Management": "DAFMAN 91-203 Introduction and JHA",
+  "Sight Conservation": "Personal Protective Equipment (PPE)",
+  "Systems Safety": "DAFMAN 91-203 Introduction and JHA",
+  "Toxic Metals": "Personal Protective Equipment (PPE)",
+  "Traffic Safety": "Motor Vehicle Operations and Maintenance",
+  "Traffic Safety Training for Low Speed Vehicles/GVO/GMV": "Motor Vehicle Operations and Maintenance",
+  "Training": "DAFMAN 91-203 Introduction and JHA",
+  "Weight Handling": "Material Handling Equipment (MHE)"
+};
+
+function inspectionFocusKeyForAssessmentItem(assessmentItem) {
+  return inspectionFocusAliases[assessmentItem] || assessmentItem;
+}
 
 const fields = [
   "unit",
@@ -828,11 +916,11 @@ function updateAssessmentItem(record) {
 }
 
 function updateInspectionFocus(record) {
-  const focusOptions = inspectionFocusByAssessmentItem[record.assessmentItem] || [];
+  const focusKey = inspectionFocusKeyForAssessmentItem(record.assessmentItem || "");
+  const focusOptions = inspectionFocusByAssessmentItem[focusKey] || [];
   const showInspectionFocus = focusOptions.length > 0;
-  const focusKey = record.assessmentItem || "";
 
-  if (activeInspectionFocusKey !== focusKey) {
+  if (activeInspectionFocusKey !== record.assessmentItem) {
     const selectedValue = record.inspectionFocus || "";
     inspectionFocusInput.innerHTML = showInspectionFocus
       ? '<option value="">Select a possible inspection focus</option>'
@@ -845,7 +933,7 @@ function updateInspectionFocus(record) {
     });
     inspectionFocusInput.value = focusOptions.includes(selectedValue) ? selectedValue : "";
     record.inspectionFocus = inspectionFocusInput.value;
-    activeInspectionFocusKey = focusKey;
+    activeInspectionFocusKey = record.assessmentItem || "";
   }
 
   inspectionFocusInput.disabled = !showInspectionFocus;
