@@ -33,6 +33,7 @@ let activeAssessmentItemKey = "";
 let activeInspectionFocusKey = "";
 let lastSavedInspection = null;
 let topicSearchMatches = [];
+let topicSearchApplied = false;
 
 const assessmentItemsByBranch = {
   "Aviation Safety|Commander and Supervisory Support (SMS)": [
@@ -1177,6 +1178,7 @@ function findTopicMatches(query) {
 
 function renderTopicSearchResults() {
   const query = topicSearchInput.value.trim();
+  topicSearchApplied = false;
   topicSearchMatches = findTopicMatches(query);
   updateTopicTeachState();
 
@@ -1206,6 +1208,7 @@ function renderTopicSearchResults() {
 }
 
 function applyTopicSearchMatch(match) {
+  topicSearchApplied = true;
   const record = getRecordFromForm();
   record.responsibleDiscipline = match.responsibleDiscipline;
   record.assessmentArea = match.assessmentArea;
@@ -1223,7 +1226,7 @@ function updateTopicTeachState() {
   const record = getRecordFromForm();
   const rawTerm = topicSearchInput.value.trim();
   const term = normalizeSearchText(rawTerm);
-  const canTeach = Boolean(term && record.responsibleDiscipline && record.assessmentArea && record.assessmentItem);
+  const canTeach = Boolean(!topicSearchApplied && term && record.responsibleDiscipline && record.assessmentArea && record.assessmentItem);
   topicTeach.hidden = !canTeach;
   topicTeachPreview.hidden = !canTeach;
 
@@ -1521,6 +1524,9 @@ async function saveCurrentInspectionToLibrary() {
 
 function update() {
   const record = getRecordFromForm();
+  if (document.activeElement === assessmentItemInput || document.activeElement === inspectionFocusInput || document.activeElement?.name === "responsibleDiscipline" || document.activeElement?.name === "assessmentArea") {
+    topicSearchApplied = false;
+  }
   syncCalculatedDates(record);
   updateAssessmentItem(record);
   updateInspectionFocus(record);
