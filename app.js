@@ -1,6 +1,7 @@
 const STORAGE_KEY = "spotInspectionRecord";
 const UNIT_MEMORY_KEY = "spotInspectionUnitMemory";
 const EMAIL_MEMORY_KEY = "spotInspectionEmailMemory";
+const TOPIC_MEMORY_KEY = "spotInspectionTopicSearchMemory";
 
 const form = document.querySelector("#inspectionForm");
 const unitInput = document.querySelector("#unit");
@@ -13,6 +14,7 @@ const assessmentItemInput = document.querySelector("#assessmentItem");
 const inspectionFocusInput = document.querySelector("#inspectionFocus");
 const topicSearchInput = document.querySelector("#topicSearch");
 const topicSearchResults = document.querySelector("#topicSearchResults");
+const topicTeach = document.querySelector("#topicTeach");
 const reportPreview = document.querySelector("#reportPreview");
 const textareaModal = document.querySelector("#textareaModal");
 const textareaModalTitle = document.querySelector("#textareaModalTitle");
@@ -1048,8 +1050,44 @@ function uniqueValues(values) {
   return [...new Set(values.filter(Boolean))];
 }
 
+function getLearnedTopicSearches() {
+  const saved = localStorage.getItem(TOPIC_MEMORY_KEY);
+  if (!saved) return [];
+
+  try {
+    return JSON.parse(saved).filter((entry) => entry?.term && entry?.assessmentItem);
+  } catch {
+    return [];
+  }
+}
+
+function saveLearnedTopicSearches(entries) {
+  localStorage.setItem(TOPIC_MEMORY_KEY, JSON.stringify(entries.slice(0, 100)));
+}
+
+function learnedTopicMatches() {
+  return getLearnedTopicSearches().map((entry) => ({
+    responsibleDiscipline: entry.responsibleDiscipline || "",
+    assessmentArea: entry.assessmentArea || "",
+    assessmentItem: entry.assessmentItem || "",
+    inspectionFocus: entry.inspectionFocus || "",
+    title: entry.assessmentItem || "Learned Search",
+    detail: entry.inspectionFocus || `${entry.responsibleDiscipline || "Safety"} | ${entry.assessmentArea || "Assessment"}`,
+    canonical: true,
+    learned: true,
+    term: entry.term,
+    searchText: normalizeSearchText([
+      entry.term,
+      entry.responsibleDiscipline,
+      entry.assessmentArea,
+      entry.assessmentItem,
+      entry.inspectionFocus
+    ].join(" "))
+  }));
+}
+
 function buildTopicSearchCatalog() {
-  return Object.entries(assessmentItemsByBranch).flatMap(([branchKey, assessmentItems]) => {
+  const builtInMatches = Object.entries(assessmentItemsByBranch).flatMap(([branchKey, assessmentItems]) => {
     const [disciplineKey, assessmentArea] = branchKey.split("|");
     const responsibleDiscipline = responsibleDisciplineForSearchKey(disciplineKey);
     return assessmentItems.flatMap((assessmentItem) => {
@@ -1092,16 +1130,22 @@ function buildTopicSearchCatalog() {
       }));
     });
   });
+
+  return [...learnedTopicMatches(), ...builtInMatches];
 }
 
 function topicMatchScore(match, terms, query) {
+  const learnedBoost = match.learned
+    ? (normalizeSearchText(match.term) === query ? 120 : 45)
+    : 0;
+
   return terms.reduce((score, term) => {
     if (!match.searchText.includes(term)) return score - 5;
     if (normalizeSearchText(match.title).includes(term)) return score + 12;
     if (normalizeSearchText(match.detail).includes(term)) return score + 8;
     if (match.searchText.includes(query)) return score + 4;
     return score + 2;
-  }, 0);
+  }, learnedBoost);
 }
 
 function findTopicMatches(query) {
@@ -1122,6 +1166,7 @@ function findTopicMatches(query) {
 function renderTopicSearchResults() {
   const query = topicSearchInput.value.trim();
   topicSearchMatches = findTopicMatches(query);
+  updateTopicTeachState();
 
   if (!query) {
     topicSearchResults.innerHTML = "<p>Search by what you plan to inspect, then choose a suggestion to fill Boxes 3-6.</p>";
@@ -1137,11 +1182,12 @@ function renderTopicSearchResults() {
 
   topicSearchResults.innerHTML = topicSearchMatches.map((match, index) => `
     <button class="topic-result" data-topic-index="${index}" type="button">
-      <strong>${escapeHtml(match.title)}</strong>
+      <strong>${match.learned ? '<span class="learned-topic-label">Learned</span> ' : ""}${escapeHtml(match.title)}</strong>
       <span>${escapeHtml(match.detail)}</span>
       <small>${escapeHtml(match.responsibleDiscipline)} | ${escapeHtml(match.assessmentArea)}</small>
     </button>
   `).join("");
+  updateTopicTeachState();
 }
 
 function applyTopicSearchMatch(match) {
@@ -1155,6 +1201,42 @@ function applyTopicSearchMatch(match) {
     <p><strong>Applied:</strong> ${escapeHtml(match.title)}. Boxes 3-6 were updated from the selected suggestion.</p>
   `;
   saveRecord();
+  updateTopicTeachState();
+}
+
+function updateTopicTeachState() {
+  const record = getRecordFromForm();
+  const term = normalizeSearchText(topicSearchInput.value);
+  const canTeach = Boolean(term && record.responsibleDiscipline && record.assessmentArea && record.assessmentItem);
+  topicTeach.hidden = !canTeach;
+  topicTeach.textContent = canTeach
+    ? `Remember "${topicSearchInput.value.trim()}" for current Boxes 3-6`
+    : "Teach Search";
+}
+
+function rememberTopicSearchSelection() {
+  const record = getRecordFromForm();
+  const rawTerm = topicSearchInput.value.trim();
+  const term = normalizeSearchText(rawTerm);
+  if (!term || !record.responsibleDiscipline || !record.assessmentArea || !record.assessmentItem) return;
+
+  const learnedEntry = {
+    term,
+    displayTerm: rawTerm,
+    responsibleDiscipline: record.responsibleDiscipline,
+    assessmentArea: record.assessmentArea,
+    assessmentItem: record.assessmentItem,
+    inspectionFocus: record.inspectionFocus,
+    savedAt: new Date().toISOString()
+  };
+  const existing = getLearnedTopicSearches()
+    .filter((entry) => normalizeSearchText(entry.term) !== term);
+  saveLearnedTopicSearches([learnedEntry, ...existing]);
+  renderTopicSearchResults();
+  topicSearchResults.insertAdjacentHTML("afterbegin", `
+    <p><strong>Learned:</strong> "${escapeHtml(rawTerm)}" will now prioritize ${escapeHtml(record.assessmentItem)}.</p>
+  `);
+  updateTopicTeachState();
 }
 
 function isFindingRecord(record) {
@@ -1418,6 +1500,7 @@ function update() {
   updateHazardSection(record);
   saveRecord();
   renderReport(record);
+  updateTopicTeachState();
 }
 
 function modalTitleFor(textarea) {
@@ -1464,6 +1547,8 @@ topicSearchResults.addEventListener("click", (event) => {
   if (!match) return;
   applyTopicSearchMatch(match);
 });
+
+topicTeach.addEventListener("click", rememberTopicSearchSelection);
 
 unitInput.addEventListener("blur", () => {
   rememberUnit(unitInput.value);
