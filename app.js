@@ -370,6 +370,7 @@ const inspectionFocusByAssessmentItem = {
     "2.2 - Are hazards identified and controlled before work begins?",
     "2.3 - Are jewelry and loose-item restrictions followed around machinery, electrical equipment, or moving parts?",
     "2.4 - Are work areas clean, orderly, and free of slip, trip, fire, and access hazards?",
+    "2.4.9.9 - Are storage racks and shelving load sizes and ratings determined by manufacturer specifications or a structural engineer/certified testing agency, and posted on the rack or shelving unit unless used for lightweight administrative office items?",
     "2.5 - Are office safety hazards such as cords, storage, electrical use, and walkways controlled?",
     "2.6 - Are ergonomic hazards evaluated and corrected where personnel perform repetitive or sustained tasks?",
     "2.7 - Are roll-up doors inspected, controlled, and used safely?",
@@ -1074,6 +1075,7 @@ function buildTopicSearchCatalog() {
           inspectionFocus: "",
           title: assessmentItem,
           detail: `${responsibleDiscipline} | ${assessmentArea}`,
+          canonical: assessmentItem === focusKey,
           searchText: normalizeSearchText(baseText)
         }];
       }
@@ -1085,6 +1087,7 @@ function buildTopicSearchCatalog() {
         inspectionFocus,
         title: assessmentItem,
         detail: inspectionFocus,
+        canonical: assessmentItem === focusKey,
         searchText: normalizeSearchText(`${baseText} ${inspectionFocus}`)
       }));
     });
@@ -1112,7 +1115,7 @@ function findTopicMatches(query) {
       score: topicMatchScore(match, terms, normalizedQuery)
     }))
     .filter((match) => match.score > 0)
-    .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title))
+    .sort((a, b) => b.score - a.score || Number(b.canonical) - Number(a.canonical) || a.title.localeCompare(b.title))
     .slice(0, 8);
 }
 
