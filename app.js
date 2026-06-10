@@ -151,6 +151,66 @@ function assessmentDisciplineKey(value) {
 }
 
 const inspectionFocusByAssessmentItem = {
+  "Confined Space": [
+    "23.4.1 - Has the unit evaluated workplaces to identify confined spaces and coordinated classifications with the Confined Space Program Team?",
+    "23.4.1 - Are permit-required confined spaces posted with danger signs or another effective warning method?",
+    "23.4.1 - Does the unit have a written confined space program approved by the Confined Space Program Team?",
+    "23.4.1 - Are confined space entry personnel trained before performing entrant, attendant, or entry supervisor duties?",
+    "23.4.2 - Does the entry supervisor complete, sign, and post the permit before entry begins?",
+    "23.4.2 - Is the confined space program or Master Entry Plan available at the entry location?",
+    "23.4.3 - Does the attendant maintain an accurate count of authorized entrants and remain outside the space during entry?",
+    "23.4.3 - Does the attendant communicate with entrants and order evacuation when required?",
+    "23.5 - Does the written program identify space classifications, entry procedures, monitoring requirements, rescue procedures, and required equipment?",
+    "23.5 - Is atmospheric monitoring continuous unless the program documents that periodic monitoring is sufficient?",
+    "23.5 - Is monitoring equipment calibrated or checked according to manufacturer instructions and program requirements?",
+    "23.5 - If hot work is performed, is DAF Form 592 completed and coordinated as required?",
+    "23.7 - For recurring entries, does the Master Entry Plan identify spaces, tasks, hazards, controls, PPE, monitoring, communication, and rescue procedures?",
+    "23.7 - Are rescue services verified before entry and is rescue equipment inspected, tested, maintained, and documented?",
+    "23.7 - Are completed permits retained for at least one year for program review?",
+    "23.8 - For non-permit spaces, has a formal risk assessment confirmed the space can be entered without permit controls?",
+    "23.8 - Is atmospheric testing performed before non-permit entry and repeated when conditions change?",
+    "23.10 - Are initial, annual proficiency, unit-specific, and atmospheric testing training records maintained?",
+    "23.11 - Does DAF Form 1024 document hazards, controls, atmospheric testing, authorized personnel, emergency response, entry log, and close-out?"
+  ],
+  "Electrical Safety": [
+    "8.1 - Has the supervisor completed a job hazard analysis for electrical work and identified required controls?",
+    "8.1 - Are only qualified and authorized personnel performing electrical work or repairs?",
+    "8.2 - Are receptacles, plugs, and adapters serviceable and used without unsafe multiple-plug arrangements?",
+    "8.2 - Are GFCI or AFCI protections used where required for the work area or equipment?",
+    "8.4 - Are extension cords used only as temporary wiring and not as a substitute for permanent wiring?",
+    "8.4 - Are extension cords inspected for damage before use and removed from service if defective?",
+    "8.4 - Are extension cords and surge protectors listed by a nationally recognized testing laboratory?",
+    "8.4 - Are cords routed to prevent damage and kept from being run through doors, windows, walls, ceilings, or under rugs?",
+    "8.4 - Are high-current appliances plugged directly into wall outlets instead of extension cords or power strips?",
+    "8.5 - Are electrical disconnects, panels, and breakers accessible and kept clear of obstructions?",
+    "8.5 - Are breakers clearly marked and free from tape, blocked handles, or other improper status indicators?",
+    "8.5 - Are frequently tripping breakers reported and evaluated instead of repeatedly reset?",
+    "8.9 - Are electrical hazards identified by supervisors and corrected or reported for repair?",
+    "8.9 - Is wiring enclosed or protected from physical damage and environmental exposure?",
+    "8.10 - Are electrical panel and control box doors closed when not being serviced?",
+    "8.11 - Are electronic workbenches, accessories, and insulating matting serviceable and appropriate for the task?",
+    "8.12 - Is emergency electrical equipment available, identified, and maintained where required?",
+    "8.17 - Is equipment de-energized before work unless energized work is properly authorized and controlled?",
+    "8.17 - When energized work is authorized, are arc flash controls and required PPE used?"
+  ],
+  "Fall Protection": [
+    "13.1 - Are fall hazards controlled for work above four feet in general industry or six feet in construction activities?",
+    "13.2 - Has the unit identified fall protection roles such as program administrator, qualified person, competent person, and authorized user?",
+    "13.2 - Are competent persons inspecting fall protection equipment at least quarterly?",
+    "13.2 - Are authorized users completing pre-use inspections before using fall protection equipment?",
+    "13.2 - Are supervisors ensuring personnel are trained, evaluated, and understand their fall protection assignments?",
+    "13.3 - Has a fall hazard survey been completed for work areas where fall hazards exist?",
+    "13.3 - Does the fall hazard survey identify access methods, task locations, hazards, work configuration, environmental factors, risk assessment, and selected controls?",
+    "13.3 - Is the fall hazard survey updated when equipment, tasks, facilities, or conditions change?",
+    "13.4 - Are written fall protection and rescue procedures available for tasks requiring fall protection?",
+    "13.4 - Do procedures identify location, standards, training, clearance/design requirements, equipment, and rescue plan?",
+    "13.6 - Are personnel trained before exposure to fall hazards and retrained when procedures, equipment, or performance gaps change?",
+    "13.7 - Is fall protection equipment maintained according to manufacturer instructions or technical orders?",
+    "13.7 - Is unserviceable fall protection equipment removed from service and destroyed when required?",
+    "13.7 - Are anchorage inspections current and documented?",
+    "13.9 - Has the annual fall protection assessment reviewed training records, surveys, written procedures, equipment, anchorages, storage, maintenance, and incident investigations?",
+    "13.9 - Were annual fall protection assessment results reported to the commander within required timelines?"
+  ],
   "Hazardous Energy Control": [
     "21.2.1 - Does the shop have a hazardous energy control program with procedures, training, and periodic inspections?",
     "21.2.2 - If tagout-only devices are used, is equivalent protection to lockout documented?",
@@ -181,6 +241,26 @@ const inspectionFocusByAssessmentItem = {
     "21.6.3 - Are written shift-change or personnel-change procedures used to maintain hazardous energy control protection?",
     "21.7.2 - For complex LOTO, is a written plan of execution used when multiple energy sources, crews, locations, employers, disconnects, sequences, or work periods are involved?",
     "21.8 - Are contractor hazardous energy control responsibilities specified and coordinated?"
+  ],
+  "Personal Protective Equipment (PPE)": [
+    "14.2 - Have personnel received PPE training on when PPE is required, what PPE is required, how to use it, limitations, care, maintenance, and disposal?",
+    "14.2 - Is PPE training documented and is retraining completed when workplace conditions, PPE, or employee knowledge changes?",
+    "14.3 - Has the supervisor completed and documented a job hazard analysis for operations requiring PPE?",
+    "14.3 - Are engineering and administrative controls considered before relying on PPE as the primary control?",
+    "14.3 - Does the supervisor coordinate with Bioenvironmental Engineering or Safety when operations, materials, or hazards change?",
+    "14.3 - Is required PPE provided, used, fitted, inspected, maintained, and stored correctly?",
+    "14.3.2 - Do personnel inspect PPE for serviceability before use and report problems to the supervisor?",
+    "14.3.3 - Is eye and face protection appropriate for the hazard and marked to ANSI/ISEA Z87.1?",
+    "14.3.4 - Where respiratory protection is required, is it managed through the respiratory protection program?",
+    "14.3.5 - Is head protection, hair protection, or bump cap use required and controlled where hazards exist?",
+    "14.3.6 - Is hearing protection available and used where noise hazards require it?",
+    "14.3.7 - Are electrical workers using required protective clothing and rubber insulating PPE where applicable?",
+    "14.3.8 - Is hand and arm protection selected for the specific chemical, cut, burn, electrical, or mechanical hazard?",
+    "14.3.10 - Does the JHA identify required foot or leg protection and is safety footwear appropriate for the hazard?",
+    "14.3.12 - Is chemical protective clothing selected using SDS information, exposure duration, and material performance characteristics?",
+    "14.3.13 - Are welding and cutting personnel using required eye, face, hand, arm, and body protection?",
+    "14.4 - Is PPE cleaned, disinfected, repaired, replaced, or disposed of when contaminated or unserviceable?",
+    "14.4 - Are supervisors ensuring protective clothing and equipment continue to protect personnel from assigned work hazards?"
   ]
 };
 
@@ -469,7 +549,7 @@ function updateInspectionFocus(record) {
     const selectedValue = record.inspectionFocus || "";
     inspectionFocusInput.innerHTML = showInspectionFocus
       ? '<option value="">Select a possible inspection focus</option>'
-      : '<option value="">Select Hazardous Energy Control in Box 5 first</option>';
+      : '<option value="">Select a supported assessment item in Box 5 first</option>';
     focusOptions.forEach((value) => {
       const option = document.createElement("option");
       option.value = value;
