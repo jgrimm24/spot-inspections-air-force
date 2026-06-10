@@ -128,6 +128,62 @@ button {
   gap: 18px;
 }
 
+.topic-finder {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0 6px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #f7faf9;
+}
+
+.topic-finder label {
+  margin: 0;
+}
+
+.topic-search-results {
+  display: grid;
+  gap: 8px;
+}
+
+.topic-search-results p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.topic-result {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  border: 1px solid #c9d1d9;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.topic-result:hover,
+.topic-result:focus {
+  border-color: var(--accent);
+  outline: 3px solid rgba(31, 122, 109, 0.14);
+}
+
+.topic-result span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.topic-result small {
+  color: var(--accent-dark);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
 .compact-grid {
   grid-template-columns: repeat(2, minmax(220px, 390px));
 }

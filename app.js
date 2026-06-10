@@ -11,6 +11,8 @@ const hazardSection = document.querySelector("#hazardSection");
 const positiveFindingField = document.querySelector("#positiveFindingField");
 const assessmentItemInput = document.querySelector("#assessmentItem");
 const inspectionFocusInput = document.querySelector("#inspectionFocus");
+const topicSearchInput = document.querySelector("#topicSearch");
+const topicSearchResults = document.querySelector("#topicSearchResults");
 const reportPreview = document.querySelector("#reportPreview");
 const textareaModal = document.querySelector("#textareaModal");
 const textareaModalTitle = document.querySelector("#textareaModalTitle");
@@ -27,6 +29,7 @@ let activeTextarea = null;
 let activeAssessmentItemKey = "";
 let activeInspectionFocusKey = "";
 let lastSavedInspection = null;
+let topicSearchMatches = [];
 
 const assessmentItemsByBranch = {
   "Aviation Safety|Commander and Supervisory Support (SMS)": [
@@ -635,6 +638,171 @@ const inspectionFocusAliases = {
   "Weight Handling": "Material Handling Equipment (MHE)"
 };
 
+const topicSearchKeywords = {
+  "Aerial Work Platform Safety": [
+    "aerial lift",
+    "boom lift",
+    "man lift",
+    "scissor lift",
+    "scaffold",
+    "work platform"
+  ],
+  "Batteries - Maintenance, Handling, and Storage": [
+    "battery",
+    "battery room",
+    "charging",
+    "lithium",
+    "lead acid"
+  ],
+  "Compressed Gases": [
+    "cylinder",
+    "compressed gas",
+    "oxygen bottle",
+    "acetylene",
+    "regulator"
+  ],
+  "Emergency Shower and Eyewash Units": [
+    "eyewash",
+    "eye wash",
+    "emergency shower",
+    "chemical splash",
+    "corrosive"
+  ],
+  "Electrical Safety": [
+    "cord",
+    "extension cord",
+    "power strip",
+    "surge protector",
+    "breaker",
+    "electrical panel",
+    "outlet",
+    "plug"
+  ],
+  "Fall Protection": [
+    "fall",
+    "harness",
+    "lanyard",
+    "anchor",
+    "roof",
+    "elevated work"
+  ],
+  "Fire or Life Safety": [
+    "fire extinguisher",
+    "exit",
+    "egress",
+    "emergency exit",
+    "exit sign"
+  ],
+  "Flammables and Combustibles": [
+    "flammable",
+    "flammable cabinet",
+    "combustible",
+    "solvent",
+    "fuel can",
+    "safety can"
+  ],
+  "General Work Procedures": [
+    "shelf",
+    "shelving",
+    "rack",
+    "storage rack",
+    "storage",
+    "housekeeping",
+    "clutter",
+    "office",
+    "trip hazard",
+    "slip"
+  ],
+  "Hand Tools, Portable Power Tools, and Machinery": [
+    "tool",
+    "grinder",
+    "drill",
+    "saw",
+    "machine guard",
+    "machinery",
+    "bench grinder"
+  ],
+  "Hazardous Energy Control": [
+    "lockout",
+    "tagout",
+    "loto",
+    "stored energy",
+    "energy control"
+  ],
+  "Indoor Environmental Quality (IEQ)": [
+    "mold",
+    "water leak",
+    "odor",
+    "air quality",
+    "ventilation",
+    "temperature"
+  ],
+  "Interior Spray Finishing": [
+    "paint",
+    "paint booth",
+    "spray booth",
+    "spray paint",
+    "coating"
+  ],
+  "Laser": [
+    "laser",
+    "laser eye protection",
+    "beam"
+  ],
+  "Material Handling": [
+    "material handling",
+    "lifting",
+    "manual lifting",
+    "pallet",
+    "shelving",
+    "storage"
+  ],
+  "Material Handling Equipment (MHE)": [
+    "forklift",
+    "powered industrial truck",
+    "pit",
+    "hoist",
+    "crane",
+    "sling",
+    "conveyor",
+    "pallet jack"
+  ],
+  "Motor Vehicle Operations and Maintenance": [
+    "vehicle",
+    "tire",
+    "wheel",
+    "jack",
+    "lift",
+    "maintenance bay"
+  ],
+  "Personal Protective Equipment (PPE)": [
+    "ppe",
+    "glove",
+    "gloves",
+    "safety glasses",
+    "goggles",
+    "hard hat",
+    "hearing protection",
+    "respirator",
+    "boots"
+  ],
+  "Walking-Working Surfaces": [
+    "ladder",
+    "stairs",
+    "ramp",
+    "walking surface",
+    "floor opening",
+    "guardrail"
+  ],
+  "Welding, Cutting, and Hot Work": [
+    "welding",
+    "cutting",
+    "hot work",
+    "torch",
+    "fire watch"
+  ]
+};
+
 function inspectionFocusKeyForAssessmentItem(assessmentItem) {
   return inspectionFocusAliases[assessmentItem] || assessmentItem;
 }
@@ -855,6 +1023,135 @@ function escapeHtml(value) {
 
 function display(value, fallback = "Not documented") {
   return escapeHtml(value || fallback);
+}
+
+function normalizeSearchText(value) {
+  return String(value || "")
+    .toLocaleLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function searchTerms(value) {
+  return normalizeSearchText(value).split(" ").filter((term) => term.length > 1);
+}
+
+function responsibleDisciplineForSearchKey(value) {
+  if (value === "Aviation Safety") return "Aviation Safety/SAFSO/Range Safety Officer";
+  if (value === "Occupational Safety") return "Occupational Safety/USR/Supervisor";
+  if (value === "Weapons Safety") return "Weapons Safety/ADWSR";
+  return value;
+}
+
+function uniqueValues(values) {
+  return [...new Set(values.filter(Boolean))];
+}
+
+function buildTopicSearchCatalog() {
+  return Object.entries(assessmentItemsByBranch).flatMap(([branchKey, assessmentItems]) => {
+    const [disciplineKey, assessmentArea] = branchKey.split("|");
+    const responsibleDiscipline = responsibleDisciplineForSearchKey(disciplineKey);
+    return assessmentItems.flatMap((assessmentItem) => {
+      const focusKey = inspectionFocusKeyForAssessmentItem(assessmentItem);
+      const focusOptions = inspectionFocusByAssessmentItem[focusKey] || [];
+      const keywords = uniqueValues([
+        ...(topicSearchKeywords[assessmentItem] || []),
+        ...(topicSearchKeywords[focusKey] || [])
+      ]);
+      const baseText = [
+        responsibleDiscipline,
+        assessmentArea,
+        assessmentItem,
+        focusKey,
+        ...keywords
+      ].join(" ");
+
+      if (!focusOptions.length) {
+        return [{
+          responsibleDiscipline,
+          assessmentArea,
+          assessmentItem,
+          inspectionFocus: "",
+          title: assessmentItem,
+          detail: `${responsibleDiscipline} | ${assessmentArea}`,
+          searchText: normalizeSearchText(baseText)
+        }];
+      }
+
+      return focusOptions.map((inspectionFocus) => ({
+        responsibleDiscipline,
+        assessmentArea,
+        assessmentItem,
+        inspectionFocus,
+        title: assessmentItem,
+        detail: inspectionFocus,
+        searchText: normalizeSearchText(`${baseText} ${inspectionFocus}`)
+      }));
+    });
+  });
+}
+
+function topicMatchScore(match, terms, query) {
+  return terms.reduce((score, term) => {
+    if (!match.searchText.includes(term)) return score - 5;
+    if (normalizeSearchText(match.title).includes(term)) return score + 12;
+    if (normalizeSearchText(match.detail).includes(term)) return score + 8;
+    if (match.searchText.includes(query)) return score + 4;
+    return score + 2;
+  }, 0);
+}
+
+function findTopicMatches(query) {
+  const normalizedQuery = normalizeSearchText(query);
+  const terms = searchTerms(query);
+  if (!normalizedQuery || terms.length === 0) return [];
+
+  return buildTopicSearchCatalog()
+    .map((match) => ({
+      ...match,
+      score: topicMatchScore(match, terms, normalizedQuery)
+    }))
+    .filter((match) => match.score > 0)
+    .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title))
+    .slice(0, 8);
+}
+
+function renderTopicSearchResults() {
+  const query = topicSearchInput.value.trim();
+  topicSearchMatches = findTopicMatches(query);
+
+  if (!query) {
+    topicSearchResults.innerHTML = "<p>Search by what you plan to inspect, then choose a suggestion to fill Boxes 3-6.</p>";
+    return;
+  }
+
+  if (!topicSearchMatches.length) {
+    topicSearchResults.innerHTML = `
+      <p>No matches yet. Try another term like <strong>storage</strong>, <strong>ladder</strong>, <strong>forklift</strong>, <strong>eyewash</strong>, or <strong>paint</strong>.</p>
+    `;
+    return;
+  }
+
+  topicSearchResults.innerHTML = topicSearchMatches.map((match, index) => `
+    <button class="topic-result" data-topic-index="${index}" type="button">
+      <strong>${escapeHtml(match.title)}</strong>
+      <span>${escapeHtml(match.detail)}</span>
+      <small>${escapeHtml(match.responsibleDiscipline)} | ${escapeHtml(match.assessmentArea)}</small>
+    </button>
+  `).join("");
+}
+
+function applyTopicSearchMatch(match) {
+  const record = getRecordFromForm();
+  record.responsibleDiscipline = match.responsibleDiscipline;
+  record.assessmentArea = match.assessmentArea;
+  record.assessmentItem = match.assessmentItem;
+  record.inspectionFocus = match.inspectionFocus;
+  renderRecord(record);
+  topicSearchResults.innerHTML = `
+    <p><strong>Applied:</strong> ${escapeHtml(match.title)}. Boxes 3-6 were updated from the selected suggestion.</p>
+  `;
+  saveRecord();
 }
 
 function isFindingRecord(record) {
@@ -1153,6 +1450,17 @@ function plainReportText() {
 
 form.addEventListener("input", update);
 form.addEventListener("change", update);
+
+topicSearchInput.addEventListener("input", renderTopicSearchResults);
+
+topicSearchResults.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-topic-index]");
+  if (!button) return;
+
+  const match = topicSearchMatches[Number(button.dataset.topicIndex)];
+  if (!match) return;
+  applyTopicSearchMatch(match);
+});
 
 unitInput.addEventListener("blur", () => {
   rememberUnit(unitInput.value);
