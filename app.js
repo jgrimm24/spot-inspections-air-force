@@ -14,6 +14,7 @@ const assessmentItemInput = document.querySelector("#assessmentItem");
 const inspectionFocusInput = document.querySelector("#inspectionFocus");
 const topicSearchInput = document.querySelector("#topicSearch");
 const topicSearchResults = document.querySelector("#topicSearchResults");
+const topicTeachPreview = document.querySelector("#topicTeachPreview");
 const topicTeach = document.querySelector("#topicTeach");
 const reportPreview = document.querySelector("#reportPreview");
 const textareaModal = document.querySelector("#textareaModal");
@@ -1220,11 +1221,23 @@ function applyTopicSearchMatch(match) {
 
 function updateTopicTeachState() {
   const record = getRecordFromForm();
-  const term = normalizeSearchText(topicSearchInput.value);
+  const rawTerm = topicSearchInput.value.trim();
+  const term = normalizeSearchText(rawTerm);
   const canTeach = Boolean(term && record.responsibleDiscipline && record.assessmentArea && record.assessmentItem);
   topicTeach.hidden = !canTeach;
+  topicTeachPreview.hidden = !canTeach;
+
+  if (canTeach) {
+    topicTeachPreview.innerHTML = `
+      <strong>Teach Search will remember:</strong>
+      <span><b>${escapeHtml(rawTerm)}</b> &rarr; Box 3: ${escapeHtml(record.responsibleDiscipline)} | Box 4: ${escapeHtml(record.assessmentArea)} | Box 5: ${escapeHtml(record.assessmentItem)}${record.inspectionFocus ? ` | Box 6: ${escapeHtml(record.inspectionFocus)}` : ""}</span>
+    `;
+  } else {
+    topicTeachPreview.textContent = "";
+  }
+
   topicTeach.textContent = canTeach
-    ? `Remember "${topicSearchInput.value.trim()}" for current Boxes 3-6`
+    ? "Remember this search pairing"
     : "Teach Search";
 }
 
@@ -1248,7 +1261,7 @@ function rememberTopicSearchSelection() {
   saveLearnedTopicSearches([learnedEntry, ...existing]);
   renderTopicSearchResults();
   topicSearchResults.insertAdjacentHTML("afterbegin", `
-    <p><strong>Learned:</strong> "${escapeHtml(rawTerm)}" will now prioritize ${escapeHtml(record.assessmentItem)}.</p>
+    <p><strong>Learned:</strong> future searches for "${escapeHtml(rawTerm)}" will prioritize Box 5: ${escapeHtml(record.assessmentItem)}${record.inspectionFocus ? ` and Box 6: ${escapeHtml(record.inspectionFocus)}` : ""}.</p>
   `);
   updateTopicTeachState();
 }
