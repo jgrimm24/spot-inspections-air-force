@@ -69,31 +69,58 @@ const assessmentItemsByBranch = {
   ],
   "Occupational Safety|Compliance with Program Directives": [
     "Aerial Work Platform Safety",
+    "Additive Manufacturing Safety",
+    "Aircraft Flightline Ground Operations",
+    "Batteries - Maintenance, Handling, and Storage",
     "CBRNE",
+    "Civil Engineering",
+    "Communication Cable, Antenna, and Communication Systems",
+    "Composite Materials",
+    "Compressed Gases",
     "Confined Space",
+    "Cryogenic Liquids",
+    "DAFMAN 91-203 Introduction and JHA",
     "Electrical Safety",
+    "Emergency Shower and Eyewash Units",
     "Ergonomics",
     "Fall Protection",
     "Fire or Life Safety",
+    "Flammables and Combustibles",
+    "General Work Procedures",
+    "Grounds, Mowing, and Agriculture Tractors",
     "Hazard Communication Plan (HAZCOM)",
     "Hazardous Energy Control",
     "Hazardous Material",
+    "Hand Tools, Portable Power Tools, and Machinery",
     "Hearing Conservation",
     "High Risk Activities/High Risk Training (HRT)",
+    "Hydrocarbon Fuels",
     "Indoor Environmental Quality (IEQ)",
+    "Interior Spray Finishing",
     "Job Safety Training Outline (JSTO)",
     "Laser",
     "Local National Safety Program",
     "Material Handling",
+    "Material Handling Equipment (MHE)",
+    "Motor Vehicle Operations and Maintenance",
+    "Mishap Prevention Safety Signs, Tags, and Labeling",
     "Non-Ionizing Radiation",
+    "Nondestructive Inspection (NDI) and Oil Analysis",
     "Occupational Health/Industrial Hygiene (IH)",
     "Other Describe (Unique)",
     "Personal Protective Equipment (PPE)",
+    "Precision Measurement Equipment Laboratory",
+    "Process Safety Management (PSM)",
     "Recreational Off Duty Safety (RODS)",
     "Respiratory Protection",
     "Risk Management",
+    "Services Operations",
     "Sight Conservation",
+    "Training Systems",
     "Systems Safety",
+    "Walking-Working Surfaces",
+    "Weather Safety",
+    "Welding, Cutting, and Hot Work",
     "Toxic Metals",
     "Tracking Motorcycle Riders in MUSTT",
     "Traffic Safety",
@@ -151,6 +178,79 @@ function assessmentDisciplineKey(value) {
 }
 
 const inspectionFocusByAssessmentItem = {
+  "Aerial Work Platform Safety": [
+    "16.2 - Are mobile elevating work platform or scaffold hazards identified before work begins?",
+    "16.3 - Are operators and users trained for the equipment or scaffold being used?",
+    "16.4 - Are vehicle-mounted elevating and rotating work platforms inspected and used within manufacturer limits?",
+    "16.5 - Are manually propelled or self-propelled work platforms set up on stable surfaces and protected from movement?",
+    "16.6 - Are scaffolds erected, used, moved, and dismantled under appropriate supervision?",
+    "16.7 - Are tubular welded frame scaffolds assembled with required bracing, platforms, and access?",
+    "16.9 - Are tube and coupler scaffolds built to the required configuration and load capacity?"
+  ],
+  "Additive Manufacturing Safety": [
+    "34.2 - Have additive manufacturing responsibilities been assigned for supervision, safety, and users?",
+    "34.3 - Has the unit identified the type of additive manufacturing process in use?",
+    "34.4 - Are part processing categories understood and controlled for the materials and equipment used?",
+    "34.5 - Are additive manufacturing hazards such as dust, fumes, heat, lasers, chemicals, and mechanical hazards evaluated?",
+    "34.6 - Are exposure controls, ventilation, PPE, and housekeeping practices in place for the process?",
+    "34.7 - Are personnel trained before operating additive manufacturing equipment or handling related materials?"
+  ],
+  "Aircraft Flightline Ground Operations": [
+    "24.2 - Are flightline-specific requirements briefed and followed for the operation being inspected?",
+    "24.3 - Are flightline hazardous areas identified, controlled, and communicated to affected personnel?",
+    "24.4 - Is additional PPE available and used for flightline hazards?",
+    "24.5 - Are aircraft parking requirements followed and parking areas controlled?",
+    "24.6 - Are adverse weather safeguards applied for high winds, lightning, snow, or other hazardous conditions?",
+    "24.7 - Are towing and taxiing operations controlled with qualified personnel, communication, and clearance?",
+    "24.8 - Are aircraft jacking operations performed with required controls and equipment condition checks?",
+    "24.15 - Are aircraft shop and flightline maintenance operations using required safety controls?"
+  ],
+  "Batteries - Maintenance, Handling, and Storage": [
+    "29.2 - Are battery safety precautions followed during maintenance, charging, handling, and storage?",
+    "29.3 - Do battery rooms and areas have required equipment, layout, and emergency controls?",
+    "29.4 - Are battery fire prevention controls in place?",
+    "29.5 - Are ventilation systems operating where battery charging or storage creates atmospheric hazards?",
+    "29.6 - Are batteries stored and handled to prevent spills, shorts, damage, or incompatible storage?",
+    "29.7 - Are electrical controls and protections suitable for battery operations?",
+    "29.8 - Are vehicle and support equipment batteries installed and maintained safely?",
+    "29.9 - Are aircraft battery and electrical system requirements followed where applicable?"
+  ],
+  "Civil Engineering": [
+    "25.2 - Are supervisors ensuring personnel follow civil engineering safety requirements for assigned work?",
+    "25.3 - Is compressed air used safely and within approved limits?",
+    "25.4 - Are shoring and trenching operations evaluated and controlled before entry or work?",
+    "25.5 - Are barricades and traffic signs used where CE work affects roads, pavements, or pedestrian areas?",
+    "25.6 - Are sanitation controls in place for CE work areas?",
+    "25.8 - Are equipment operations and pavement activities controlled for struck-by, traffic, and equipment hazards?",
+    "25.9 - Are carpentry and structural maintenance hazards controlled?",
+    "25.12 - Are refrigeration, air conditioning, heating, water, or wastewater work hazards controlled as applicable?"
+  ],
+  "Communication Cable, Antenna, and Communication Systems": [
+    "28.2 - Are general safety practices followed for communications cable, antenna, and communication systems work?",
+    "28.3 - Are personnel trained for the communications work they perform?",
+    "28.4 - Are safety equipment and devices available, inspected, and used?",
+    "28.5 - Are tools and equipment appropriate, serviceable, and used safely?",
+    "28.6 - Are high-voltage hazards identified and controlled before work begins?",
+    "28.7 - Are aerial work controls used for climbing, elevated work, or antenna tasks?",
+    "28.12 - Are radar and microwave equipment hazards controlled?",
+    "28.13 - Are manhole, handhole, and unvented vault entries evaluated and controlled?"
+  ],
+  "Composite Materials": [
+    "31.2 - Are composite material safety responsibilities assigned and understood?",
+    "31.3 - Are general requirements followed for composite material handling, cutting, sanding, repair, or disposal?",
+    "31.4 - Are controls in place for the specific composite application being performed?",
+    "31.5 - Is hazardous waste from composite material work collected, labeled, stored, and disposed correctly?",
+    "31.6 - Are special mishap considerations understood for composite material fires, dust, or damaged components?",
+    "31.7 - Are safety reviews completed for new composite material processes or modifications?"
+  ],
+  "Compressed Gases": [
+    "19.2 - Are compressed gas cylinders secured, capped when required, and protected from damage?",
+    "19.2 - Are cylinders identified by contents and kept away from incompatible hazards?",
+    "19.2 - Are regulators, valves, hoses, and fittings inspected and suitable for the gas used?",
+    "19.3 - Are compressed gases stored with separation for oxygen, fuel gases, flammables, and incompatible materials?",
+    "19.3 - Are storage areas ventilated, posted, protected from heat, and arranged to prevent falling cylinders?",
+    "19.4 - Are disposal and shipping requirements followed for empty, damaged, or unserviceable cylinders?"
+  ],
   "Confined Space": [
     "23.4.1 - Has the unit evaluated workplaces to identify confined spaces and coordinated classifications with the Confined Space Program Team?",
     "23.4.1 - Are permit-required confined spaces posted with danger signs or another effective warning method?",
@@ -171,6 +271,25 @@ const inspectionFocusByAssessmentItem = {
     "23.8 - Is atmospheric testing performed before non-permit entry and repeated when conditions change?",
     "23.10 - Are initial, annual proficiency, unit-specific, and atmospheric testing training records maintained?",
     "23.11 - Does DAF Form 1024 document hazards, controls, atmospheric testing, authorized personnel, emergency response, entry log, and close-out?"
+  ],
+  "Cryogenic Liquids": [
+    "26.1 - Are cryogenic hazards such as extreme cold, oxygen enrichment or deficiency, pressure, and fire hazards identified?",
+    "26.2 - Are general cryogenic handling requirements followed for containers, transfer, storage, and transport?",
+    "26.3 - Is the cryogenic storage facility sited and arranged to control exposure and emergency access hazards?",
+    "26.4 - Have occupational health concerns been evaluated for personnel exposed to cryogenic operations?",
+    "26.5 - Are precautions followed when working with LN2, LOX, LH2, or LNG?",
+    "26.6 - Are fire prevention and protection controls in place for cryogenic operations?",
+    "26.8 - Are cryogenic work areas clean, uncluttered, ventilated, and free of incompatible materials?",
+    "26.9 - Are receipt, storage, and issue operations controlled and documented?"
+  ],
+  "DAFMAN 91-203 Introduction and JHA": [
+    "1.2 - Are roles and responsibilities understood for the inspected workplace or operation?",
+    "1.3 - Are waivers, exemptions, or letters of interpretation documented when requirements cannot be met?",
+    "1.5 - Are applicable standards being applied to the work being inspected?",
+    "1.6 - Has a job hazard analysis been completed or reviewed for the task?",
+    "1.7 - Are required safety documents and records maintained?",
+    "1.8 - Are first aid and CPR training requirements met where required?",
+    "1.9 - Is bloodborne pathogen training current where occupational exposure may exist?"
   ],
   "Electrical Safety": [
     "8.1 - Has the supervisor completed a job hazard analysis for electrical work and identified required controls?",
@@ -193,6 +312,14 @@ const inspectionFocusByAssessmentItem = {
     "8.17 - Is equipment de-energized before work unless energized work is properly authorized and controlled?",
     "8.17 - When energized work is authorized, are arc flash controls and required PPE used?"
   ],
+  "Emergency Shower and Eyewash Units": [
+    "9.2 - Are emergency shower and eyewash requirements identified for the chemicals or hazards present?",
+    "9.3 - Is emergency shower or eyewash equipment properly acquired and suitable for the hazard?",
+    "9.4 - Are units located within required travel distance and free of access obstructions?",
+    "9.4 - Are emergency shower and eyewash units clearly identified and accessible at all times?",
+    "9.5 - Are units maintained, inspected, flushed, and tested at required intervals?",
+    "9.6 - Are personnel trained on emergency shower and eyewash location and use?"
+  ],
   "Fall Protection": [
     "13.1 - Are fall hazards controlled for work above four feet in general industry or six feet in construction activities?",
     "13.2 - Has the unit identified fall protection roles such as program administrator, qualified person, competent person, and authorized user?",
@@ -210,6 +337,52 @@ const inspectionFocusByAssessmentItem = {
     "13.7 - Are anchorage inspections current and documented?",
     "13.9 - Has the annual fall protection assessment reviewed training records, surveys, written procedures, equipment, anchorages, storage, maintenance, and incident investigations?",
     "13.9 - Were annual fall protection assessment results reported to the commander within required timelines?"
+  ],
+  "Fire or Life Safety": [
+    "6.1 - Are portable fire extinguishers available, mounted, identified, and appropriate for the hazard?",
+    "6.1 - Are fire extinguishers inspected and maintained at required intervals?",
+    "6.2 - Are exits, corridors, doors, and emergency routes clear and usable?",
+    "6.2 - Are fire prevention controls in place for storage, ignition sources, and combustible materials?",
+    "6.2 - Are fire protection systems protected from obstruction, damage, or impairment?",
+    "6.2 - Are personnel aware of local fire reporting and evacuation procedures?"
+  ],
+  "Flammables and Combustibles": [
+    "22.2 - Are flammable and combustible liquid hazards identified for the operation?",
+    "22.3 - Are personnel trained on safe handling, storage, dispensing, and emergency actions?",
+    "22.4 - Is required PPE available and used for flammable or combustible liquid operations?",
+    "22.5 - Are housekeeping controls preventing spills, residue buildup, and ignition hazards?",
+    "22.6 - Are fire protection controls available and suitable for the liquids in use?",
+    "22.7 - Do buildings, rooms, cabinets, and equipment meet requirements for the material stored or used?",
+    "22.8 - Are handling and dispensing operations bonded, grounded, ventilated, and controlled as required?"
+  ],
+  "General Work Procedures": [
+    "2.2 - Are hazards identified and controlled before work begins?",
+    "2.3 - Are jewelry and loose-item restrictions followed around machinery, electrical equipment, or moving parts?",
+    "2.4 - Are work areas clean, orderly, and free of slip, trip, fire, and access hazards?",
+    "2.5 - Are office safety hazards such as cords, storage, electrical use, and walkways controlled?",
+    "2.6 - Are ergonomic hazards evaluated and corrected where personnel perform repetitive or sustained tasks?",
+    "2.7 - Are roll-up doors inspected, controlled, and used safely?",
+    "2.8 - Are receiving and loading dock hazards controlled?",
+    "2.10 - Are manual material handling and lifting techniques being used safely?"
+  ],
+  "Grounds, Mowing, and Agriculture Tractors": [
+    "10.2 - Are grounds equipment inspections and maintenance completed before use?",
+    "10.3 - Are mowing operations controlled for thrown objects, slopes, traffic, and bystanders?",
+    "10.4 - Are edgers inspected and used with proper guards and PPE?",
+    "10.5 - Is commercial mowing or turf care equipment operated by trained personnel and within safe limits?",
+    "10.6 - Are tree and hedge trimming hazards controlled, including overhead and falling-object hazards?",
+    "10.7 - Are fertilizers handled and stored safely?",
+    "10.8 - Are irrigation system hazards controlled?",
+    "10.9 - Are agricultural tractors and implements inspected, guarded, and operated safely?"
+  ],
+  "Hand Tools, Portable Power Tools, and Machinery": [
+    "11.1 - Are general tool and machinery safety requirements understood and followed?",
+    "11.2 - Are hand tools and portable power tools inspected before use and removed from service if damaged?",
+    "11.2 - Are guards, handles, cords, switches, and accessories serviceable and appropriate for the tool?",
+    "11.2 - Are personnel using proper PPE for the tool and task?",
+    "11.3 - Are machinery guards in place and adjusted before operation?",
+    "11.3 - Are machinery operators trained and protected from point-of-operation, nip point, and rotating-part hazards?",
+    "11.4 - Are machine-specific requirements followed for the equipment being inspected?"
   ],
   "Hazardous Energy Control": [
     "21.2.1 - Does the shop have a hazardous energy control program with procedures, training, and periodic inspections?",
@@ -242,6 +415,62 @@ const inspectionFocusByAssessmentItem = {
     "21.7.2 - For complex LOTO, is a written plan of execution used when multiple energy sources, crews, locations, employers, disconnects, sequences, or work periods are involved?",
     "21.8 - Are contractor hazardous energy control responsibilities specified and coordinated?"
   ],
+  "Hydrocarbon Fuels": [
+    "18.2 - Are hydrocarbon fuel hazards identified, including fire, vapor, exposure, and static hazards?",
+    "18.3 - Are personnel trained for the fuel operation they perform?",
+    "18.4 - Is required PPE available and used for fuel handling, servicing, storage, or laboratory operations?",
+    "18.5 - Are fuel work areas kept clean and free of unnecessary combustible materials?",
+    "18.6 - Are fire prevention and protection controls in place for fuel operations?",
+    "18.7 - Are required inspections completed for fuel areas or equipment?",
+    "18.8 - Are fuel storage systems controlled and maintained?",
+    "18.9 - Are fuel servicing operations performed with bonding, grounding, spill control, and emergency controls?"
+  ],
+  "Interior Spray Finishing": [
+    "27.2 - Are spray finishing safety requirements followed for the materials and process in use?",
+    "27.3 - Are health and environmental controls in place for paint, solvent, and coating exposures?",
+    "27.4 - Are fire prevention controls in place for spray finishing operations?",
+    "27.5 - Are ventilation systems operating, inspected, and suitable for spray operations?",
+    "27.6 - Are coatings, solvents, and related materials stored and handled safely?",
+    "27.7 - Is electrical equipment suitable for the spray finishing area classification?",
+    "27.9 - Are paint spray booths inspected, maintained, and used correctly?",
+    "27.16 - Are aerosol spray paint cans stored, used, and disposed safely?"
+  ],
+  "Material Handling Equipment (MHE)": [
+    "12.2 - Are general material handling equipment requirements followed for the equipment being used?",
+    "12.4 - Are required inspections completed and documented for material handling equipment?",
+    "12.6 - Are operators qualified and trained for the equipment?",
+    "12.7 - Are required tests current for lifting or hoisting equipment?",
+    "12.8 - Are powered industrial trucks inspected, operated, charged, parked, and maintained safely?",
+    "12.9 - Are conveyors guarded, inspected, and controlled?",
+    "12.11 - Are hoists inspected and used within rated capacity?",
+    "12.13 - Are overhead, gantry, underhung cranes, or monorail systems inspected and operated safely?"
+  ],
+  "Mishap Prevention Safety Signs, Tags, and Labeling": [
+    "17.2 - Are hazards identified and communicated with appropriate signs, tags, labels, or markings?",
+    "17.3 - Are personnel trained on the meaning and use of required safety signs, tags, and labels?",
+    "17.4 - Are required mishap prevention signs posted, legible, and placed where personnel can see them?",
+    "17.5 - Are safety, fire prevention, and health tags used correctly and removed when no longer needed?",
+    "17.6 - Are administrative devices used only for their intended purpose and not as hazard-control substitutes?",
+    "17.7 - Are piping systems labeled, marked, or color-coded where required?"
+  ],
+  "Motor Vehicle Operations and Maintenance": [
+    "30.2 - Are motor vehicle operation and maintenance hazards identified for the work being performed?",
+    "30.3 - Are general vehicle safety controls followed by operators and maintainers?",
+    "30.5 - Are vehicle maintenance facility and equipment requirements met?",
+    "30.6 - Are fire prevention controls in place for maintenance, fuels, batteries, and flammable materials?",
+    "30.7 - Is ventilation adequate for vehicle maintenance and exhaust-producing operations?",
+    "30.8 - Are solvent cleaning operations controlled?",
+    "30.12 - Are lifting devices inspected and used within rated capacity?",
+    "30.13 - Are wheel and tire maintenance operations controlled for stored-energy hazards?"
+  ],
+  "Nondestructive Inspection (NDI) and Oil Analysis": [
+    "5.2 - Are NDI and oil analysis safety precautions followed for the process being performed?",
+    "5.2 - Are radiation, chemical, electrical, fire, and exposure hazards controlled as applicable?",
+    "5.3 - Are supervisor responsibilities understood and carried out for NDI or oil analysis operations?",
+    "5.4 - Is NDI equipment inspected, maintained, and used according to requirements?",
+    "5.4 - Are fire protection systems and controls available and serviceable in NDI areas?",
+    "5.4 - Are required postings, shielding, ventilation, or access controls in place?"
+  ],
   "Personal Protective Equipment (PPE)": [
     "14.2 - Have personnel received PPE training on when PPE is required, what PPE is required, how to use it, limitations, care, maintenance, and disposal?",
     "14.2 - Is PPE training documented and is retraining completed when workplace conditions, PPE, or employee knowledge changes?",
@@ -261,6 +490,64 @@ const inspectionFocusByAssessmentItem = {
     "14.3.13 - Are welding and cutting personnel using required eye, face, hand, arm, and body protection?",
     "14.4 - Is PPE cleaned, disinfected, repaired, replaced, or disposed of when contaminated or unserviceable?",
     "14.4 - Are supervisors ensuring protective clothing and equipment continue to protect personnel from assigned work hazards?"
+  ],
+  "Precision Measurement Equipment Laboratory": [
+    "32.2 - Are PMEL hazards identified, including chemical, electrical, radioactive, cleaning, and equipment hazards?",
+    "32.3 - Are ventilation systems operating and appropriate for PMEL operations?",
+    "32.4 - Are electrical safety controls followed for PMEL equipment and work practices?",
+    "32.5 - Are radioactive material safety requirements followed where applicable?",
+    "32.6 - Are equipment and component cleaning operations controlled for chemical and exposure hazards?",
+    "32.7 - Are PMEL tools and equipment serviceable, appropriate, and used safely?"
+  ],
+  "Process Safety Management (PSM)": [
+    "33.2 - Has the unit determined whether OSHA Process Safety Management requirements apply?",
+    "33.3 - Are PSM responsibilities assigned and understood?",
+    "33.4 - Has a chemical process and storage review been completed for highly hazardous chemicals?",
+    "33.4 - Are process hazards, chemical inventories, storage conditions, and controls documented?",
+    "33.5 - Are personnel trained for PSM-covered processes before working independently?",
+    "Table 33.1 - Has the PSM decision flow been used to determine whether the process is covered?"
+  ],
+  "Services Operations": [
+    "4.2 - Are laundry operations controlled for heat, chemical, ergonomic, machine, and housekeeping hazards?",
+    "4.3 - Are lodging operations inspected for housekeeping, storage, electrical, and emergency access hazards?",
+    "4.4 - Are food service operations controlled for slips, burns, cuts, sanitation, chemical use, and equipment hazards?",
+    "4.4 - Are food service employees using required PPE and safe work practices?",
+    "4.4 - Are kitchen fire prevention and emergency controls available and serviceable?",
+    "4.4 - Are equipment guards, interlocks, cords, and surfaces maintained in safe condition?"
+  ],
+  "Training Systems": [
+    "15.2 - Are general training system safety requirements identified and followed?",
+    "15.3 - Are facility requirements met for the training system being used?",
+    "15.4 - Are training systems inspected, operated, and maintained according to requirements?",
+    "15.5 - Are wheeled vehicle egress assistance trainer requirements followed where applicable?",
+    "15.6 - Are aircraft flight or high-value training systems controlled for motion, electrical, fire, egress, and emergency hazards?",
+    "15.7 - Are upgrades or modifications to existing training systems reviewed for safety impacts?"
+  ],
+  "Walking-Working Surfaces": [
+    "7.1 - Are walking-working surfaces clean, dry, orderly, and free of slip, trip, and fall hazards?",
+    "7.1 - Are floor openings, holes, edges, and elevated surfaces guarded or otherwise controlled?",
+    "7.2 - Are stairs and ramps maintained with required handrails, surfaces, lighting, and clear access?",
+    "7.3 - Are fixed ladders inspected, labeled, and equipped with required fall protection or safety systems?",
+    "7.4 - Are portable ladders inspected before use and used on stable surfaces at proper angles?",
+    "7.5 - Are stepladders used fully open and within rated capacity?",
+    "7.6 - Are emergency walking-working surface conditions addressed during emergency operations?"
+  ],
+  "Weather Safety": [
+    "3.1 - Are weather safety responsibilities assigned and understood for the activity or operation?",
+    "3.2 - Is the two-tier weather notification system understood and used when required?",
+    "3.3 - Are lightning safety procedures followed for outdoor work, flightline operations, ranges, and exposed activities?",
+    "3.3 - Are personnel moved to safe locations when lightning criteria or warnings require it?",
+    "3.4 - Are snow and ice hazards controlled for DAF activities and operations?",
+    "3.4 - Are walking surfaces, vehicle operations, and outdoor tasks adjusted for snow or ice conditions?"
+  ],
+  "Welding, Cutting, and Hot Work": [
+    "20.2 - Are welding, cutting, and hot work hazards identified before work begins?",
+    "20.4 - Are personnel trained and qualified for the hot work being performed?",
+    "20.5 - Are precautions in place for fire watch, combustibles, ventilation, cylinders, and adjacent areas?",
+    "20.6 - Is required PPE available and used for welding, cutting, or hot work?",
+    "20.7 - Is welding equipment inspected, serviceable, and used correctly?",
+    "20.8 - Are hot work locations approved or controlled for the operation?",
+    "20.10 - Is DAF Form 592 or the required hot work permit completed when required?"
   ]
 };
 
