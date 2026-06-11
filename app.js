@@ -14,8 +14,6 @@ const assessmentItemInput = document.querySelector("#assessmentItem");
 const inspectionFocusInput = document.querySelector("#inspectionFocus");
 const topicSearchInput = document.querySelector("#topicSearch");
 const topicSearchResults = document.querySelector("#topicSearchResults");
-const topicTeachPreview = document.querySelector("#topicTeachPreview");
-const topicTeach = document.querySelector("#topicTeach");
 const reportPreview = document.querySelector("#reportPreview");
 const textareaModal = document.querySelector("#textareaModal");
 const textareaModalTitle = document.querySelector("#textareaModalTitle");
@@ -33,7 +31,6 @@ let activeAssessmentItemKey = "";
 let activeInspectionFocusKey = "";
 let lastSavedInspection = null;
 let topicSearchMatches = [];
-let topicSearchApplied = false;
 
 const assessmentItemsByBranch = {
   "Aviation Safety|Commander and Supervisory Support (SMS)": [
@@ -1178,9 +1175,7 @@ function findTopicMatches(query) {
 
 function renderTopicSearchResults() {
   const query = topicSearchInput.value.trim();
-  topicSearchApplied = false;
   topicSearchMatches = findTopicMatches(query);
-  updateTopicTeachState();
 
   if (!query) {
     topicSearchResults.innerHTML = "<p>Search by what you plan to inspect. Click a suggestion and the app will fill Boxes 3-6 automatically.</p>";
@@ -1204,11 +1199,9 @@ function renderTopicSearchResults() {
       ${match.learned ? `<button class="topic-unlearn" data-topic-term="${escapeHtml(match.term)}" type="button">Unlearn</button>` : ""}
     </article>
   `).join("");
-  updateTopicTeachState();
 }
 
 function applyTopicSearchMatch(match) {
-  topicSearchApplied = true;
   const record = getRecordFromForm();
   record.responsibleDiscipline = match.responsibleDiscipline;
   record.assessmentArea = match.assessmentArea;
@@ -1219,54 +1212,6 @@ function applyTopicSearchMatch(match) {
     <p><strong>Applied:</strong> ${escapeHtml(match.title)}. Boxes 3-6 were updated from the selected suggestion.</p>
   `;
   saveRecord();
-  updateTopicTeachState();
-}
-
-function updateTopicTeachState() {
-  const record = getRecordFromForm();
-  const rawTerm = topicSearchInput.value.trim();
-  const term = normalizeSearchText(rawTerm);
-  const canTeach = Boolean(!topicSearchApplied && term && record.responsibleDiscipline && record.assessmentArea && record.assessmentItem);
-  topicTeach.hidden = !canTeach;
-  topicTeachPreview.hidden = !canTeach;
-
-  if (canTeach) {
-    topicTeachPreview.innerHTML = `
-      <strong>Teach Search will remember:</strong>
-      <span><b>${escapeHtml(rawTerm)}</b> &rarr; Box 3: ${escapeHtml(record.responsibleDiscipline)} | Box 4: ${escapeHtml(record.assessmentArea)} | Box 5: ${escapeHtml(record.assessmentItem)}${record.inspectionFocus ? ` | Box 6: ${escapeHtml(record.inspectionFocus)}` : ""}</span>
-    `;
-  } else {
-    topicTeachPreview.textContent = "";
-  }
-
-  topicTeach.textContent = canTeach
-    ? "Remember this search pairing"
-    : "Teach Search";
-}
-
-function rememberTopicSearchSelection() {
-  const record = getRecordFromForm();
-  const rawTerm = topicSearchInput.value.trim();
-  const term = normalizeSearchText(rawTerm);
-  if (!term || !record.responsibleDiscipline || !record.assessmentArea || !record.assessmentItem) return;
-
-  const learnedEntry = {
-    term,
-    displayTerm: rawTerm,
-    responsibleDiscipline: record.responsibleDiscipline,
-    assessmentArea: record.assessmentArea,
-    assessmentItem: record.assessmentItem,
-    inspectionFocus: record.inspectionFocus,
-    savedAt: new Date().toISOString()
-  };
-  const existing = getLearnedTopicSearches()
-    .filter((entry) => normalizeSearchText(entry.term) !== term);
-  saveLearnedTopicSearches([learnedEntry, ...existing]);
-  renderTopicSearchResults();
-  topicSearchResults.insertAdjacentHTML("afterbegin", `
-    <p><strong>Learned:</strong> future searches for "${escapeHtml(rawTerm)}" will prioritize Box 5: ${escapeHtml(record.assessmentItem)}${record.inspectionFocus ? ` and Box 6: ${escapeHtml(record.inspectionFocus)}` : ""}.</p>
-  `);
-  updateTopicTeachState();
 }
 
 function isFindingRecord(record) {
@@ -1524,16 +1469,12 @@ async function saveCurrentInspectionToLibrary() {
 
 function update() {
   const record = getRecordFromForm();
-  if (document.activeElement === assessmentItemInput || document.activeElement === inspectionFocusInput || document.activeElement?.name === "responsibleDiscipline" || document.activeElement?.name === "assessmentArea") {
-    topicSearchApplied = false;
-  }
   syncCalculatedDates(record);
   updateAssessmentItem(record);
   updateInspectionFocus(record);
   updateHazardSection(record);
   saveRecord();
   renderReport(record);
-  updateTopicTeachState();
 }
 
 function modalTitleFor(textarea) {
@@ -1586,8 +1527,6 @@ topicSearchResults.addEventListener("click", (event) => {
   if (!match) return;
   applyTopicSearchMatch(match);
 });
-
-topicTeach.addEventListener("click", rememberTopicSearchSelection);
 
 unitInput.addEventListener("blur", () => {
   rememberUnit(unitInput.value);
