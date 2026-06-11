@@ -1183,8 +1183,10 @@ function renderTopicSearchResults() {
   }
 
   if (!topicSearchMatches.length) {
+    const regulationSearchUrl = `dafman-search.html?q=${encodeURIComponent(query)}`;
     topicSearchResults.innerHTML = `
       <p>No matches yet. Try another term like <strong>storage</strong>, <strong>ladder</strong>, <strong>forklift</strong>, <strong>eyewash</strong>, or <strong>paint</strong>.</p>
+      <a class="secondary-button topic-regulation-link" href="${escapeHtml(regulationSearchUrl)}">Search DAFMAN 91-203 for "${escapeHtml(query)}"</a>
     `;
     return;
   }

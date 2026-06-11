@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DAFMAN 91-203 Search</title>
+    <link rel="stylesheet" href="styles.css?v=20260610-7" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Regulation Helper</p>
+        <h1>DAFMAN 91-203 Search</h1>
+      </div>
+      <div class="header-actions">
+        <a class="header-link" href="index.html">Back to Builder</a>
+      </div>
+    </header>
+
+    <main class="library-page">
+      <section class="form-section">
+        <div class="section-heading">
+          <p class="eyebrow">Department of the Air Force Manual 91-203</p>
+          <h2>Search Numbered Paragraphs</h2>
+        </div>
+
+        <div class="dafman-search-panel">
+          <label>
+            <span>Search the regulation</span>
+            <input id="dafmanSearchInput" type="search" placeholder="Try shelving, daisy chain, extension cord, eyewash, forklift..." autocomplete="off" />
+          </label>
+          <p class="filter-helper">This searches indexed DAFMAN 91-203 paragraph text. Use the paragraph number shown in the result to document the correct reference.</p>
+        </div>
+
+        <p class="library-status" id="dafmanSearchStatus">Enter a term to search DAFMAN 91-203.</p>
+        <div class="dafman-results" id="dafmanSearchResults"></div>
+      </section>
+    </main>
+
+    <script src="dafman-search-data.js?v=20260610-1"></script>
+    <script src="dafman-search.js?v=20260610-1"></script>
+  </body>
+</html>

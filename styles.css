@@ -202,6 +202,10 @@ button {
   font-weight: 800;
 }
 
+.topic-regulation-link {
+  justify-self: start;
+}
+
 .learned-topic-label {
   display: inline-flex;
   align-items: center;
@@ -576,6 +580,51 @@ td select {
   color: var(--accent-dark);
   font-size: 0.76rem;
   font-weight: 700;
+}
+
+.dafman-search-panel {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #f7faf9;
+}
+
+.dafman-search-panel label {
+  margin: 0;
+}
+
+.dafman-results {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.dafman-result {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.dafman-result h3,
+.dafman-result p {
+  margin: 0;
+}
+
+.dafman-result h3 {
+  font-size: 1.05rem;
+}
+
+.dafman-result mark {
+  border-radius: 3px;
+  background: #fff0a8;
+  color: inherit;
+  padding: 0 2px;
 }
 
 .library-toolbar p {
