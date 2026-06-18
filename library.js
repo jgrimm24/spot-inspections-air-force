@@ -31,14 +31,12 @@ const tallyDisciplines = [
   "Aviation Safety/SAFSO/Range Safety Officer",
   "Occupational Safety/USR/Supervisor",
   "Weapons Safety/ADWSR",
-  "MSR",
   "Space Safety"
 ];
 const tallyDisciplineAliases = {
   "Aviation Safety/SAFSO/Range Safety Officer": ["Aviation Safety/SAFSO/Range Safety Officer", "Aviation Safety"],
   "Occupational Safety/USR/Supervisor": ["Occupational Safety/USR/Supervisor", "Occupational Safety"],
   "Weapons Safety/ADWSR": ["Weapons Safety/ADWSR", "Weapons Safety"],
-  MSR: ["MSR"],
   "Space Safety": ["Space Safety"]
 };
 const fiscalYearMonths = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
