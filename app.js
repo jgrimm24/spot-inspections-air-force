@@ -937,11 +937,11 @@ function emptyRecord() {
   return {
     unit: "",
     functionalArea: "",
-    responsibleDiscipline: "",
-    assessmentArea: "",
+    responsibleDiscipline: "Occupational Safety/USR/Supervisor",
+    assessmentArea: "Compliance with Program Directives",
     assessmentItem: "",
     inspectionFocus: "",
-    inspectionType: "",
+    inspectionType: "Safety spot inspection",
     inspectionTypeTier2: "",
     inspectionDate: currentDateValue(),
     inspectionTime: currentTimeValue(),
@@ -1002,6 +1002,9 @@ function loadRecord() {
     const record = { ...emptyRecord(), ...JSON.parse(saved) };
     return {
       ...record,
+      responsibleDiscipline: record.responsibleDiscipline || "Occupational Safety/USR/Supervisor",
+      assessmentArea: record.assessmentArea || "Compliance with Program Directives",
+      inspectionType: record.inspectionType || "Safety spot inspection",
       inspectionTime: record.inspectionTime || currentTimeValue(),
       followUpDue: addDays(record.inspectionDate, 30)
     };
@@ -1082,7 +1085,7 @@ function learnedTopicMatches() {
     assessmentItem: entry.assessmentItem || "",
     inspectionFocus: entry.inspectionFocus || "",
     title: entry.assessmentItem || "Learned Search",
-    detail: entry.inspectionFocus || `${entry.responsibleDiscipline || "Safety"} | ${entry.assessmentArea || "Assessment"}`,
+    detail: entry.inspectionFocus || entry.responsibleDiscipline || "Safety",
     canonical: true,
     learned: true,
     term: entry.term,
@@ -1122,7 +1125,7 @@ function buildTopicSearchCatalog() {
           assessmentItem,
           inspectionFocus: "",
           title: assessmentItem,
-          detail: `${responsibleDiscipline} | ${assessmentArea}`,
+          detail: responsibleDiscipline,
           canonical: assessmentItem === focusKey,
           searchText: normalizeSearchText(baseText)
         }];
@@ -1178,7 +1181,7 @@ function renderTopicSearchResults() {
   topicSearchMatches = findTopicMatches(query);
 
   if (!query) {
-    topicSearchResults.innerHTML = "<p>Search by what you plan to inspect. Click a suggestion and the app will fill Boxes 3-6 automatically.</p>";
+    topicSearchResults.innerHTML = "<p>Search by what you plan to inspect. Click a suggestion to select the discipline, topic, and suggested inspection question.</p>";
     return;
   }
 
@@ -1196,7 +1199,7 @@ function renderTopicSearchResults() {
       <button class="topic-result" data-topic-index="${index}" type="button">
         <strong>${match.learned ? '<span class="learned-topic-label">Learned</span> ' : ""}${escapeHtml(match.title)}</strong>
         <span>${escapeHtml(match.detail)}</span>
-        <small>${escapeHtml(match.responsibleDiscipline)} | ${escapeHtml(match.assessmentArea)}</small>
+        <small>${escapeHtml(match.responsibleDiscipline)}</small>
       </button>
       ${match.learned ? `<button class="topic-unlearn" data-topic-term="${escapeHtml(match.term)}" type="button">Unlearn</button>` : ""}
     </article>
@@ -1211,7 +1214,7 @@ function applyTopicSearchMatch(match) {
   record.inspectionFocus = match.inspectionFocus;
   renderRecord(record);
   topicSearchResults.innerHTML = `
-    <p><strong>Applied:</strong> ${escapeHtml(match.title)}. Boxes 3-6 were updated from the selected suggestion.</p>
+    <p><strong>Selected:</strong> ${escapeHtml(match.title)}. The discipline, topic, and suggested inspection question were filled automatically.</p>
   `;
   saveRecord();
 }
@@ -1253,7 +1256,7 @@ function updateAssessmentItem(record) {
 
   if (activeAssessmentItemKey !== itemKey) {
     const selectedValue = record.assessmentItem || "";
-    assessmentItemInput.innerHTML = '<option value="">Select assessment item</option>';
+    assessmentItemInput.innerHTML = '<option value="">Select inspection topic</option>';
     options.forEach((value) => {
       const option = document.createElement("option");
       option.value = value;
@@ -1283,7 +1286,7 @@ function updateInspectionFocus(record) {
     const selectedValue = record.inspectionFocus || "";
     inspectionFocusInput.innerHTML = showInspectionFocus
       ? '<option value="">Select a possible inspection focus</option>'
-      : '<option value="">Select a supported assessment item in Box 5 first</option>';
+      : '<option value="">Select an inspection topic first</option>';
     focusOptions.forEach((value) => {
       const option = document.createElement("option");
       option.value = value;
@@ -1351,11 +1354,8 @@ function renderReport(record) {
         <dt>Unit</dt><dd>${display(record.unit)}</dd>
         <dt>Functional Area</dt><dd>${display(record.functionalArea)}</dd>
         <dt>Responsible Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
-        <dt>Assessment Area</dt><dd>${display(record.assessmentArea)}</dd>
-        <dt>Assessment Item</dt><dd>${display(record.assessmentItem)}</dd>
-        <dt>Possible Inspection Focus</dt><dd>${display(record.inspectionFocus)}</dd>
-        <dt>Type</dt><dd>${display(record.inspectionType)}</dd>
-        <dt>Type Tier 2</dt><dd>${display(record.inspectionTypeTier2)}</dd>
+        <dt>Inspection Topic</dt><dd>${display(record.assessmentItem)}</dd>
+        <dt>Suggested Inspection Question</dt><dd>${display(record.inspectionFocus)}</dd>
         <dt>Date</dt><dd>${display(record.inspectionDate)}</dd>
         <dt>Time</dt><dd>${display(record.inspectionTime)}</dd>
         <dt>Inspector Name</dt><dd>${display(record.inspectorName)}</dd>
@@ -1397,9 +1397,8 @@ function createMailtoUrl(entry) {
     `Inspection ID: ${entry?.id || "Not documented"}`,
     `Unit: ${record.unit || "Not documented"}`,
     `Responsible Discipline: ${record.responsibleDiscipline || "Not documented"}`,
-    `Assessment Area: ${record.assessmentArea || "Not documented"}`,
-    `Assessment Item: ${record.assessmentItem || "Not documented"}`,
-    `Possible Inspection Focus: ${record.inspectionFocus || "Not documented"}`,
+    `Inspection Topic: ${record.assessmentItem || "Not documented"}`,
+    `Suggested Inspection Question: ${record.inspectionFocus || "Not documented"}`,
     `Inspection Date: ${record.inspectionDate || "Not documented"}`,
     `Follow-up Due: ${record.followUpDue || "Not applicable"}`,
     `Finding Identified: ${record.hasFinding || "Not documented"}`,

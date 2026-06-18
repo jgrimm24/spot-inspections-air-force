@@ -377,11 +377,8 @@ function renderReport(record) {
         <dt>Unit</dt><dd>${display(record.unit)}</dd>
         <dt>Functional Area</dt><dd>${display(record.functionalArea)}</dd>
         <dt>Responsible Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
-        <dt>Assessment Area</dt><dd>${display(record.assessmentArea)}</dd>
-        <dt>Assessment Item</dt><dd>${display(record.assessmentItem)}</dd>
-        <dt>Possible Inspection Focus</dt><dd>${display(record.inspectionFocus)}</dd>
-        <dt>Type</dt><dd>${display(record.inspectionType)}</dd>
-        <dt>Type Tier 2</dt><dd>${display(record.inspectionTypeTier2)}</dd>
+        <dt>Inspection Topic</dt><dd>${display(record.assessmentItem)}</dd>
+        <dt>Suggested Inspection Question</dt><dd>${display(record.inspectionFocus)}</dd>
         <dt>Date</dt><dd>${display(record.inspectionDate)}</dd>
         <dt>Time</dt><dd>${display(record.inspectionTime)}</dd>
         <dt>Inspector Name</dt><dd>${display(record.inspectorName)}</dd>
@@ -491,7 +488,7 @@ function renderLibrary() {
         <div>
           <span class="follow-up-badge follow-up-badge-${status.tone}">${escapeHtml(status.label)}</span>
           <h3>${display(record.unit)}</h3>
-          <p>${display(record.workArea)} - ${display(record.inspectionDate)} - ${display(record.inspectionTypeTier2)}</p>
+          <p>${display(record.workArea)} - ${display(record.inspectionDate)}</p>
         </div>
         <dl>
           <dt>Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
@@ -647,11 +644,8 @@ function exportVisibleInspections() {
     "Unit",
     "Functional Area",
     "Responsible Discipline",
-    "Assessment Area",
-    "Assessment Item",
-    "Possible Inspection Focus",
-    "Inspection Type",
-    "Inspection Type Tier 2",
+    "Inspection Topic",
+    "Suggested Inspection Question",
     "Inspection Date",
     "Inspection Time",
     "Inspector Name",
@@ -682,11 +676,8 @@ function exportVisibleInspections() {
       record.unit,
       record.functionalArea,
       record.responsibleDiscipline,
-      record.assessmentArea,
       record.assessmentItem,
       record.inspectionFocus,
-      record.inspectionType,
-      record.inspectionTypeTier2,
       record.inspectionDate,
       record.inspectionTime,
       record.inspectorName,

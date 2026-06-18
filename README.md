@@ -4,7 +4,7 @@ This project standardizes how spot inspections are documented from opening scope
 
 ## Process
 
-1. Capture the unit, functional area, responsible discipline, inspection type tier 1, inspection type tier 2, date, time, inspector name, and inspector email address.
+1. Capture the unit, functional area, responsible discipline, inspection topic, date, time, inspector name, and inspector email address.
 2. Document the area, equipment, processes, or procedures reviewed.
 3. Record whether a hazard, risk, deficiency, unsafe work practice, or positive finding was identified.
 4. If a finding exists, document the hazard/discrepancy, cause, corrective action, responsible person, and responsible contact.
