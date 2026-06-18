@@ -582,6 +582,14 @@ td select {
   font-weight: 700;
 }
 
+.field-source {
+  display: block;
+  margin-top: 6px;
+  color: var(--accent-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
 .dafman-search-panel {
   display: grid;
   gap: 8px;

@@ -70,6 +70,18 @@ function display(value, fallback = "Not documented") {
   return escapeHtml(value || fallback);
 }
 
+function inspectionReferenceSource(record) {
+  const assessmentItem = String(record?.assessmentItem || "");
+  const inspectionFocus = String(record?.inspectionFocus || "");
+  if (assessmentItem.startsWith("Program Element -") || inspectionFocus.startsWith("DAFI 91-202")) {
+    return "DAFI 91-202";
+  }
+  if (/^\d+(?:\.\d+)+\s*-/.test(inspectionFocus)) {
+    return "DAFMAN 91-203";
+  }
+  return assessmentItem ? "General inspection guidance" : "";
+}
+
 function formatSavedDate(value) {
   if (!value) return "Unknown";
   const date = new Date(value);
@@ -378,6 +390,7 @@ function renderReport(record) {
         <dt>Functional Area</dt><dd>${display(record.functionalArea)}</dd>
         <dt>Responsible Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
         <dt>Inspection Topic</dt><dd>${display(record.assessmentItem)}</dd>
+        <dt>Reference Source</dt><dd>${display(inspectionReferenceSource(record))}</dd>
         <dt>Suggested Inspection Question</dt><dd>${display(record.inspectionFocus)}</dd>
         <dt>Date</dt><dd>${display(record.inspectionDate)}</dd>
         <dt>Time</dt><dd>${display(record.inspectionTime)}</dd>
@@ -645,6 +658,7 @@ function exportVisibleInspections() {
     "Functional Area",
     "Responsible Discipline",
     "Inspection Topic",
+    "Reference Source",
     "Suggested Inspection Question",
     "Inspection Date",
     "Inspection Time",
@@ -677,6 +691,7 @@ function exportVisibleInspections() {
       record.functionalArea,
       record.responsibleDiscipline,
       record.assessmentItem,
+      inspectionReferenceSource(record),
       record.inspectionFocus,
       record.inspectionDate,
       record.inspectionTime,

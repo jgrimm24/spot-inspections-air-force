@@ -12,6 +12,7 @@ const hazardSection = document.querySelector("#hazardSection");
 const positiveFindingField = document.querySelector("#positiveFindingField");
 const assessmentItemInput = document.querySelector("#assessmentItem");
 const inspectionFocusInput = document.querySelector("#inspectionFocus");
+const inspectionFocusSource = document.querySelector("#inspectionFocusSource");
 const topicSearchInput = document.querySelector("#topicSearch");
 const topicSearchResults = document.querySelector("#topicSearchResults");
 const reportPreview = document.querySelector("#reportPreview");
@@ -990,6 +991,22 @@ function inspectionFocusKeyForAssessmentItem(assessmentItem) {
   return inspectionFocusAliases[assessmentItem] || assessmentItem;
 }
 
+function inspectionReferenceSource(assessmentItem, inspectionFocus = "") {
+  if (assessmentItem.startsWith("Program Element -") || inspectionFocus.startsWith("DAFI 91-202")) {
+    return "DAFI 91-202";
+  }
+  if (/^\d+(?:\.\d+)+\s*-/.test(inspectionFocus)) {
+    return "DAFMAN 91-203";
+  }
+  return assessmentItem ? "General inspection guidance" : "";
+}
+
+function inspectionFocusOptionLabel(assessmentItem, inspectionFocus) {
+  const source = inspectionReferenceSource(assessmentItem, inspectionFocus);
+  const prompt = inspectionFocus.replace(/^DAFI 91-202(?: DAFGM)?\s+/, "");
+  return `${source} | ${prompt}`;
+}
+
 const fields = [
   "unit",
   "functionalArea",
@@ -1462,7 +1479,7 @@ function updateInspectionFocus(record) {
     focusOptions.forEach((value) => {
       const option = document.createElement("option");
       option.value = value;
-      option.textContent = value;
+      option.textContent = inspectionFocusOptionLabel(record.assessmentItem, value);
       inspectionFocusInput.appendChild(option);
     });
     inspectionFocusInput.value = focusOptions.includes(selectedValue) ? selectedValue : "";
@@ -1471,6 +1488,10 @@ function updateInspectionFocus(record) {
   }
 
   inspectionFocusInput.disabled = !showInspectionFocus;
+  const source = inspectionReferenceSource(record.assessmentItem, record.inspectionFocus);
+  inspectionFocusSource.textContent = source
+    ? `Source: ${source}`
+    : "Source will appear after selecting an inspection topic.";
 
   if (!showInspectionFocus && inspectionFocusInput.value) {
     inspectionFocusInput.value = "";
@@ -1527,6 +1548,7 @@ function renderReport(record) {
         <dt>Functional Area</dt><dd>${display(record.functionalArea)}</dd>
         <dt>Responsible Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
         <dt>Inspection Topic</dt><dd>${display(record.assessmentItem)}</dd>
+        <dt>Reference Source</dt><dd>${display(inspectionReferenceSource(record.assessmentItem, record.inspectionFocus))}</dd>
         <dt>Suggested Inspection Question</dt><dd>${display(record.inspectionFocus)}</dd>
         <dt>Date</dt><dd>${display(record.inspectionDate)}</dd>
         <dt>Time</dt><dd>${display(record.inspectionTime)}</dd>
@@ -1570,6 +1592,7 @@ function createMailtoUrl(entry) {
     `Unit: ${record.unit || "Not documented"}`,
     `Responsible Discipline: ${record.responsibleDiscipline || "Not documented"}`,
     `Inspection Topic: ${record.assessmentItem || "Not documented"}`,
+    `Reference Source: ${inspectionReferenceSource(record.assessmentItem, record.inspectionFocus) || "Not documented"}`,
     `Suggested Inspection Question: ${record.inspectionFocus || "Not documented"}`,
     `Inspection Date: ${record.inspectionDate || "Not documented"}`,
     `Follow-up Due: ${record.followUpDue || "Not applicable"}`,
