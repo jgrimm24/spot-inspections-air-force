@@ -935,7 +935,7 @@ function rememberEmail(value) {
 
 function emptyRecord() {
   return {
-    unit: "",
+    unit: getUnitMemory()[0] || "",
     functionalArea: "",
     responsibleDiscipline: "Occupational Safety/USR/Supervisor",
     assessmentArea: "Compliance with Program Directives",
