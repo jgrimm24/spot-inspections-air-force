@@ -14,9 +14,9 @@ This project standardizes how spot inspections are documented from opening scope
 8. Update 30-day follow-up actions from the shared library when returning to a saved inspection.
 9. Print or copy the report preview for records management and closeout.
 
-## Draft DAFI 91-202 Alignment
+## DAFI 91-202 Alignment
 
-The form is shaped around the draft spot-inspection documentation elements in paragraph 9.6:
+The form is shaped around the spot-inspection documentation elements in paragraphs 3.7.2 and 3.7.3, with the February 2026 guidance memorandum applied where it changes the instruction:
 
 - Organization, unit, activity, or work area inspected
 - Date and time of inspection
@@ -40,6 +40,8 @@ python3 -m http.server 8000
 The form saves the current in-progress inspection in browser storage so the record survives refreshes on the same device.
 
 Use **Save Completed** in the blue banner to add the current spot inspection to the shared completed inspections library. Use **Library** to open the standalone library page, filter saved inspections by unit, search records, preview reports, or delete records when authorized.
+
+The inspection topic search includes DAFI 91-202 program elements and DAFMAN 91-203 operational topics. When a topic is not in the curated suggestions, the regulation search helpers can search numbered paragraphs in either publication.
 
 ## Render Shared Library Setup
 

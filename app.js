@@ -77,6 +77,19 @@ const assessmentItemsByBranch = {
     "Aircraft Flightline Ground Operations",
     "Batteries - Maintenance, Handling, and Storage",
     "CBRNE",
+    "Program Element - Fall Protection",
+    "Program Element - Hazardous Energy Control",
+    "Program Element - Confined Space",
+    "Program Element - USR Roles and Responsibilities",
+    "Program Element - Motorcycle Safety Representative",
+    "Program Element - Supervisor Safety Training",
+    "Program Element - Traffic Safety Training",
+    "Program Element - Hazard Reporting Procedures",
+    "Program Element - Mishap Response and Reporting",
+    "Program Element - Safety Promotion",
+    "Program Element - Risk Management and Training",
+    "Program Element - Personal Protective Equipment",
+    "Program Element - JSTO, JHA, and Hazard Currency",
     "Civil Engineering",
     "Communication Cable, Antenna, and Communication Systems",
     "Composite Materials",
@@ -182,6 +195,71 @@ function assessmentDisciplineKey(value) {
 }
 
 const inspectionFocusByAssessmentItem = {
+  "Program Element - Fall Protection": [
+    "DAFI 91-202 3.4.4.1 - Has the unit determined whether a fall protection program applies to its work activities?",
+    "DAFI 91-202 3.4.4.1 - Are fall protection responsibilities, training, inspections, and records current for the work performed?",
+    "DAFI 91-202 3.4.4.1 - Are identified fall hazards being controlled and program deficiencies tracked to correction?"
+  ],
+  "Program Element - Hazardous Energy Control": [
+    "DAFI 91-202 3.4.4.2 - Has the unit determined where hazardous energy control procedures are required?",
+    "DAFI 91-202 3.4.4.2 and 14.1.3.1 - Are affected and authorized personnel trained for their hazardous energy control responsibilities?",
+    "DAFI 91-202 3.4.4.2 - Are hazardous energy control procedures, periodic inspections, and corrective actions current and documented?"
+  ],
+  "Program Element - Confined Space": [
+    "DAFI 91-202 3.4.4.3 - Has the unit identified confined spaces and determined whether permit-required controls apply?",
+    "DAFI 91-202 3.4.4.3 and 14.1.3.5 - Are confined-space entrants, attendants, supervisors, monitors, and rescue personnel trained as applicable?",
+    "DAFI 91-202 3.4.4.3 - Are confined-space procedures, permits, equipment, and program records current and available?"
+  ],
+  "Program Element - USR Roles and Responsibilities": [
+    "DAFI 91-202 2.2.2.1 - Does the USR advise the commander on safety matters, hazards, and latent conditions?",
+    "DAFI 91-202 2.2.2.2 - Does the USR conduct and document monthly spot inspections, with facility managers when possible?",
+    "DAFI 91-202 2.2.2.3-2.2.2.7 - Does the USR assist with mishap reporting, JSTOs/JHAs, safety briefings, hazard abatement, and formal inspections?"
+  ],
+  "Program Element - Motorcycle Safety Representative": [
+    "DAFI 91-202 3.4.4.5 - Is a Motorcycle Safety Representative appointed when the unit has motorcycle riders?",
+    "DAFI 91-202 1.6.59 and 3.4.4.5 - Is the representative complying with applicable AFI 91-207 roles and responsibilities?",
+    "DAFI 91-202 3.4.4.5 - Are rider identification, required training, and applicable program records current?"
+  ],
+  "Program Element - Supervisor Safety Training": [
+    "DAFI 91-202 3.4.4.6 and 14.5.1 - Are newly assigned supervisors identified and scheduled for Supervisor Safety Training?",
+    "DAFI 91-202 14.5.2.3 - Have supervisors completed the required computer-based and classroom portions of Supervisor Safety Training?",
+    "DAFI 91-202 14.5.3 - Is Supervisor Safety Training completion properly documented and retained?"
+  ],
+  "Program Element - Traffic Safety Training": [
+    "DAFI 91-202 3.4.4.7 - Is required traffic safety training current and documented in accordance with AFI 91-207?",
+    "DAFI 91-202 14.1.2.7 - Are personnel briefed on seat belts, helmets, speed limits, local hazards, backing spotters, vehicle training, and electronic-device restrictions as applicable?",
+    "DAFI 91-202 14.1.2.7 - Are motorcycle safety training requirements communicated before personnel ride?"
+  ],
+  "Program Element - Hazard Reporting Procedures": [
+    "DAFI 91-202 DAFGM 4.3 - Are DAF Form 457, SAFEREP, or equivalent hazard-reporting methods readily available to personnel?",
+    "DAFI 91-202 DAFGM 4.3 - Do personnel understand that hazards may be reported anonymously and without fear of reprisal?",
+    "DAFI 91-202 DAFGM 4.3.3 - Are hazards that cannot be eliminated immediately reported, documented, and tracked through the proper process?"
+  ],
+  "Program Element - Mishap Response and Reporting": [
+    "DAFI 91-202 3.4.4.9 - Are current mishap response and reporting procedures available and understood?",
+    "DAFI 91-202 14.1.2.5 - Do personnel know how to report mishaps, occupational injuries or illnesses, and applicable OSHA-recordable events without fear of reprisal?",
+    "DAFI 91-202 14.1.2.5.2-14.1.2.5.7 - Do personnel know treatment locations, emergency contact methods, evacuation routes, accountability points, shelter locations, and active-shooter actions?"
+  ],
+  "Program Element - Safety Promotion": [
+    "DAFI 91-202 3.4.4.10 - Does the unit actively support safety promotion through briefings, meetings, publications, or electronic communication?",
+    "DAFI 91-202 2.2.2.5 - Are safety briefings documented and useful educational materials provided to unit personnel?",
+    "DAFI 91-202 5.3 - Is safety information distributed using methods appropriate for the content and audience?"
+  ],
+  "Program Element - Risk Management and Training": [
+    "DAFI 91-202 3.4.4.11 - Is risk management applied to unit activities and incorporated into applicable training?",
+    "DAFI 91-202 1.6.28.5 - Are work environments and job tasks analyzed for hazards using risk management, deliberate risk assessments, or JHAs as applicable?",
+    "DAFI 91-202 13.6 - Are JHAs current for applicable work processes and updated when equipment, processes, or procedures change?"
+  ],
+  "Program Element - Personal Protective Equipment": [
+    "DAFI 91-202 3.4.4.12 - Are personnel trained on the required care and use of PPE?",
+    "DAFI 91-202 14.1.2.2 - Does the JHA, technical guidance, or safety/health evaluation identify the PPE required for each task?",
+    "DAFI 91-202 14.1.2.2.1 - Does PPE training cover donning, doffing, cleaning, maintenance, storage, and disposal?"
+  ],
+  "Program Element - JSTO, JHA, and Hazard Currency": [
+    "DAFI 91-202 3.4.4.13 and 14.1.1.1 - Is the JSTO reviewed at least annually and when equipment, processes, or requirements change?",
+    "DAFI 91-202 14.1.2 - Does the JSTO address workplace-specific hazards, controls, emergency actions, reporting, traffic safety, and applicable job-specific training?",
+    "DAFI 91-202 3.4.4.13 - Are current JHAs and documented hazards, including AF Forms 1118 and AF Form 3 information, reflected in the JSTO?"
+  ],
   "Aerial Work Platform Safety": [
     "16.2 - Are mobile elevating work platform or scaffold hazards identified before work begins?",
     "16.3 - Are operators and users trained for the equipment or scaffold being used?",
@@ -652,6 +730,98 @@ function unlearnTopicSearchTerm(term) {
 }
 
 const topicSearchKeywords = {
+  "Program Element - Fall Protection": [
+    "fall protection program",
+    "fall hazards",
+    "harness",
+    "anchor",
+    "working at height"
+  ],
+  "Program Element - Hazardous Energy Control": [
+    "hazardous energy program",
+    "lockout",
+    "tagout",
+    "loto",
+    "energy isolation"
+  ],
+  "Program Element - Confined Space": [
+    "confined space program",
+    "permit space",
+    "entrant",
+    "attendant",
+    "entry supervisor"
+  ],
+  "Program Element - USR Roles and Responsibilities": [
+    "usr",
+    "unit safety representative",
+    "safety representative duties",
+    "monthly spot inspection"
+  ],
+  "Program Element - Motorcycle Safety Representative": [
+    "msr",
+    "motorcycle safety representative",
+    "motorcycle riders",
+    "rider training"
+  ],
+  "Program Element - Supervisor Safety Training": [
+    "sst",
+    "supervisor safety training",
+    "new supervisor",
+    "supervisor training",
+    "cbt"
+  ],
+  "Program Element - Traffic Safety Training": [
+    "traffic safety",
+    "seat belt",
+    "backing spotter",
+    "vehicle training",
+    "electronic device driving"
+  ],
+  "Program Element - Hazard Reporting Procedures": [
+    "hazard report",
+    "daf form 457",
+    "form 457",
+    "saferep",
+    "anonymous reporting",
+    "unsafe condition"
+  ],
+  "Program Element - Mishap Response and Reporting": [
+    "mishap reporting",
+    "injury reporting",
+    "illness reporting",
+    "emergency response",
+    "osha recordable"
+  ],
+  "Program Element - Safety Promotion": [
+    "safety promotion",
+    "safety briefing",
+    "safety meeting",
+    "safety bulletin",
+    "educational materials"
+  ],
+  "Program Element - Risk Management and Training": [
+    "risk management",
+    "rm",
+    "risk assessment",
+    "job hazard analysis",
+    "jha"
+  ],
+  "Program Element - Personal Protective Equipment": [
+    "ppe program",
+    "personal protective equipment",
+    "ppe training",
+    "ppe storage",
+    "ppe care"
+  ],
+  "Program Element - JSTO, JHA, and Hazard Currency": [
+    "jsto",
+    "job safety training outline",
+    "jha currency",
+    "annual jsto review",
+    "af form 1118",
+    "af form 3",
+    "hazard abatement plan"
+  ],
   "Aerial Work Platform Safety": [
     "aerial lift",
     "boom lift",
@@ -1186,10 +1356,12 @@ function renderTopicSearchResults() {
   }
 
   if (!topicSearchMatches.length) {
-    const regulationSearchUrl = `dafman-search.html?q=${encodeURIComponent(query)}`;
+    const dafmanSearchUrl = `dafman-search.html?q=${encodeURIComponent(query)}`;
+    const dafiSearchUrl = `dafi-search.html?q=${encodeURIComponent(query)}`;
     topicSearchResults.innerHTML = `
       <p>No matches yet. Try another term like <strong>storage</strong>, <strong>ladder</strong>, <strong>forklift</strong>, <strong>eyewash</strong>, or <strong>paint</strong>.</p>
-      <a class="secondary-button topic-regulation-link" href="${escapeHtml(regulationSearchUrl)}">Search DAFMAN 91-203 for "${escapeHtml(query)}"</a>
+      <a class="secondary-button topic-regulation-link" href="${escapeHtml(dafmanSearchUrl)}">Search DAFMAN 91-203 for "${escapeHtml(query)}"</a>
+      <a class="secondary-button topic-regulation-link" href="${escapeHtml(dafiSearchUrl)}">Search DAFI 91-202 for "${escapeHtml(query)}"</a>
     `;
     return;
   }

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DAFI 91-202 Search</title>
+    <link rel="stylesheet" href="styles.css?v=20260618-1" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Regulation Helper</p>
+        <h1>DAFI 91-202 Search</h1>
+      </div>
+      <div class="header-actions">
+        <a class="header-link" href="index.html">Back to Builder</a>
+      </div>
+    </header>
+
+    <main class="library-page">
+      <section class="form-section">
+        <div class="section-heading">
+          <p class="eyebrow">Department of the Air Force Instruction 91-202</p>
+          <h2>Search Numbered Paragraphs</h2>
+        </div>
+
+        <div class="dafman-search-panel">
+          <label>
+            <span>Search the regulation</span>
+            <input id="dafiSearchInput" type="search" placeholder="Try USR, spot inspection, Form 457, supervisor training, JSTO..." autocomplete="off" />
+          </label>
+          <p class="filter-helper">This searches DAFI 91-202 and the attached February 2026 guidance memorandum. Guidance memorandum results are identified separately.</p>
+        </div>
+
+        <p class="library-status" id="dafiSearchStatus">Enter a term to search DAFI 91-202.</p>
+        <div class="dafman-results" id="dafiSearchResults"></div>
+      </section>
+    </main>
+
+    <script src="dafi-search-data.js?v=20260618-1"></script>
+    <script src="dafi-search.js?v=20260618-1"></script>
+  </body>
+</html>
