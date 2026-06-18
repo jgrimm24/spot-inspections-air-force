@@ -1546,7 +1546,7 @@ function renderReport(record) {
       <dl>
         <dt>Unit</dt><dd>${display(record.unit)}</dd>
         <dt>Functional Area</dt><dd>${display(record.functionalArea)}</dd>
-        <dt>Responsible Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
+        <dt>Safety Area / Role</dt><dd>${display(record.responsibleDiscipline)}</dd>
         <dt>Inspection Topic</dt><dd>${display(record.assessmentItem)}</dd>
         <dt>Reference Source</dt><dd>${display(inspectionReferenceSource(record.assessmentItem, record.inspectionFocus))}</dd>
         <dt>Suggested Inspection Question</dt><dd>${display(record.inspectionFocus)}</dd>
@@ -1590,7 +1590,7 @@ function createMailtoUrl(entry) {
     "",
     `Inspection ID: ${entry?.id || "Not documented"}`,
     `Unit: ${record.unit || "Not documented"}`,
-    `Responsible Discipline: ${record.responsibleDiscipline || "Not documented"}`,
+    `Safety Area / Role: ${record.responsibleDiscipline || "Not documented"}`,
     `Inspection Topic: ${record.assessmentItem || "Not documented"}`,
     `Reference Source: ${inspectionReferenceSource(record.assessmentItem, record.inspectionFocus) || "Not documented"}`,
     `Suggested Inspection Question: ${record.inspectionFocus || "Not documented"}`,

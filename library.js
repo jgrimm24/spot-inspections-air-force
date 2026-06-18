@@ -388,7 +388,7 @@ function renderReport(record) {
       <dl>
         <dt>Unit</dt><dd>${display(record.unit)}</dd>
         <dt>Functional Area</dt><dd>${display(record.functionalArea)}</dd>
-        <dt>Responsible Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
+        <dt>Safety Area / Role</dt><dd>${display(record.responsibleDiscipline)}</dd>
         <dt>Inspection Topic</dt><dd>${display(record.assessmentItem)}</dd>
         <dt>Reference Source</dt><dd>${display(inspectionReferenceSource(record))}</dd>
         <dt>Suggested Inspection Question</dt><dd>${display(record.inspectionFocus)}</dd>
@@ -504,7 +504,7 @@ function renderLibrary() {
           <p>${display(record.workArea)} - ${display(record.inspectionDate)}</p>
         </div>
         <dl>
-          <dt>Discipline</dt><dd>${display(record.responsibleDiscipline)}</dd>
+          <dt>Safety Area / Role</dt><dd>${display(record.responsibleDiscipline)}</dd>
           <dt>Finding</dt><dd>${display(record.hasFinding)}</dd>
           <dt>Follow-up</dt><dd>${escapeHtml(status.detail)}</dd>
           <dt>Saved</dt><dd>${formatSavedDate(entry.savedAt)}</dd>
@@ -656,7 +656,7 @@ function exportVisibleInspections() {
   const headers = [
     "Unit",
     "Functional Area",
-    "Responsible Discipline",
+    "Safety Area / Role",
     "Inspection Topic",
     "Reference Source",
     "Suggested Inspection Question",
