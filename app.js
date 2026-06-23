@@ -1243,6 +1243,68 @@ function searchTerms(value) {
   return normalizeSearchText(value).split(" ").filter((term) => term.length > 1);
 }
 
+const topicVoiceCorrections = new Map([
+  ["all protection", "fall protection"],
+  ["fall prevention", "fall protection"],
+  ["fall arrest", "fall protection"],
+  ["false protection", "fall protection"],
+  ["eye wash", "eyewash"],
+  ["i wash", "eyewash"],
+  ["i washed", "eyewash"],
+  ["eye washer", "eyewash"],
+  ["emergency eye wash", "emergency eyewash"],
+  ["just so", "JSTO"],
+  ["jesto", "JSTO"],
+  ["gesture", "JSTO"],
+  ["job safety training", "JSTO"],
+  ["job safety training outline", "JSTO"],
+  ["has com", "HAZCOM"],
+  ["haz come", "HAZCOM"],
+  ["haz comm", "HAZCOM"],
+  ["hazard communication", "HAZCOM"],
+  ["pee pee e", "PPE"],
+  ["p p e", "PPE"],
+  ["personal protective equipment", "PPE"],
+  ["lock out tag out", "hazardous energy control"],
+  ["lockout tagout", "hazardous energy control"],
+  ["low toe", "LOTO"],
+  ["loto", "hazardous energy control"],
+  ["confined spaces", "confined space"],
+  ["fork lift", "forklift"],
+  ["for 57", "Form 457"],
+  ["four fifty seven", "Form 457"],
+  ["form for 57", "Form 457"],
+  ["must", "MUSTT"],
+  ["musty", "MUSTT"],
+  ["motorcycle must", "MUSTT"],
+  ["jay ha", "JHA"],
+  ["j h a", "JHA"],
+  ["job hazard analysis", "JHA"]
+]);
+
+function correctTopicVoiceTranscript(transcript) {
+  const value = transcript.trim();
+  const normalized = normalizeSearchText(value);
+  if (!normalized) {
+    return { heard: value, search: "" };
+  }
+
+  const exactCorrection = topicVoiceCorrections.get(normalized);
+  if (exactCorrection) {
+    return { heard: value, search: exactCorrection };
+  }
+
+  for (const [heardPhrase, correctedPhrase] of topicVoiceCorrections.entries()) {
+    if (heardPhrase.length < 6) continue;
+    if (normalized.includes(heardPhrase)) {
+      const corrected = normalized.replace(heardPhrase, correctedPhrase);
+      return { heard: value, search: corrected };
+    }
+  }
+
+  return { heard: value, search: value };
+}
+
 function responsibleDisciplineForSearchKey(value) {
   if (value === "Aviation Safety") return "Aviation Safety/SAFSO/Range Safety Officer";
   if (value === "Occupational Safety") return "Occupational Safety/USR/Supervisor";
@@ -1412,12 +1474,18 @@ function setTopicVoiceListening(isListening) {
 }
 
 function applyTopicVoiceTranscript(transcript) {
-  const value = transcript.trim();
-  if (!value) return;
+  const correction = correctTopicVoiceTranscript(transcript);
+  if (!correction.search) return;
 
-  topicSearchInput.value = value;
+  topicSearchInput.value = correction.search;
   topicSearchInput.dispatchEvent(new Event("input", { bubbles: true }));
   topicSearchInput.focus();
+
+  if (normalizeSearchText(correction.heard) !== normalizeSearchText(correction.search)) {
+    setTopicVoiceStatus(`Heard: ${correction.heard}. Searching as: ${correction.search}`);
+  } else {
+    setTopicVoiceStatus(`Heard: ${correction.heard}`);
+  }
 }
 
 function initializeTopicVoiceSearch() {
@@ -1442,7 +1510,6 @@ function initializeTopicVoiceSearch() {
       .map((result) => result[0]?.transcript || "")
       .join(" ");
     applyTopicVoiceTranscript(transcript);
-    setTopicVoiceStatus(transcript ? `Heard: ${transcript}` : "");
   });
 
   topicVoiceRecognition.addEventListener("error", (event) => {
