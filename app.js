@@ -34,6 +34,7 @@ let activeAssessmentItemKey = "";
 let activeInspectionFocusKey = "";
 let lastSavedInspection = null;
 let topicSearchMatches = [];
+let TopicVoiceRecognitionConstructor = null;
 let topicVoiceRecognition = null;
 let topicVoiceListening = false;
 let topicVoiceTimeout = 0;
@@ -1489,15 +1490,18 @@ function stopTopicVoiceSearch(message = "") {
     topicVoiceTimeout = 0;
   }
 
-  if (topicVoiceRecognition) {
+  const activeRecognition = topicVoiceRecognition;
+  topicVoiceRecognition = null;
+
+  if (activeRecognition) {
     try {
-      topicVoiceRecognition.stop();
+      activeRecognition.stop();
     } catch {
       // Some browsers throw if speech recognition has already stopped.
     }
 
     try {
-      topicVoiceRecognition.abort();
+      activeRecognition.abort();
     } catch {
       // Abort is not implemented consistently across browsers.
     }
@@ -1507,6 +1511,51 @@ function stopTopicVoiceSearch(message = "") {
   if (message) {
     setTopicVoiceStatus(message);
   }
+}
+
+function createTopicVoiceRecognition() {
+  if (!TopicVoiceRecognitionConstructor) return null;
+
+  const recognition = new TopicVoiceRecognitionConstructor();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.lang = navigator.language || "en-US";
+
+  recognition.addEventListener("start", () => {
+    topicVoiceStopRequested = false;
+    setTopicVoiceListening(true);
+    setTopicVoiceStatus("Listening... tap Stop to end.");
+    topicVoiceTimeout = window.setTimeout(() => {
+      stopTopicVoiceSearch("Voice search timed out.");
+    }, TOPIC_VOICE_TIMEOUT_MS);
+  });
+
+  recognition.addEventListener("result", (event) => {
+    const transcript = Array.from(event.results)
+      .map((result) => result[0]?.transcript || "")
+      .join(" ");
+    applyTopicVoiceTranscript(transcript);
+    stopTopicVoiceSearch();
+  });
+
+  recognition.addEventListener("error", (event) => {
+    if (topicVoiceStopRequested && event.error === "aborted") return;
+
+    const message = event.error === "not-allowed"
+      ? "Microphone permission was blocked."
+      : "Voice search could not hear a clear search term.";
+    setTopicVoiceStatus(message);
+  });
+
+  recognition.addEventListener("end", () => {
+    if (topicVoiceRecognition === recognition) {
+      topicVoiceRecognition = null;
+    }
+    setTopicVoiceListening(false);
+  });
+
+  return recognition;
 }
 
 function applyTopicVoiceTranscript(transcript) {
@@ -1528,43 +1577,9 @@ function initializeTopicVoiceSearch() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition || !topicVoiceSearch) return;
 
+  TopicVoiceRecognitionConstructor = SpeechRecognition;
   topicVoiceSearch.hidden = false;
   topicVoiceSearch.setAttribute("aria-pressed", "false");
-
-  topicVoiceRecognition = new SpeechRecognition();
-  topicVoiceRecognition.continuous = false;
-  topicVoiceRecognition.interimResults = false;
-  topicVoiceRecognition.lang = navigator.language || "en-US";
-
-  topicVoiceRecognition.addEventListener("start", () => {
-    topicVoiceStopRequested = false;
-    setTopicVoiceListening(true);
-    setTopicVoiceStatus("Listening... tap Stop to end.");
-    topicVoiceTimeout = window.setTimeout(() => {
-      stopTopicVoiceSearch("Voice search timed out.");
-    }, TOPIC_VOICE_TIMEOUT_MS);
-  });
-
-  topicVoiceRecognition.addEventListener("result", (event) => {
-    const transcript = Array.from(event.results)
-      .map((result) => result[0]?.transcript || "")
-      .join(" ");
-    applyTopicVoiceTranscript(transcript);
-    stopTopicVoiceSearch();
-  });
-
-  topicVoiceRecognition.addEventListener("error", (event) => {
-    if (topicVoiceStopRequested && event.error === "aborted") return;
-
-    const message = event.error === "not-allowed"
-      ? "Microphone permission was blocked."
-      : "Voice search could not hear a clear search term.";
-    setTopicVoiceStatus(message);
-  });
-
-  topicVoiceRecognition.addEventListener("end", () => {
-    setTopicVoiceListening(false);
-  });
 }
 
 function applyTopicSearchMatch(match) {
@@ -1882,17 +1897,19 @@ form.addEventListener("change", update);
 topicSearchInput.addEventListener("input", renderTopicSearchResults);
 
 topicVoiceSearch.addEventListener("click", () => {
-  if (!topicVoiceRecognition) return;
-
   if (topicVoiceListening) {
     stopTopicVoiceSearch("Voice search stopped.");
     return;
   }
 
+  topicVoiceRecognition = createTopicVoiceRecognition();
+  if (!topicVoiceRecognition) return;
+
   try {
     topicVoiceStopRequested = false;
     topicVoiceRecognition.start();
   } catch {
+    topicVoiceRecognition = null;
     setTopicVoiceStatus("Voice search is already starting.");
   }
 });
@@ -1953,6 +1970,18 @@ textareaModal.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (!textareaModal.hidden && event.key === "Escape") {
     closeTextareaModal();
+  }
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && topicVoiceListening) {
+    stopTopicVoiceSearch();
+  }
+});
+
+window.addEventListener("pagehide", () => {
+  if (topicVoiceListening) {
+    stopTopicVoiceSearch();
   }
 });
 
