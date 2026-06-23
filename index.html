@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Spot Inspection Documentation</title>
-    <link rel="stylesheet" href="styles.css?v=20260618-2" />
+    <link rel="stylesheet" href="styles.css?v=20260623-1" />
   </head>
   <body>
     <header class="app-header">
@@ -33,7 +33,11 @@
             <section class="topic-finder" aria-label="Inspection topic finder">
               <label>
                 <span>Find an inspection topic</span>
-                <input id="topicSearch" type="search" placeholder="Search equipment or programs: shelving, ladder, Form 457, supervisor training, JSTO..." autocomplete="off" />
+                <div class="topic-search-control">
+                  <input id="topicSearch" type="search" placeholder="Search equipment or programs: shelving, ladder, Form 457, supervisor training, JSTO..." autocomplete="off" />
+                  <button class="topic-voice-button" id="topicVoiceSearch" type="button" hidden aria-label="Search inspection topics by voice">Mic</button>
+                </div>
+                <small class="topic-voice-status" id="topicVoiceStatus" hidden></small>
               </label>
               <div class="topic-search-results" id="topicSearchResults">
                 <p>Search by what you plan to inspect. Click a suggestion to select the discipline, topic, and suggested inspection question.</p>
@@ -317,6 +321,6 @@
     <script>
       window.SPOT_INSPECTION_API_URL = "https://spot-inspections-air-force.onrender.com";
     </script>
-    <script src="app.js?v=20260618-5"></script>
+    <script src="app.js?v=20260623-1"></script>
   </body>
 </html>

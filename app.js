@@ -14,6 +14,8 @@ const assessmentItemInput = document.querySelector("#assessmentItem");
 const inspectionFocusInput = document.querySelector("#inspectionFocus");
 const inspectionFocusSource = document.querySelector("#inspectionFocusSource");
 const topicSearchInput = document.querySelector("#topicSearch");
+const topicVoiceSearch = document.querySelector("#topicVoiceSearch");
+const topicVoiceStatus = document.querySelector("#topicVoiceStatus");
 const topicSearchResults = document.querySelector("#topicSearchResults");
 const reportPreview = document.querySelector("#reportPreview");
 const textareaModal = document.querySelector("#textareaModal");
@@ -32,6 +34,8 @@ let activeAssessmentItemKey = "";
 let activeInspectionFocusKey = "";
 let lastSavedInspection = null;
 let topicSearchMatches = [];
+let topicVoiceRecognition = null;
+let topicVoiceListening = false;
 
 const assessmentItemsByBranch = {
   "Aviation Safety|Commander and Supervisory Support (SMS)": [
@@ -1395,6 +1399,64 @@ function renderTopicSearchResults() {
   `).join("");
 }
 
+function setTopicVoiceStatus(message = "") {
+  topicVoiceStatus.textContent = message;
+  topicVoiceStatus.hidden = !message;
+}
+
+function setTopicVoiceListening(isListening) {
+  topicVoiceListening = isListening;
+  topicVoiceSearch.classList.toggle("is-listening", isListening);
+  topicVoiceSearch.textContent = isListening ? "Stop" : "Mic";
+  topicVoiceSearch.setAttribute("aria-pressed", String(isListening));
+}
+
+function applyTopicVoiceTranscript(transcript) {
+  const value = transcript.trim();
+  if (!value) return;
+
+  topicSearchInput.value = value;
+  topicSearchInput.dispatchEvent(new Event("input", { bubbles: true }));
+  topicSearchInput.focus();
+}
+
+function initializeTopicVoiceSearch() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition || !topicVoiceSearch) return;
+
+  topicVoiceSearch.hidden = false;
+  topicVoiceSearch.setAttribute("aria-pressed", "false");
+
+  topicVoiceRecognition = new SpeechRecognition();
+  topicVoiceRecognition.continuous = false;
+  topicVoiceRecognition.interimResults = false;
+  topicVoiceRecognition.lang = navigator.language || "en-US";
+
+  topicVoiceRecognition.addEventListener("start", () => {
+    setTopicVoiceListening(true);
+    setTopicVoiceStatus("Listening...");
+  });
+
+  topicVoiceRecognition.addEventListener("result", (event) => {
+    const transcript = Array.from(event.results)
+      .map((result) => result[0]?.transcript || "")
+      .join(" ");
+    applyTopicVoiceTranscript(transcript);
+    setTopicVoiceStatus(transcript ? `Heard: ${transcript}` : "");
+  });
+
+  topicVoiceRecognition.addEventListener("error", (event) => {
+    const message = event.error === "not-allowed"
+      ? "Microphone permission was blocked."
+      : "Voice search could not hear a clear search term.";
+    setTopicVoiceStatus(message);
+  });
+
+  topicVoiceRecognition.addEventListener("end", () => {
+    setTopicVoiceListening(false);
+  });
+}
+
 function applyTopicSearchMatch(match) {
   const record = getRecordFromForm();
   record.responsibleDiscipline = match.responsibleDiscipline;
@@ -1709,6 +1771,21 @@ form.addEventListener("change", update);
 
 topicSearchInput.addEventListener("input", renderTopicSearchResults);
 
+topicVoiceSearch.addEventListener("click", () => {
+  if (!topicVoiceRecognition) return;
+
+  if (topicVoiceListening) {
+    topicVoiceRecognition.stop();
+    return;
+  }
+
+  try {
+    topicVoiceRecognition.start();
+  } catch {
+    setTopicVoiceStatus("Voice search is already starting.");
+  }
+});
+
 topicSearchResults.addEventListener("click", (event) => {
   const unlearnButton = event.target.closest("[data-topic-term]");
   if (unlearnButton) {
@@ -1803,4 +1880,5 @@ document.querySelector("#copyReport").addEventListener("click", async (event) =>
 
 renderUnitMemory();
 renderEmailMemory();
+initializeTopicVoiceSearch();
 renderRecord(loadRecord());

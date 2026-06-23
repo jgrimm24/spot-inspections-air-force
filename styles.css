@@ -142,6 +142,48 @@ button {
   margin: 0;
 }
 
+.topic-search-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.topic-search-control input {
+  min-width: 0;
+}
+
+.topic-voice-button {
+  min-width: 54px;
+  min-height: 42px;
+  border: 1px solid #c9d1d9;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.topic-voice-button:hover,
+.topic-voice-button:focus-visible {
+  border-color: var(--accent);
+  outline: 3px solid rgba(31, 122, 109, 0.14);
+}
+
+.topic-voice-button.is-listening {
+  border-color: var(--danger);
+  background: #ffe1df;
+  color: var(--danger);
+}
+
+.topic-voice-status {
+  display: block;
+  margin-top: 6px;
+  color: var(--accent-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
 .topic-search-results {
   display: grid;
   gap: 8px;
