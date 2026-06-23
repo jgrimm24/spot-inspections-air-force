@@ -36,6 +36,9 @@ let lastSavedInspection = null;
 let topicSearchMatches = [];
 let topicVoiceRecognition = null;
 let topicVoiceListening = false;
+let topicVoiceTimeout = 0;
+let topicVoiceStopRequested = false;
+const TOPIC_VOICE_TIMEOUT_MS = 7000;
 
 const assessmentItemsByBranch = {
   "Aviation Safety|Commander and Supervisory Support (SMS)": [
@@ -1471,6 +1474,39 @@ function setTopicVoiceListening(isListening) {
   topicVoiceSearch.classList.toggle("is-listening", isListening);
   topicVoiceSearch.textContent = isListening ? "Stop" : "Mic";
   topicVoiceSearch.setAttribute("aria-pressed", String(isListening));
+
+  if (!isListening && topicVoiceTimeout) {
+    window.clearTimeout(topicVoiceTimeout);
+    topicVoiceTimeout = 0;
+  }
+}
+
+function stopTopicVoiceSearch(message = "") {
+  topicVoiceStopRequested = true;
+
+  if (topicVoiceTimeout) {
+    window.clearTimeout(topicVoiceTimeout);
+    topicVoiceTimeout = 0;
+  }
+
+  if (topicVoiceRecognition) {
+    try {
+      topicVoiceRecognition.stop();
+    } catch {
+      // Some browsers throw if speech recognition has already stopped.
+    }
+
+    try {
+      topicVoiceRecognition.abort();
+    } catch {
+      // Abort is not implemented consistently across browsers.
+    }
+  }
+
+  setTopicVoiceListening(false);
+  if (message) {
+    setTopicVoiceStatus(message);
+  }
 }
 
 function applyTopicVoiceTranscript(transcript) {
@@ -1501,8 +1537,12 @@ function initializeTopicVoiceSearch() {
   topicVoiceRecognition.lang = navigator.language || "en-US";
 
   topicVoiceRecognition.addEventListener("start", () => {
+    topicVoiceStopRequested = false;
     setTopicVoiceListening(true);
-    setTopicVoiceStatus("Listening...");
+    setTopicVoiceStatus("Listening... tap Stop to end.");
+    topicVoiceTimeout = window.setTimeout(() => {
+      stopTopicVoiceSearch("Voice search timed out.");
+    }, TOPIC_VOICE_TIMEOUT_MS);
   });
 
   topicVoiceRecognition.addEventListener("result", (event) => {
@@ -1510,9 +1550,12 @@ function initializeTopicVoiceSearch() {
       .map((result) => result[0]?.transcript || "")
       .join(" ");
     applyTopicVoiceTranscript(transcript);
+    stopTopicVoiceSearch();
   });
 
   topicVoiceRecognition.addEventListener("error", (event) => {
+    if (topicVoiceStopRequested && event.error === "aborted") return;
+
     const message = event.error === "not-allowed"
       ? "Microphone permission was blocked."
       : "Voice search could not hear a clear search term.";
@@ -1842,11 +1885,12 @@ topicVoiceSearch.addEventListener("click", () => {
   if (!topicVoiceRecognition) return;
 
   if (topicVoiceListening) {
-    topicVoiceRecognition.stop();
+    stopTopicVoiceSearch("Voice search stopped.");
     return;
   }
 
   try {
+    topicVoiceStopRequested = false;
     topicVoiceRecognition.start();
   } catch {
     setTopicVoiceStatus("Voice search is already starting.");
