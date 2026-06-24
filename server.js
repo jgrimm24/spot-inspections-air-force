@@ -345,6 +345,9 @@ async function updateInspection(payload) {
     reviewer: String(updates.reviewer || "").trim(),
     reviewDate: String(updates.reviewDate || "").trim(),
     corrected: String(updates.corrected || currentEntry.record.corrected || "").trim(),
+    followUpDue: Object.hasOwn(updates, "followUpDue")
+      ? String(updates.followUpDue || "").trim()
+      : String(currentEntry.record.followUpDue || "").trim(),
     followUpLog: String(updates.followUpLog || "").trim()
   };
 

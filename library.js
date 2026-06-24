@@ -92,6 +92,17 @@ function currentDateValue() {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+function formatDateValue(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function addDays(startDateValue, days) {
+  const date = dateFromValue(startDateValue);
+  if (!date) return "";
+  date.setDate(date.getDate() + days);
+  return formatDateValue(date);
+}
+
 function dateFromValue(value) {
   if (!value) return null;
   const date = new Date(`${value}T00:00:00`);
@@ -583,7 +594,7 @@ function openFollowUpEditor(entry) {
   followUpEditorTitle.textContent = `Update ${record.unit || "Spot Inspection"}`;
   followUpReviewer.value = record.reviewer || "";
   followUpReviewDate.value = record.reviewDate || currentDateValue();
-  followUpCorrected.value = record.corrected || "";
+  followUpCorrected.value = record.corrected || "No";
   followUpLogEdit.value = record.followUpLog || "";
   followUpEditor.hidden = false;
   followUpEditor.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -600,6 +611,10 @@ async function saveFollowUpUpdate(event) {
   saveFollowUpEdit.textContent = "Saving...";
 
   try {
+    const reviewDate = followUpReviewDate.value || currentDateValue();
+    const corrected = followUpCorrected.value || "No";
+    const followUpDue = corrected === "Yes" ? (entry.record?.followUpDue || "") : addDays(reviewDate, 30);
+
     const response = await fetch(apiUrl("/api/inspections"), {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -607,8 +622,9 @@ async function saveFollowUpUpdate(event) {
         path: entry.path,
         recordUpdates: {
           reviewer: followUpReviewer.value,
-          reviewDate: followUpReviewDate.value,
-          corrected: followUpCorrected.value,
+          reviewDate,
+          corrected,
+          followUpDue,
           followUpLog: followUpLogEdit.value
         }
       })
