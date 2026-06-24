@@ -29,6 +29,7 @@ const cancelFollowUpEdit = document.querySelector("#cancelFollowUpEdit");
 let inspections = [];
 let selectedInspectionId = "";
 let editingInspectionId = "";
+let requiresDeleteToken = false;
 const exportSelection = new Set();
 const tallyDisciplines = [
   "Aviation Safety/SAFSO/Range Safety Officer",
@@ -674,6 +675,7 @@ async function loadLibrary() {
     }
 
     inspections = Array.isArray(result.inspections) ? result.inspections : [];
+    requiresDeleteToken = Boolean(result.requiresDeleteToken);
     const currentIds = new Set(inspections.map((entry) => entry.id));
     Array.from(exportSelection).forEach((id) => {
       if (!currentIds.has(id)) exportSelection.delete(id);
@@ -696,9 +698,15 @@ async function deleteInspection(entry) {
   if (!window.confirm(`Delete ${record.unit || "this inspection"} from the shared library?`)) return;
 
   const headers = { "Content-Type": "application/json" };
-  const deleteCode = window.prompt("Enter delete code if required. Leave blank if not configured.", "");
-  if (deleteCode === null) return;
-  if (deleteCode) headers["X-Library-Delete-Token"] = deleteCode;
+  if (requiresDeleteToken) {
+    const deleteCode = window.prompt("Enter library delete code.", "");
+    if (deleteCode === null) return;
+    if (!deleteCode.trim()) {
+      window.alert("A delete code is required for this library.");
+      return;
+    }
+    headers["X-Library-Delete-Token"] = deleteCode.trim();
+  }
 
   const response = await fetch(apiUrl("/api/inspections"), {
     method: "DELETE",
