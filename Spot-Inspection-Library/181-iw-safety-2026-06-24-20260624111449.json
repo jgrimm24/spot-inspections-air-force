@@ -1,0 +1,33 @@
+{
+  "id": "SI-1782299689158",
+  "savedAt": "2026-06-24T11:14:49.158Z",
+  "record": {
+    "unit": "181 IW",
+    "functionalArea": "Safety",
+    "responsibleDiscipline": "Occupational Safety/USR/Supervisor",
+    "assessmentArea": "Compliance with Program Directives",
+    "assessmentItem": "Fall Protection",
+    "inspectionFocus": "13.1 - Are fall hazards controlled for work above four feet in general industry or six feet in construction activities?",
+    "inspectionType": "Safety spot inspection",
+    "inspectionTypeTier2": "",
+    "inspectionDate": "2026-06-24",
+    "inspectionTime": "06:58",
+    "inspectorEmail": "joseph.grimm.2@us.af.mil",
+    "inspectorName": "Joe Grimm",
+    "workArea": "Harness inspection",
+    "positiveFinding": "",
+    "hazard": "",
+    "correctiveAction": "",
+    "cause": "",
+    "responsibleName": "",
+    "responsibleContact": "",
+    "followUpDue": "2026-07-24",
+    "reviewer": "",
+    "reviewDate": "",
+    "followUpLog": "",
+    "hasFinding": "No",
+    "hasPositiveFinding": "No",
+    "corrected": ""
+  },
+  "reportText": "Spot Inspection\nUnit\n181 IW\nFunctional Area\nSafety\nSafety Area / Role\nOccupational Safety/USR/Supervisor\nInspection Topic\nFall Protection\nReference Source\nDAFMAN 91-203\nSuggested Inspection Question\n13.1 - Are fall hazards controlled for work above four feet in general industry or six feet in construction activities?\nDate\n2026-06-24\nTime\n06:58\nInspector Name\nJoe Grimm\nInspector Email\njoseph.grimm.2@us.af.mil\nActivity / Work Area\nHarness inspection\nFinding Identified\nNo\nPositive Finding\nNo\nHazard / Risk Identification\n\nNo hazard, risk, or finding was identified during this spot inspection.\n\nReview and Closeout\nReviewer\nNot documented\nReview Date\nNot documented\n\nFollow-up Log: Not documented"
+}
