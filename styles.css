@@ -603,6 +603,7 @@ td select {
 
 .library-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: end;
   justify-content: space-between;
   gap: 16px;
@@ -616,6 +617,11 @@ td select {
 .library-toolbar label {
   width: min(360px, 100%);
   margin: 0;
+}
+
+.library-multi-select {
+  min-height: 132px;
+  overflow: auto;
 }
 
 .filter-helper {

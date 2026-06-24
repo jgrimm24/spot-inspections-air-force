@@ -2,6 +2,7 @@ const API_BASE = String(window.SPOT_INSPECTION_API_URL || "").trim().replace(/\/
 
 const libraryStatus = document.querySelector("#libraryStatus");
 const libraryUnitFilter = document.querySelector("#libraryUnitFilter");
+const libraryFunctionalAreaFilter = document.querySelector("#libraryFunctionalAreaFilter");
 const librarySearch = document.querySelector("#librarySearch");
 const followUpStatusFilter = document.querySelector("#followUpStatusFilter");
 const followUpSummary = document.querySelector("#followUpSummary");
@@ -40,6 +41,58 @@ const tallyDisciplineAliases = {
   "Space Safety": ["Space Safety"]
 };
 const fiscalYearMonths = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const functionalAreas = [
+  "Aerial Port",
+  "Civil Engineering - Carpentry",
+  "Civil Engineering - Electrician",
+  "Civil Engineering - Explosive Ordnance Disposal",
+  "Civil Engineering - Fire Department",
+  "Civil Engineering - HVAC",
+  "Civil Engineering - Other",
+  "Civil Engineering - Plumbing",
+  "Civil Engineering - Road & Grounds",
+  "Civil Engineering - Sheet Metal",
+  "Civil Engineering - Sign Shop",
+  "Communications",
+  "Comptroller",
+  "Contracting",
+  "Corrosion Control Facility",
+  "Engineering Installation Squadron (EIS)",
+  "Intelligence",
+  "Logistics - Fuels",
+  "Logistics - Supply",
+  "Logistics - Vehicle Maintenance",
+  "Logistics - Vehicle Operations",
+  "Logistics Readiness",
+  "Maintenance - AGE",
+  "Maintenance - Aircraft",
+  "Maintenance - Engines",
+  "Maintenance - Fuel Cell",
+  "Maintenance - Other",
+  "Maintenance - PMEL",
+  "Maintenance - Sheet Metal",
+  "Maintenance - Space",
+  "Maintenance - Weapons/Munitions",
+  "Medical",
+  "Operations - Aircrew",
+  "Operations - Airfield Management",
+  "Operations - Cyber",
+  "Operations - Life Support",
+  "Operations - Other",
+  "Operations - Space",
+  "Operations - Weapons/Munitions",
+  "Other, Describe",
+  "Personnel",
+  "Research and Development",
+  "Safety",
+  "Security Forces",
+  "Services",
+  "Storage - Weapons/Munitions",
+  "Test and Evaluation",
+  "Training",
+  "Weather",
+  "Wing Staff Agencies"
+];
 
 function apiUrl(path) {
   return `${API_BASE}${path}`;
@@ -217,6 +270,7 @@ function renderMonthlyTally() {
   renderFiscalYearFilter();
   const selectedYear = Number(libraryFiscalYear.value);
   const selectedUnit = libraryUnitFilter.value;
+  const selectedAreas = selectedFunctionalAreas();
   if (!selectedUnit) {
     monthlyTallyBody.innerHTML = `
       <tr>
@@ -230,7 +284,8 @@ function renderMonthlyTally() {
   const tallyEntries = inspections.filter((entry) => {
     const record = entry.record || {};
     return record.unit === selectedUnit
-      && fiscalYearForDate(record.inspectionDate) === selectedYear;
+      && fiscalYearForDate(record.inspectionDate) === selectedYear
+      && functionalAreaMatches(entry, selectedAreas);
   });
   const disciplines = [...new Set([
     ...tallyDisciplines,
@@ -270,11 +325,35 @@ function renderMonthlyTally() {
     `
   ].join("");
 
-  monthlyTallyScope.textContent = `FY ${selectedYear} | ${selectedUnit} | ${grandTotal} completed inspection${grandTotal === 1 ? "" : "s"}`;
+  monthlyTallyScope.textContent = `FY ${selectedYear} | ${selectedUnit} | ${functionalAreaScopeText(selectedAreas)} | ${grandTotal} completed inspection${grandTotal === 1 ? "" : "s"}`;
 }
 
 function uniqueUnits() {
   return [...new Set(inspections.map((entry) => entry.record?.unit).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+}
+
+function uniqueFunctionalAreas() {
+  const knownAreas = new Set(functionalAreas);
+  const savedAreas = [...new Set(inspections.map((entry) => entry.record?.functionalArea).filter(Boolean))]
+    .filter((area) => !knownAreas.has(area))
+    .sort((a, b) => a.localeCompare(b));
+  return [...functionalAreas, ...savedAreas];
+}
+
+function selectedFunctionalAreas() {
+  return Array.from(libraryFunctionalAreaFilter.selectedOptions)
+    .map((option) => option.value)
+    .filter(Boolean);
+}
+
+function functionalAreaMatches(entry, selectedAreas = selectedFunctionalAreas()) {
+  return !selectedAreas.length || selectedAreas.includes(entry.record?.functionalArea || "");
+}
+
+function functionalAreaScopeText(selectedAreas = selectedFunctionalAreas()) {
+  if (!selectedAreas.length) return "All functional areas";
+  if (selectedAreas.length === 1) return selectedAreas[0];
+  return `${selectedAreas.length} functional areas`;
 }
 
 function renderUnitFilter() {
@@ -287,6 +366,13 @@ function renderUnitFilter() {
     libraryUnitFilter.appendChild(option);
   });
   libraryUnitFilter.value = uniqueUnits().includes(current) ? current : "";
+}
+
+function renderFunctionalAreaFilter() {
+  const selected = new Set(selectedFunctionalAreas());
+  libraryFunctionalAreaFilter.innerHTML = uniqueFunctionalAreas()
+    .map((area) => `<option value="${escapeHtml(area)}" ${selected.has(area) ? "selected" : ""}>${escapeHtml(area)}</option>`)
+    .join("");
 }
 
 function entryText(entry) {
@@ -317,11 +403,13 @@ function filteredInspections() {
 
   const query = librarySearch.value.trim().toLowerCase();
   const statusFilter = followUpStatusFilter.value;
+  const selectedAreas = selectedFunctionalAreas();
   return inspections.filter((entry) => {
     const status = followUpStatus(entry);
     const unitMatches = entry.record?.unit === unit;
+    const functionalAreaMatch = functionalAreaMatches(entry, selectedAreas);
     const queryMatches = !query || entryText(entry).includes(query);
-    return unitMatches && queryMatches && statusMatchesFilter(status, statusFilter);
+    return unitMatches && functionalAreaMatch && queryMatches && statusMatchesFilter(status, statusFilter);
   }).sort((a, b) => {
     const statusA = followUpStatus(a);
     const statusB = followUpStatus(b);
@@ -334,14 +422,15 @@ function selectedInspections() {
   return inspections.filter((entry) => exportSelection.has(entry.id));
 }
 
-function pruneExportSelectionForUnit(unit) {
+function pruneExportSelectionForFilters(unit) {
   if (!unit) {
     exportSelection.clear();
     return;
   }
 
+  const selectedAreas = selectedFunctionalAreas();
   const unitEntryIds = new Set(inspections
-    .filter((entry) => entry.record?.unit === unit)
+    .filter((entry) => entry.record?.unit === unit && functionalAreaMatches(entry, selectedAreas))
     .map((entry) => entry.id));
   Array.from(exportSelection).forEach((id) => {
     if (!unitEntryIds.has(id)) exportSelection.delete(id);
@@ -425,6 +514,7 @@ function renderReport(record) {
 
 function renderFollowUpSummary() {
   const selectedUnit = libraryUnitFilter.value;
+  const selectedAreas = selectedFunctionalAreas();
   if (!selectedUnit) {
     followUpSummary.innerHTML = `
       <div class="empty-library">
@@ -444,7 +534,7 @@ function renderFollowUpSummary() {
   };
 
   inspections
-    .filter((entry) => entry.record?.unit === selectedUnit)
+    .filter((entry) => entry.record?.unit === selectedUnit && functionalAreaMatches(entry, selectedAreas))
     .forEach((entry) => {
     const status = followUpStatus(entry);
     counts[status.key] += 1;
@@ -466,11 +556,12 @@ function renderFollowUpSummary() {
 
 function renderLibrary() {
   renderUnitFilter();
+  renderFunctionalAreaFilter();
   renderMonthlyTally();
   renderFollowUpSummary();
   const visibleEntries = filteredInspections();
   const selectedUnit = libraryUnitFilter.value;
-  pruneExportSelectionForUnit(selectedUnit);
+  pruneExportSelectionForFilters(selectedUnit);
   const selectedCount = exportSelection.size;
   const visibleCountText = `${visibleEntries.length} inspection${visibleEntries.length === 1 ? "" : "s"}`;
   libraryCount.textContent = selectedUnit
@@ -493,7 +584,7 @@ function renderLibrary() {
     libraryList.innerHTML = `
       <div class="empty-library">
         <strong>No completed spot inspections found.</strong>
-        <span>Try a different Unit filter or save a completed inspection from the builder.</span>
+        <span>Try a different Unit or Functional Area filter, or save a completed inspection from the builder.</span>
       </div>
     `;
     return;
@@ -753,6 +844,7 @@ function updateFilters() {
 }
 
 libraryUnitFilter.addEventListener("change", updateFilters);
+libraryFunctionalAreaFilter.addEventListener("change", updateFilters);
 librarySearch.addEventListener("input", updateFilters);
 followUpStatusFilter.addEventListener("change", updateFilters);
 libraryFiscalYear.addEventListener("change", renderMonthlyTally);
