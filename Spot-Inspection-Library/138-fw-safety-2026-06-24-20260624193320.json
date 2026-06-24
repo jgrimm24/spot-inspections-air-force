@@ -22,12 +22,13 @@
     "responsibleName": "MSgt",
     "responsibleContact": "seth.branham@us.af.mil",
     "followUpDue": "2026-07-24",
-    "reviewer": "",
-    "reviewDate": "",
-    "followUpLog": "",
+    "reviewer": "MSgt Brian Massey",
+    "reviewDate": "2026-06-24",
+    "followUpLog": "This is a duplicate entry and entered in error.",
     "hasFinding": "Yes",
     "hasPositiveFinding": "No",
-    "corrected": "No"
+    "corrected": "Yes"
   },
-  "reportText": "Spot Inspection\nUnit\n138 FW\nFunctional Area\nSafety\nSafety Area / Role\nOccupational Safety/USR/Supervisor\nInspection Topic\nProgram Element - JSTO, JHA, and Hazard Currency\nReference Source\nDAFI 91-202\nSuggested Inspection Question\nDAFI 91-202 14.1.2 - Does the JSTO address workplace-specific hazards, controls, emergency actions, reporting, traffic safety, and applicable job-specific training?\nDate\n2026-06-24\nTime\n13:54\nInspector Name\nMSgt Brian Massey\nInspector Email\n138FW.SE.SafetyOffice@us.af.mil\nActivity / Work Area\nElectric and Environmental JSTO overdue for annual review.\nFinding Identified\nYes\nPositive Finding\nNo\nHazard / Risk Identification\nHazard / Discrepancy\nSupervisor needing to validate and update JSTO\nCorrective Action\nTo ensure correct references are being used. Verify emergency procedures and rally points are correct.\nCause\nSupervisor Oversight\nResponsible Person\nMSgt\nResponsible Contact\nseth.branham@us.af.mil\nFollow-up Due\n2026-07-24\nCorrected\nNo\nReview and Closeout\nReviewer\nNot documented\nReview Date\nNot documented\n\nFollow-up Log: Not documented"
+  "reportText": "Spot Inspection\nUnit\n138 FW\nFunctional Area\nSafety\nSafety Area / Role\nOccupational Safety/USR/Supervisor\nInspection Topic\nProgram Element - JSTO, JHA, and Hazard Currency\nReference Source\nDAFI 91-202\nSuggested Inspection Question\nDAFI 91-202 14.1.2 - Does the JSTO address workplace-specific hazards, controls, emergency actions, reporting, traffic safety, and applicable job-specific training?\nDate\n2026-06-24\nTime\n13:54\nInspector Name\nMSgt Brian Massey\nInspector Email\n138FW.SE.SafetyOffice@us.af.mil\nActivity / Work Area\nElectric and Environmental JSTO overdue for annual review.\nFinding Identified\nYes\nPositive Finding\nNo\nHazard / Risk Identification\nHazard / Discrepancy\nSupervisor needing to validate and update JSTO\nCorrective Action\nTo ensure correct references are being used. Verify emergency procedures and rally points are correct.\nCause\nSupervisor Oversight\nResponsible Person\nMSgt\nResponsible Contact\nseth.branham@us.af.mil\nFollow-up Due\n2026-07-24\nCorrected\nNo\nReview and Closeout\nReviewer\nNot documented\nReview Date\nNot documented\n\nFollow-up Log: Not documented",
+  "updatedAt": "2026-06-24T19:37:51.261Z"
 }
