@@ -1,0 +1,33 @@
+{
+  "id": "SI-1782325741367",
+  "savedAt": "2026-06-24T18:29:01.367Z",
+  "record": {
+    "unit": "181 IW",
+    "functionalArea": "Safety",
+    "responsibleDiscipline": "Occupational Safety/USR/Supervisor",
+    "assessmentArea": "Compliance with Program Directives",
+    "assessmentItem": "Fall Protection",
+    "inspectionFocus": "13.3 - Has a fall hazard survey been completed for work areas where fall hazards exist?",
+    "inspectionType": "Safety spot inspection",
+    "inspectionTypeTier2": "",
+    "inspectionDate": "2026-06-24",
+    "inspectionTime": "08:35",
+    "inspectorEmail": "joseph.grimm.2@us.af.mil",
+    "inspectorName": "Joe Grimm",
+    "workArea": "Surveys completed",
+    "positiveFinding": "",
+    "hazard": "",
+    "correctiveAction": "",
+    "cause": "",
+    "responsibleName": "",
+    "responsibleContact": "",
+    "followUpDue": "2026-07-24",
+    "reviewer": "",
+    "reviewDate": "",
+    "followUpLog": "",
+    "hasFinding": "No",
+    "hasPositiveFinding": "No",
+    "corrected": ""
+  },
+  "reportText": "Spot Inspection\nUnit\n181 IW\nFunctional Area\nSafety\nSafety Area / Role\nOccupational Safety/USR/Supervisor\nInspection Topic\nFall Protection\nReference Source\nDAFMAN 91-203\nSuggested Inspection Question\n13.3 - Has a fall hazard survey been completed for work areas where fall hazards exist?\nDate\n2026-06-24\nTime\n08:35\nInspector Name\nJoe Grimm\nInspector Email\njoseph.grimm.2@us.af.mil\nActivity / Work Area\nSurveys completed\nFinding Identified\nNo\nPositive Finding\nNo\nHazard / Risk Identification\n\nNo hazard, risk, or finding was identified during this spot inspection.\n\nReview and Closeout\nReviewer\nNot documented\nReview Date\nNot documented\n\nFollow-up Log: Not documented"
+}
