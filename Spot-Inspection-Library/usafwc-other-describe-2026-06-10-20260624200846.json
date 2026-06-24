@@ -1,0 +1,33 @@
+{
+  "id": "SI-1782331726716",
+  "savedAt": "2026-06-24T20:08:46.716Z",
+  "record": {
+    "unit": "USAFWC",
+    "functionalArea": "Other, Describe",
+    "responsibleDiscipline": "Occupational Safety/USR/Supervisor",
+    "assessmentArea": "Compliance with Program Directives",
+    "assessmentItem": "General Work Procedures",
+    "inspectionFocus": "2.4 - Are work areas clean, orderly, and free of slip, trip, fire, and access hazards?",
+    "inspectionType": "Safety spot inspection",
+    "inspectionTypeTier2": "",
+    "inspectionDate": "2026-06-10",
+    "inspectionTime": "12:36",
+    "inspectorEmail": "Jeremiah.ogilvie@us.af.mil",
+    "inspectorName": "MSgt Ogilvie, Jeremiah",
+    "workArea": "Bldg 620, just walked around the bldg and check offices.",
+    "positiveFinding": "",
+    "hazard": "",
+    "correctiveAction": "",
+    "cause": "",
+    "responsibleName": "",
+    "responsibleContact": "",
+    "followUpDue": "2026-07-10",
+    "reviewer": "Good to go",
+    "reviewDate": "2026-06-11",
+    "followUpLog": "Not Needed",
+    "hasFinding": "No",
+    "hasPositiveFinding": "No",
+    "corrected": ""
+  },
+  "reportText": "Spot Inspection\nUnit\nUSAFWC\nFunctional Area\nOther, Describe\nSafety Area / Role\nOccupational Safety/USR/Supervisor\nInspection Topic\nGeneral Work Procedures\nReference Source\nDAFMAN 91-203\nSuggested Inspection Question\n2.4 - Are work areas clean, orderly, and free of slip, trip, fire, and access hazards?\nDate\n2026-06-10\nTime\n12:36\nInspector Name\nMSgt Ogilvie, Jeremiah\nInspector Email\nJeremiah.ogilvie@us.af.mil\nActivity / Work Area\nBldg 620, just walked around the bldg and check offices.\nFinding Identified\nNo\nPositive Finding\nNo\nHazard / Risk Identification\n\nNo hazard, risk, or finding was identified during this spot inspection.\n\nReview and Closeout\nReviewer\nGood to go\nReview Date\n2026-06-11\n\nFollow-up Log: Not Needed"
+}
