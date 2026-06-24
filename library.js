@@ -11,6 +11,8 @@ const libraryList = document.querySelector("#libraryList");
 const libraryFiscalYear = document.querySelector("#libraryFiscalYear");
 const monthlyTallyScope = document.querySelector("#monthlyTallyScope");
 const monthlyTallyBody = document.querySelector("#monthlyTallyBody");
+const monthlyChartScope = document.querySelector("#monthlyChartScope");
+const monthlyChartBars = document.querySelector("#monthlyChartBars");
 const libraryReportPreview = document.querySelector("#libraryReportPreview");
 const refreshLibrary = document.querySelector("#refreshLibrary");
 const exportCsv = document.querySelector("#exportCsv");
@@ -267,6 +269,39 @@ function renderFiscalYearFilter() {
   libraryFiscalYear.value = String(selectedYear);
 }
 
+function renderMonthlyChart(columnTotals = [], context = {}) {
+  const monthLabels = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
+  const selectedYear = context.selectedYear || Number(libraryFiscalYear.value);
+  const selectedUnit = context.selectedUnit || libraryUnitFilter.value;
+  const selectedAreas = context.selectedAreas || selectedFunctionalAreas();
+  const grandTotal = columnTotals.reduce((sum, count) => sum + count, 0);
+  const maxCount = Math.max(...columnTotals, 1);
+
+  if (!selectedUnit) {
+    monthlyChartScope.textContent = `FY ${selectedYear} | Select a unit to graph monthly totals`;
+    monthlyChartBars.innerHTML = `
+      <div class="monthly-chart-empty">
+        Select a unit above to build the monthly graph.
+      </div>
+    `;
+    return;
+  }
+
+  monthlyChartScope.textContent = `FY ${selectedYear} | ${selectedUnit} | ${functionalAreaScopeText(selectedAreas)} | ${grandTotal} completed inspection${grandTotal === 1 ? "" : "s"}`;
+  monthlyChartBars.innerHTML = columnTotals.map((count, index) => {
+    const height = count ? Math.max(14, Math.round((count / maxCount) * 132)) : 6;
+    return `
+      <div class="monthly-chart-bar-group">
+        <div class="monthly-chart-value">${count}</div>
+        <div class="monthly-chart-track" aria-hidden="true">
+          <div class="monthly-chart-bar" style="height: ${height}px"></div>
+        </div>
+        <div class="monthly-chart-month">${monthLabels[index]}</div>
+      </div>
+    `;
+  }).join("");
+}
+
 function renderMonthlyTally() {
   renderFiscalYearFilter();
   const selectedYear = Number(libraryFiscalYear.value);
@@ -279,6 +314,7 @@ function renderMonthlyTally() {
       </tr>
     `;
     monthlyTallyScope.textContent = `FY ${selectedYear} | Select a unit to view tracker totals`;
+    renderMonthlyChart([], { selectedYear, selectedUnit, selectedAreas });
     return;
   }
 
@@ -327,6 +363,7 @@ function renderMonthlyTally() {
   ].join("");
 
   monthlyTallyScope.textContent = `FY ${selectedYear} | ${selectedUnit} | ${functionalAreaScopeText(selectedAreas)} | ${grandTotal} completed inspection${grandTotal === 1 ? "" : "s"}`;
+  renderMonthlyChart(columnTotals, { selectedYear, selectedUnit, selectedAreas });
 }
 
 function uniqueUnits() {

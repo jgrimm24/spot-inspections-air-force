@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Completed Spot Inspections</title>
-    <link rel="stylesheet" href="styles.css?v=20260624-2" />
+    <link rel="stylesheet" href="styles.css?v=20260624-3" />
   </head>
   <body>
     <header class="app-header">
@@ -103,6 +103,17 @@
           </div>
           <p class="monthly-tally-note"><strong>To view the tracker:</strong> select a specific unit above. Functional Area narrows both the report list and tracker totals; Search filters the report list only.</p>
         </section>
+
+        <section class="monthly-chart" aria-label="Monthly inspection bar graph">
+          <div class="monthly-chart-heading">
+            <div>
+              <p class="eyebrow">Visual Summary</p>
+              <h3>Monthly Inspection Graph</h3>
+              <p class="monthly-chart-scope" id="monthlyChartScope"></p>
+            </div>
+          </div>
+          <div class="monthly-chart-bars" id="monthlyChartBars"></div>
+        </section>
       </section>
 
       <section class="report-panel" aria-label="Inspection report">
@@ -156,6 +167,6 @@
     <script>
       window.SPOT_INSPECTION_API_URL = "https://spot-inspections-air-force.onrender.com";
     </script>
-    <script src="library.js?v=20260624-3"></script>
+    <script src="library.js?v=20260624-4"></script>
   </body>
 </html>
