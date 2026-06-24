@@ -41,6 +41,7 @@ const tallyDisciplineAliases = {
   "Space Safety": ["Space Safety"]
 };
 const fiscalYearMonths = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const ALL_FUNCTIONAL_AREAS_VALUE = "__all-functional-areas__";
 const functionalAreas = [
   "Aerial Port",
   "Civil Engineering - Carpentry",
@@ -343,6 +344,7 @@ function uniqueFunctionalAreas() {
 function selectedFunctionalAreas() {
   return Array.from(libraryFunctionalAreaFilter.selectedOptions)
     .map((option) => option.value)
+    .filter((value) => value !== ALL_FUNCTIONAL_AREAS_VALUE)
     .filter(Boolean);
 }
 
@@ -370,9 +372,11 @@ function renderUnitFilter() {
 
 function renderFunctionalAreaFilter() {
   const selected = new Set(selectedFunctionalAreas());
-  libraryFunctionalAreaFilter.innerHTML = uniqueFunctionalAreas()
+  libraryFunctionalAreaFilter.innerHTML = [
+    `<option value="${ALL_FUNCTIONAL_AREAS_VALUE}" ${selected.size ? "" : "selected"}>All functional areas</option>`,
+    ...uniqueFunctionalAreas()
     .map((area) => `<option value="${escapeHtml(area)}" ${selected.has(area) ? "selected" : ""}>${escapeHtml(area)}</option>`)
-    .join("");
+  ].join("");
 }
 
 function entryText(entry) {
