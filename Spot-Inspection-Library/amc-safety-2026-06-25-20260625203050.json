@@ -1,0 +1,33 @@
+{
+  "id": "SI-1782419450077",
+  "savedAt": "2026-06-25T20:30:50.077Z",
+  "record": {
+    "unit": "AMC",
+    "functionalArea": "Safety",
+    "responsibleDiscipline": "Occupational Safety/USR/Supervisor",
+    "assessmentArea": "Compliance with Program Directives",
+    "assessmentItem": "General Work Procedures",
+    "inspectionFocus": "",
+    "inspectionType": "Safety spot inspection",
+    "inspectionTypeTier2": "",
+    "inspectionDate": "2026-06-25",
+    "inspectionTime": "15:27",
+    "inspectorEmail": "brandon.hoshor.1@us.af.mil",
+    "inspectorName": "Brandon Hoshor",
+    "workArea": "Conducted walkthrough of Bldg. P-10",
+    "positiveFinding": "",
+    "hazard": "",
+    "correctiveAction": "",
+    "cause": "",
+    "responsibleName": "",
+    "responsibleContact": "",
+    "followUpDue": "2026-07-25",
+    "reviewer": "",
+    "reviewDate": "",
+    "followUpLog": "",
+    "hasFinding": "No",
+    "hasPositiveFinding": "No",
+    "corrected": ""
+  },
+  "reportText": "Spot Inspection\nUnit\nAMC\nFunctional Area\nSafety\nSafety Area / Role\nOccupational Safety/USR/Supervisor\nInspection Topic\nGeneral Work Procedures\nReference Source\nGeneral inspection guidance\nSuggested Inspection Question\nNot documented\nDate\n2026-06-25\nTime\n15:27\nInspector Name\nBrandon Hoshor\nInspector Email\nbrandon.hoshor.1@us.af.mil\nActivity / Work Area\nConducted walkthrough of Bldg. P-10\nFinding Identified\nNo\nPositive Finding\nNo\nHazard / Risk Identification\nNo hazard, risk, or finding was identified during this spot inspection.\nReview and Closeout\nReviewer\nNot documented\nReview Date\nNot documented\nFollow-up Log: Not documented"
+}
