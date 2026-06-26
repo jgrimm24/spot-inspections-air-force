@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Completed Spot Inspections</title>
-    <link rel="stylesheet" href="styles.css?v=20260624-3" />
+    <link rel="stylesheet" href="styles.css?v=20260625-1" />
   </head>
   <body>
     <header class="app-header">
@@ -116,6 +116,26 @@
         </section>
       </section>
 
+      <section class="report-panel wing-trends" aria-label="Wing trend indicators">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow">Wing Trends</p>
+            <h2>Finding Risk Signals</h2>
+          </div>
+          <label class="trend-range-filter">
+            <span>Range</span>
+            <select id="wingTrendRange">
+              <option value="90">Last 90 days</option>
+              <option value="fy">Current fiscal year</option>
+              <option value="all">All records</option>
+            </select>
+          </label>
+        </div>
+        <div id="wingTrendPanel" class="wing-trend-panel">
+          <div class="empty-library">Loading wing trend indicators...</div>
+        </div>
+      </section>
+
       <section class="report-panel" aria-label="Inspection report">
         <div class="section-heading">
           <p class="eyebrow">Selected Record</p>
@@ -167,6 +187,6 @@
     <script>
       window.SPOT_INSPECTION_API_URL = "https://spot-inspections-air-force.onrender.com";
     </script>
-    <script src="library.js?v=20260624-5"></script>
+    <script src="library.js?v=20260625-1"></script>
   </body>
 </html>

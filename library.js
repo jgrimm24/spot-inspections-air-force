@@ -13,6 +13,8 @@ const monthlyTallyScope = document.querySelector("#monthlyTallyScope");
 const monthlyTallyBody = document.querySelector("#monthlyTallyBody");
 const monthlyChartScope = document.querySelector("#monthlyChartScope");
 const monthlyChartBars = document.querySelector("#monthlyChartBars");
+const wingTrendRange = document.querySelector("#wingTrendRange");
+const wingTrendPanel = document.querySelector("#wingTrendPanel");
 const libraryReportPreview = document.querySelector("#libraryReportPreview");
 const refreshLibrary = document.querySelector("#refreshLibrary");
 const exportCsv = document.querySelector("#exportCsv");
@@ -160,6 +162,12 @@ function addDays(startDateValue, days) {
   return formatDateValue(date);
 }
 
+function addDaysToDate(date, days) {
+  const nextDate = new Date(date);
+  nextDate.setDate(nextDate.getDate() + days);
+  return nextDate;
+}
+
 function dateFromValue(value) {
   if (!value) return null;
   const date = new Date(`${value}T00:00:00`);
@@ -253,6 +261,146 @@ function fiscalYearForDate(value) {
 
 function currentFiscalYear() {
   return fiscalYearForDate(currentDateValue());
+}
+
+function isFinding(entry) {
+  return entry.record?.hasFinding === "Yes";
+}
+
+function countBy(entries, getKey) {
+  return entries.reduce((counts, entry) => {
+    const key = String(getKey(entry) || "").trim();
+    if (!key) return counts;
+    counts.set(key, (counts.get(key) || 0) + 1);
+    return counts;
+  }, new Map());
+}
+
+function rankedCounts(entries, getKey, limit = 5) {
+  return [...countBy(entries, getKey).entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(([label, count]) => ({ label, count }));
+}
+
+function formatPercent(numerator, denominator) {
+  if (!denominator) return "0%";
+  return `${Math.round((numerator / denominator) * 100)}%`;
+}
+
+function trendEntriesForRange(range) {
+  if (range === "all") return inspections;
+
+  if (range === "fy") {
+    const fiscalYear = currentFiscalYear();
+    return inspections.filter((entry) => fiscalYearForDate(entry.record?.inspectionDate) === fiscalYear);
+  }
+
+  const today = dateFromValue(currentDateValue());
+  const startDate = addDaysToDate(today, -89);
+  return inspections.filter((entry) => {
+    const inspectionDate = dateFromValue(entry.record?.inspectionDate);
+    return inspectionDate && inspectionDate >= startDate && inspectionDate <= today;
+  });
+}
+
+function previousNinetyDayEntries() {
+  const today = dateFromValue(currentDateValue());
+  const currentStart = addDaysToDate(today, -89);
+  const previousStart = addDaysToDate(today, -179);
+  return inspections.filter((entry) => {
+    const inspectionDate = dateFromValue(entry.record?.inspectionDate);
+    return inspectionDate && inspectionDate >= previousStart && inspectionDate < currentStart;
+  });
+}
+
+function trendDirection(currentCount, previousCount) {
+  if (!currentCount && !previousCount) return { label: "Insufficient data", tone: "neutral" };
+  if (!previousCount && currentCount) return { label: "New activity", tone: "warning" };
+
+  const change = currentCount - previousCount;
+  const changeRate = Math.abs(change) / previousCount;
+  if (changeRate < 0.15) return { label: "Stable", tone: "neutral" };
+  if (change > 0) return { label: "Increasing", tone: "danger" };
+  return { label: "Decreasing", tone: "good" };
+}
+
+function renderRankList(title, rows, emptyText) {
+  const rowHtml = rows.length
+    ? rows.map((row) => `
+      <li>
+        <span>${escapeHtml(row.label)}</span>
+        <strong>${row.count}</strong>
+      </li>
+    `).join("")
+    : `<li class="trend-empty">${escapeHtml(emptyText)}</li>`;
+
+  return `
+    <section class="trend-list-card">
+      <h3>${escapeHtml(title)}</h3>
+      <ol>${rowHtml}</ol>
+    </section>
+  `;
+}
+
+function renderWingTrends() {
+  const range = wingTrendRange.value;
+  const entries = trendEntriesForRange(range);
+  const findingEntries = entries.filter(isFinding);
+  const openFollowUps = entries.filter((entry) => ["open", "due-soon", "overdue"].includes(followUpStatus(entry).key));
+  const overdueFollowUps = entries.filter((entry) => followUpStatus(entry).key === "overdue");
+  const previousFindings = range === "90" ? previousNinetyDayEntries().filter(isFinding).length : 0;
+  const findingTrend = range === "90"
+    ? trendDirection(findingEntries.length, previousFindings)
+    : { label: "Range summary", tone: "neutral" };
+  const rangeLabel = range === "90"
+    ? "Last 90 days"
+    : range === "fy"
+      ? `FY ${currentFiscalYear()}`
+      : "All saved records";
+  const repeatedTopics = rankedCounts(findingEntries, (entry) => entry.record?.assessmentItem)
+    .filter((row) => row.count > 1);
+
+  if (!inspections.length) {
+    wingTrendPanel.innerHTML = `
+      <div class="empty-library">
+        <strong>No inspection records available for trend analysis.</strong>
+        <span>Save completed inspections to populate wing trend indicators.</span>
+      </div>
+    `;
+    return;
+  }
+
+  wingTrendPanel.innerHTML = `
+    <div class="trend-summary-grid">
+      <article class="trend-summary-card">
+        <span>${escapeHtml(rangeLabel)}</span>
+        <strong>${entries.length}</strong>
+        <small>Total inspections</small>
+      </article>
+      <article class="trend-summary-card">
+        <span>Finding rate</span>
+        <strong>${formatPercent(findingEntries.length, entries.length)}</strong>
+        <small>${findingEntries.length} finding${findingEntries.length === 1 ? "" : "s"}</small>
+      </article>
+      <article class="trend-summary-card">
+        <span>Open follow-ups</span>
+        <strong>${openFollowUps.length}</strong>
+        <small>${overdueFollowUps.length} overdue</small>
+      </article>
+      <article class="trend-summary-card trend-${findingTrend.tone}">
+        <span>Finding signal</span>
+        <strong>${escapeHtml(findingTrend.label)}</strong>
+        <small>${range === "90" ? `${previousFindings} findings in prior 90 days` : "Use 90-day range for comparison"}</small>
+      </article>
+    </div>
+    <div class="trend-list-grid">
+      ${renderRankList("Top Finding Units", rankedCounts(findingEntries, (entry) => entry.record?.unit), "No findings in range.")}
+      ${renderRankList("Recurring Topics", rankedCounts(findingEntries, (entry) => entry.record?.assessmentItem), "No finding topics in range.")}
+      ${renderRankList("Common Causes", rankedCounts(findingEntries, (entry) => entry.record?.cause), "No causes documented in range.")}
+      ${renderRankList("Repeat Topic Signals", repeatedTopics, "No repeated finding topics yet.")}
+    </div>
+  `;
 }
 
 function renderFiscalYearFilter() {
@@ -601,6 +749,7 @@ function renderLibrary() {
   renderFunctionalAreaFilter();
   renderMonthlyTally();
   renderFollowUpSummary();
+  renderWingTrends();
   const visibleEntries = filteredInspections();
   const selectedUnit = libraryUnitFilter.value;
   pruneExportSelectionForFilters(selectedUnit);
@@ -684,6 +833,12 @@ async function loadLibrary() {
     renderLibrary();
   } catch (error) {
     libraryStatus.textContent = "Library unavailable";
+    wingTrendPanel.innerHTML = `
+      <div class="empty-library">
+        <strong>Wing trend indicators unavailable.</strong>
+        <span>${escapeHtml(error instanceof Error ? error.message : "Unknown error")}</span>
+      </div>
+    `;
     libraryList.innerHTML = `
       <div class="empty-library">
         <strong>Unable to load the shared library.</strong>
@@ -897,6 +1052,7 @@ libraryFunctionalAreaFilter.addEventListener("change", updateFilters);
 librarySearch.addEventListener("input", updateFilters);
 followUpStatusFilter.addEventListener("change", updateFilters);
 libraryFiscalYear.addEventListener("change", renderMonthlyTally);
+wingTrendRange.addEventListener("change", renderWingTrends);
 refreshLibrary.addEventListener("click", loadLibrary);
 exportCsv.addEventListener("click", exportVisibleInspections);
 followUpForm.addEventListener("submit", saveFollowUpUpdate);

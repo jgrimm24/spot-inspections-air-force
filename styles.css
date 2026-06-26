@@ -946,6 +946,118 @@ td select {
   text-align: center;
 }
 
+.wing-trends {
+  display: grid;
+  gap: 18px;
+}
+
+.trend-range-filter {
+  width: 180px;
+  flex: none;
+  margin: 0;
+}
+
+.wing-trend-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.trend-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.trend-summary-card {
+  display: grid;
+  gap: 5px;
+  min-height: 98px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--accent);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.trend-summary-card span,
+.trend-summary-card small {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.trend-summary-card strong {
+  color: var(--ink);
+  font-size: 1.35rem;
+  line-height: 1.15;
+}
+
+.trend-summary-card.trend-danger {
+  border-left-color: var(--danger);
+}
+
+.trend-summary-card.trend-warning {
+  border-left-color: var(--warning);
+}
+
+.trend-summary-card.trend-good {
+  border-left-color: var(--accent);
+}
+
+.trend-summary-card.trend-neutral {
+  border-left-color: #a9b2b9;
+}
+
+.trend-list-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.trend-list-card {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.trend-list-card h3 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+}
+
+.trend-list-card ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trend-list-card li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.trend-list-card li span {
+  min-width: 0;
+}
+
+.trend-list-card li strong {
+  color: var(--ink);
+}
+
+.trend-list-card .trend-empty {
+  display: block;
+  color: var(--muted);
+}
+
 .library-card {
   display: grid;
   grid-template-columns: 28px minmax(220px, 1.4fr) minmax(260px, 1fr) auto;
@@ -1082,6 +1194,11 @@ td select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .trend-summary-grid,
+  .trend-list-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .library-actions {
     grid-column: 2;
     justify-content: flex-start;
@@ -1116,6 +1233,15 @@ td select {
 
   .follow-up-summary {
     grid-template-columns: 1fr;
+  }
+
+  .trend-summary-grid,
+  .trend-list-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trend-range-filter {
+    width: 100%;
   }
 
   .library-toolbar-actions {
