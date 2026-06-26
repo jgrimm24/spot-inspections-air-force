@@ -676,6 +676,10 @@ function closeFollowUpEditor() {
   followUpEditor.hidden = true;
 }
 
+function isOpenFinding(record) {
+  return record?.hasFinding === "Yes" && record?.corrected !== "Yes";
+}
+
 function renderReport(record) {
   const positiveFindingHtml = record.hasPositiveFinding === "Yes"
     ? `
@@ -694,6 +698,7 @@ function renderReport(record) {
           <dt>Hazard / Discrepancy</dt><dd>${display(record.hazard)}</dd>
           <dt>Corrective Action</dt><dd>${display(record.correctiveAction)}</dd>
           <dt>Cause</dt><dd>${display(record.cause)}</dd>
+          <dt>RAC / Deficiency Code</dt><dd>${display(record.racCode, "Not assigned")}</dd>
           <dt>Responsible Person</dt><dd>${display(record.responsibleName)}</dd>
           <dt>Responsible Contact</dt><dd>${display(record.responsibleContact)}</dd>
           <dt>Follow-up Due</dt><dd>${display(record.followUpDue, "Not entered")}</dd>
@@ -823,6 +828,9 @@ function renderLibrary() {
   libraryList.innerHTML = visibleEntries.map((entry) => {
     const record = entry.record || {};
     const status = followUpStatus(entry);
+    const assignRacButton = isOpenFinding(record)
+      ? `<button class="secondary-button library-action" data-action="assign-rac" data-id="${entry.id}" type="button">Assign RAC (for SE, BIO, PH, or FE)</button>`
+      : "";
     return `
       <article class="library-card">
         <label class="library-select" title="Select for export">
@@ -841,6 +849,7 @@ function renderLibrary() {
         </dl>
         <div class="library-actions">
           <button class="secondary-button library-action" data-action="view" data-id="${entry.id}" type="button">View</button>
+          ${assignRacButton}
           <button class="secondary-button library-action" data-action="follow-up" data-id="${entry.id}" type="button">Update Follow-up</button>
           <button class="secondary-button danger-button library-action" data-action="delete" data-id="${entry.id}" type="button">Delete</button>
         </div>
@@ -985,6 +994,45 @@ async function saveFollowUpUpdate(event) {
   }
 }
 
+async function assignRacCode(entry) {
+  const record = entry.record || {};
+  if (!isOpenFinding(record)) return;
+
+  const racCode = window.prompt(
+    "Enter applicable RAC or deficiency code assigned by SE, BIO, PH, or FE.",
+    record.racCode || ""
+  );
+  if (racCode === null) return;
+
+  try {
+    const response = await fetch(apiUrl("/api/inspections"), {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        path: entry.path,
+        recordUpdates: {
+          racCode
+        }
+      })
+    });
+    const result = await readApiResponse(response);
+    if (!response.ok) {
+      throw new Error(result.error || `Unable to assign RAC/deficiency code (${response.status}).`);
+    }
+
+    const index = inspections.findIndex((item) => item.id === entry.id);
+    if (index >= 0) {
+      inspections[index] = result.inspection;
+    }
+    libraryStatus.textContent = racCode.trim() ? "RAC/deficiency code assigned" : "RAC/deficiency code cleared";
+    renderLibrary();
+    renderReport(result.inspection.record || {});
+    selectedInspectionId = result.inspection.id;
+  } catch (error) {
+    window.alert(error instanceof Error ? error.message : "Unable to assign RAC/deficiency code.");
+  }
+}
+
 function csvValue(value) {
   return `"${String(value || "").replaceAll('"', '""')}"`;
 }
@@ -1019,6 +1067,7 @@ function exportVisibleInspections() {
     "Hazard / Discrepancy",
     "Corrective Action",
     "Cause",
+    "RAC / Deficiency Code",
     "Responsible Person",
     "Responsible Contact",
     "Follow-up Due",
@@ -1052,6 +1101,7 @@ function exportVisibleInspections() {
       record.hazard,
       record.correctiveAction,
       record.cause,
+      record.racCode,
       record.responsibleName,
       record.responsibleContact,
       record.followUpDue,
@@ -1125,6 +1175,10 @@ libraryList.addEventListener("click", (event) => {
 
   if (button.dataset.action === "follow-up") {
     openFollowUpEditor(entry);
+  }
+
+  if (button.dataset.action === "assign-rac") {
+    assignRacCode(entry);
   }
 });
 

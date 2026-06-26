@@ -340,15 +340,17 @@ async function updateInspection(payload) {
   }
 
   const updates = payload?.recordUpdates || {};
+  const updateValue = (field) => Object.hasOwn(updates, field)
+    ? String(updates[field] || "").trim()
+    : String(currentEntry.record[field] || "").trim();
   const updatedRecord = {
     ...currentEntry.record,
-    reviewer: String(updates.reviewer || "").trim(),
-    reviewDate: String(updates.reviewDate || "").trim(),
-    corrected: String(updates.corrected || currentEntry.record.corrected || "").trim(),
-    followUpDue: Object.hasOwn(updates, "followUpDue")
-      ? String(updates.followUpDue || "").trim()
-      : String(currentEntry.record.followUpDue || "").trim(),
-    followUpLog: String(updates.followUpLog || "").trim()
+    reviewer: updateValue("reviewer"),
+    reviewDate: updateValue("reviewDate"),
+    corrected: updateValue("corrected"),
+    followUpDue: updateValue("followUpDue"),
+    followUpLog: updateValue("followUpLog"),
+    racCode: updateValue("racCode")
   };
 
   const updatedEntry = {
