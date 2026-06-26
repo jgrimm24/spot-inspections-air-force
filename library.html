@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Completed Spot Inspections</title>
-    <link rel="stylesheet" href="styles.css?v=20260625-1" />
+    <link rel="stylesheet" href="styles.css?v=20260625-2" />
   </head>
   <body>
     <header class="app-header">
@@ -122,14 +122,28 @@
             <p class="eyebrow">Wing Trends</p>
             <h2>Finding Risk Signals</h2>
           </div>
-          <label class="trend-range-filter">
-            <span>Range</span>
-            <select id="wingTrendRange">
-              <option value="90">Last 90 days</option>
-              <option value="fy">Current fiscal year</option>
-              <option value="all">All records</option>
-            </select>
-          </label>
+          <div class="trend-filters" aria-label="Wing trend filters">
+            <label class="trend-filter">
+              <span>Wing</span>
+              <select id="wingTrendUnit">
+                <option value="">All wings</option>
+              </select>
+            </label>
+            <label class="trend-filter">
+              <span>Functional Area</span>
+              <select id="wingTrendFunctionalArea">
+                <option value="">All functional areas</option>
+              </select>
+            </label>
+            <label class="trend-filter">
+              <span>Range</span>
+              <select id="wingTrendRange">
+                <option value="90">Last 90 days</option>
+                <option value="fy">Current fiscal year</option>
+                <option value="all">All records</option>
+              </select>
+            </label>
+          </div>
         </div>
         <div id="wingTrendPanel" class="wing-trend-panel">
           <div class="empty-library">Loading wing trend indicators...</div>
@@ -187,6 +201,6 @@
     <script>
       window.SPOT_INSPECTION_API_URL = "https://spot-inspections-air-force.onrender.com";
     </script>
-    <script src="library.js?v=20260625-1"></script>
+    <script src="library.js?v=20260625-2"></script>
   </body>
 </html>

@@ -951,15 +951,33 @@ td select {
   gap: 18px;
 }
 
-.trend-range-filter {
-  width: 180px;
-  flex: none;
+.trend-filters {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(210px, 1.3fr) minmax(150px, 1fr);
+  gap: 10px;
+  align-items: end;
+  width: min(100%, 720px);
+}
+
+.trend-filter {
+  min-width: 0;
   margin: 0;
+}
+
+.trend-filter select {
+  min-width: 0;
 }
 
 .wing-trend-panel {
   display: grid;
   gap: 16px;
+}
+
+.trend-filter-summary {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
 }
 
 .trend-summary-grid {
@@ -1240,7 +1258,8 @@ td select {
     grid-template-columns: 1fr;
   }
 
-  .trend-range-filter {
+  .trend-filters {
+    grid-template-columns: 1fr;
     width: 100%;
   }
 

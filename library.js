@@ -13,6 +13,8 @@ const monthlyTallyScope = document.querySelector("#monthlyTallyScope");
 const monthlyTallyBody = document.querySelector("#monthlyTallyBody");
 const monthlyChartScope = document.querySelector("#monthlyChartScope");
 const monthlyChartBars = document.querySelector("#monthlyChartBars");
+const wingTrendUnit = document.querySelector("#wingTrendUnit");
+const wingTrendFunctionalArea = document.querySelector("#wingTrendFunctionalArea");
 const wingTrendRange = document.querySelector("#wingTrendRange");
 const wingTrendPanel = document.querySelector("#wingTrendPanel");
 const libraryReportPreview = document.querySelector("#libraryReportPreview");
@@ -288,27 +290,27 @@ function formatPercent(numerator, denominator) {
   return `${Math.round((numerator / denominator) * 100)}%`;
 }
 
-function trendEntriesForRange(range) {
-  if (range === "all") return inspections;
+function trendEntriesForRange(range, sourceEntries = inspections) {
+  if (range === "all") return sourceEntries;
 
   if (range === "fy") {
     const fiscalYear = currentFiscalYear();
-    return inspections.filter((entry) => fiscalYearForDate(entry.record?.inspectionDate) === fiscalYear);
+    return sourceEntries.filter((entry) => fiscalYearForDate(entry.record?.inspectionDate) === fiscalYear);
   }
 
   const today = dateFromValue(currentDateValue());
   const startDate = addDaysToDate(today, -89);
-  return inspections.filter((entry) => {
+  return sourceEntries.filter((entry) => {
     const inspectionDate = dateFromValue(entry.record?.inspectionDate);
     return inspectionDate && inspectionDate >= startDate && inspectionDate <= today;
   });
 }
 
-function previousNinetyDayEntries() {
+function previousNinetyDayEntries(sourceEntries = inspections) {
   const today = dateFromValue(currentDateValue());
   const currentStart = addDaysToDate(today, -89);
   const previousStart = addDaysToDate(today, -179);
-  return inspections.filter((entry) => {
+  return sourceEntries.filter((entry) => {
     const inspectionDate = dateFromValue(entry.record?.inspectionDate);
     return inspectionDate && inspectionDate >= previousStart && inspectionDate < currentStart;
   });
@@ -343,13 +345,44 @@ function renderRankList(title, rows, emptyText) {
   `;
 }
 
+function trendFilteredSourceEntries() {
+  const selectedUnit = wingTrendUnit.value;
+  const selectedArea = wingTrendFunctionalArea.value;
+  return inspections.filter((entry) => {
+    const record = entry.record || {};
+    const unitMatches = !selectedUnit || record.unit === selectedUnit;
+    const areaMatches = !selectedArea || record.functionalArea === selectedArea;
+    return unitMatches && areaMatches;
+  });
+}
+
+function renderWingTrendFilters() {
+  const currentUnit = wingTrendUnit.value;
+  const currentArea = wingTrendFunctionalArea.value;
+  const units = uniqueUnits();
+  const areas = uniqueFunctionalAreas();
+
+  wingTrendUnit.innerHTML = [
+    '<option value="">All wings</option>',
+    ...units.map((unit) => `<option value="${escapeHtml(unit)}">${escapeHtml(unit)}</option>`)
+  ].join("");
+  wingTrendUnit.value = units.includes(currentUnit) ? currentUnit : "";
+
+  wingTrendFunctionalArea.innerHTML = [
+    '<option value="">All functional areas</option>',
+    ...areas.map((area) => `<option value="${escapeHtml(area)}">${escapeHtml(area)}</option>`)
+  ].join("");
+  wingTrendFunctionalArea.value = areas.includes(currentArea) ? currentArea : "";
+}
+
 function renderWingTrends() {
   const range = wingTrendRange.value;
-  const entries = trendEntriesForRange(range);
+  const sourceEntries = trendFilteredSourceEntries();
+  const entries = trendEntriesForRange(range, sourceEntries);
   const findingEntries = entries.filter(isFinding);
   const openFollowUps = entries.filter((entry) => ["open", "due-soon", "overdue"].includes(followUpStatus(entry).key));
   const overdueFollowUps = entries.filter((entry) => followUpStatus(entry).key === "overdue");
-  const previousFindings = range === "90" ? previousNinetyDayEntries().filter(isFinding).length : 0;
+  const previousFindings = range === "90" ? previousNinetyDayEntries(sourceEntries).filter(isFinding).length : 0;
   const findingTrend = range === "90"
     ? trendDirection(findingEntries.length, previousFindings)
     : { label: "Range summary", tone: "neutral" };
@@ -360,6 +393,10 @@ function renderWingTrends() {
       : "All saved records";
   const repeatedTopics = rankedCounts(findingEntries, (entry) => entry.record?.assessmentItem)
     .filter((row) => row.count > 1);
+  const filterLabel = [
+    wingTrendUnit.value || "All wings",
+    wingTrendFunctionalArea.value || "All functional areas"
+  ].join(" | ");
 
   if (!inspections.length) {
     wingTrendPanel.innerHTML = `
@@ -372,6 +409,7 @@ function renderWingTrends() {
   }
 
   wingTrendPanel.innerHTML = `
+    <p class="trend-filter-summary">${escapeHtml(filterLabel)}</p>
     <div class="trend-summary-grid">
       <article class="trend-summary-card">
         <span>${escapeHtml(rangeLabel)}</span>
@@ -747,6 +785,7 @@ function renderFollowUpSummary() {
 function renderLibrary() {
   renderUnitFilter();
   renderFunctionalAreaFilter();
+  renderWingTrendFilters();
   renderMonthlyTally();
   renderFollowUpSummary();
   renderWingTrends();
@@ -1052,6 +1091,8 @@ libraryFunctionalAreaFilter.addEventListener("change", updateFilters);
 librarySearch.addEventListener("input", updateFilters);
 followUpStatusFilter.addEventListener("change", updateFilters);
 libraryFiscalYear.addEventListener("change", renderMonthlyTally);
+wingTrendUnit.addEventListener("change", renderWingTrends);
+wingTrendFunctionalArea.addEventListener("change", renderWingTrends);
 wingTrendRange.addEventListener("change", renderWingTrends);
 refreshLibrary.addEventListener("click", loadLibrary);
 exportCsv.addEventListener("click", exportVisibleInspections);
