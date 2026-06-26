@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Completed Spot Inspections</title>
-    <link rel="stylesheet" href="styles.css?v=20260625-2" />
+    <link rel="stylesheet" href="styles.css?v=20260626-1" />
   </head>
   <body>
     <header class="app-header">
@@ -187,6 +187,33 @@
               </select>
             </label>
           </div>
+          <section class="rac-calculator" id="racCalculator" hidden>
+            <div class="rac-heading">
+              <div>
+                <p class="eyebrow">Risk Assessment Code (RAC) Calculation</p>
+                <h3>Computing RAC and Abatement</h3>
+              </div>
+            </div>
+            <div class="question-grid">
+              <label>
+                <span>Severity <em>*</em></span>
+                <select id="racSeverity" name="racSeverity">
+                  <option value="">-- Select severity --</option>
+                </select>
+              </label>
+              <label>
+                <span>Probability <em>*</em></span>
+                <select id="racProbability" name="racProbability">
+                  <option value="">-- Select probability --</option>
+                </select>
+              </label>
+              <label>
+                <span>Computed RAC</span>
+                <input id="racResult" name="racResult" type="text" readonly placeholder="Select severity and probability" />
+              </label>
+            </div>
+            <p class="rac-helper">The computed RAC will be added to the follow-up log when saved.</p>
+          </section>
           <label>
             <span>Follow-up log / 30-day updates</span>
             <textarea id="followUpLogEdit" name="followUpLogEdit" rows="5" placeholder="Document 30-day follow-up actions, status, and any closure details."></textarea>

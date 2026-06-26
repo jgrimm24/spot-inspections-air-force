@@ -27,12 +27,17 @@ const followUpReviewer = document.querySelector("#followUpReviewer");
 const followUpReviewDate = document.querySelector("#followUpReviewDate");
 const followUpCorrected = document.querySelector("#followUpCorrected");
 const followUpLogEdit = document.querySelector("#followUpLogEdit");
+const racCalculator = document.querySelector("#racCalculator");
+const racSeverity = document.querySelector("#racSeverity");
+const racProbability = document.querySelector("#racProbability");
+const racResult = document.querySelector("#racResult");
 const saveFollowUpEdit = document.querySelector("#saveFollowUpEdit");
 const cancelFollowUpEdit = document.querySelector("#cancelFollowUpEdit");
 
 let inspections = [];
 let selectedInspectionId = "";
 let editingInspectionId = "";
+let followUpEditorMode = "follow-up";
 let requiresDeleteToken = false;
 const exportSelection = new Set();
 const tallyDisciplines = [
@@ -48,6 +53,24 @@ const tallyDisciplineAliases = {
   "Space Safety": ["Space Safety"]
 };
 const fiscalYearMonths = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const racSeverityOptions = [
+  { value: "I", label: "I - Catastrophic" },
+  { value: "II", label: "II - Critical" },
+  { value: "III", label: "III - Marginal" },
+  { value: "IV", label: "IV - Negligible" }
+];
+const racProbabilityOptions = [
+  { value: "A", label: "A - Likely to occur immediately or within a short time" },
+  { value: "B", label: "B - Probable will occur in time" },
+  { value: "C", label: "C - Possible to occur in time" },
+  { value: "D", label: "D - Unlikely to occur" }
+];
+const racMatrix = {
+  I: { A: 1, B: 1, C: 2, D: 3 },
+  II: { A: 1, B: 2, C: 3, D: 4 },
+  III: { A: 2, B: 3, C: 4, D: 5 },
+  IV: { A: 3, B: 4, C: 5, D: 5 }
+};
 const ALL_FUNCTIONAL_AREAS_VALUE = "__all-functional-areas__";
 const functionalAreas = [
   "Aerial Port",
@@ -263,6 +286,60 @@ function fiscalYearForDate(value) {
 
 function currentFiscalYear() {
   return fiscalYearForDate(currentDateValue());
+}
+
+function optionLabel(options, value) {
+  return options.find((option) => option.value === value)?.label || "";
+}
+
+function populateRacOptions() {
+  racSeverity.innerHTML = [
+    '<option value="">-- Select severity --</option>',
+    ...racSeverityOptions.map((option) => `<option value="${option.value}">${escapeHtml(option.label)}</option>`)
+  ].join("");
+  racProbability.innerHTML = [
+    '<option value="">-- Select probability --</option>',
+    ...racProbabilityOptions.map((option) => `<option value="${option.value}">${escapeHtml(option.label)}</option>`)
+  ].join("");
+}
+
+function currentRacAssignment() {
+  const severity = racSeverity.value;
+  const probability = racProbability.value;
+  const rac = racMatrix[severity]?.[probability] || "";
+  if (!severity || !probability || !rac) return null;
+  return {
+    severity,
+    probability,
+    rac,
+    severityLabel: optionLabel(racSeverityOptions, severity),
+    probabilityLabel: optionLabel(racProbabilityOptions, probability)
+  };
+}
+
+function renderRacResult() {
+  const assignment = currentRacAssignment();
+  racResult.value = assignment ? `RAC ${assignment.rac}` : "";
+}
+
+function racLogEntry(entry, reviewDate) {
+  const assignment = currentRacAssignment();
+  if (!assignment) return "";
+  const record = entry.record || {};
+  return [
+    `RAC Assignment (SE/BIO/PH/FE) - ${reviewDate}`,
+    `Unit: ${record.unit || "Not documented"}`,
+    `Severity: ${assignment.severityLabel}`,
+    `Probability: ${assignment.probabilityLabel}`,
+    `Computed RAC: ${assignment.rac}`
+  ].join("\n");
+}
+
+function appendFollowUpLog(existingLog, addition) {
+  const current = String(existingLog || "").trim();
+  if (!addition) return current;
+  if (current.includes(addition)) return current;
+  return current ? `${current}\n\n${addition}` : addition;
 }
 
 function isFinding(entry) {
@@ -672,7 +749,13 @@ function clearReportPreview() {
 
 function closeFollowUpEditor() {
   editingInspectionId = "";
+  followUpEditorMode = "follow-up";
   followUpForm.reset();
+  racSeverity.value = "";
+  racProbability.value = "";
+  renderRacResult();
+  racCalculator.hidden = true;
+  saveFollowUpEdit.textContent = "Save Follow-up";
   followUpEditor.hidden = true;
 }
 
@@ -931,17 +1014,30 @@ async function deleteInspection(entry) {
   await loadLibrary();
 }
 
-function openFollowUpEditor(entry) {
+function openFollowUpEditor(entry, mode = "follow-up") {
   const record = entry.record || {};
   editingInspectionId = entry.id;
-  followUpEditorTitle.textContent = `Update ${record.unit || "Spot Inspection"}`;
+  followUpEditorMode = mode;
+  const isRacMode = mode === "rac";
+  followUpEditorTitle.textContent = isRacMode
+    ? `Assign RAC - ${record.unit || "Spot Inspection"}`
+    : `Update ${record.unit || "Spot Inspection"}`;
   followUpReviewer.value = record.reviewer || "";
   followUpReviewDate.value = record.reviewDate || currentDateValue();
   followUpCorrected.value = record.corrected || "No";
   followUpLogEdit.value = record.followUpLog || "";
+  racSeverity.value = "";
+  racProbability.value = "";
+  renderRacResult();
+  racCalculator.hidden = !isRacMode;
+  saveFollowUpEdit.textContent = isRacMode ? "Save RAC Assignment" : "Save Follow-up";
   followUpEditor.hidden = false;
   followUpEditor.scrollIntoView({ behavior: "smooth", block: "start" });
-  followUpLogEdit.focus();
+  if (isRacMode) {
+    racSeverity.focus();
+  } else {
+    followUpLogEdit.focus();
+  }
 }
 
 async function saveFollowUpUpdate(event) {
@@ -957,6 +1053,12 @@ async function saveFollowUpUpdate(event) {
     const reviewDate = followUpReviewDate.value || currentDateValue();
     const corrected = followUpCorrected.value || "No";
     const followUpDue = corrected === "Yes" ? (entry.record?.followUpDue || "") : addDays(reviewDate, 30);
+    const racEntry = followUpEditorMode === "rac" ? racLogEntry(entry, reviewDate) : "";
+    if (followUpEditorMode === "rac" && !racEntry) {
+      window.alert("Select both RAC severity and probability before saving.");
+      return;
+    }
+    const followUpLog = appendFollowUpLog(followUpLogEdit.value, racEntry);
 
     const response = await fetch(apiUrl("/api/inspections"), {
       method: "PATCH",
@@ -968,7 +1070,7 @@ async function saveFollowUpUpdate(event) {
           reviewDate,
           corrected,
           followUpDue,
-          followUpLog: followUpLogEdit.value
+          followUpLog
         }
       })
     });
@@ -990,7 +1092,7 @@ async function saveFollowUpUpdate(event) {
     window.alert(error instanceof Error ? error.message : "Unable to save follow-up update.");
   } finally {
     saveFollowUpEdit.disabled = false;
-    saveFollowUpEdit.textContent = "Save Follow-up";
+    saveFollowUpEdit.textContent = followUpEditorMode === "rac" ? "Save RAC Assignment" : "Save Follow-up";
   }
 }
 
@@ -1148,6 +1250,8 @@ refreshLibrary.addEventListener("click", loadLibrary);
 exportCsv.addEventListener("click", exportVisibleInspections);
 followUpForm.addEventListener("submit", saveFollowUpUpdate);
 cancelFollowUpEdit.addEventListener("click", closeFollowUpEditor);
+racSeverity.addEventListener("change", renderRacResult);
+racProbability.addEventListener("change", renderRacResult);
 
 followUpSummary.addEventListener("click", (event) => {
   const button = event.target.closest("[data-status-filter]");
@@ -1178,7 +1282,7 @@ libraryList.addEventListener("click", (event) => {
   }
 
   if (button.dataset.action === "assign-rac") {
-    assignRacCode(entry);
+    openFollowUpEditor(entry, "rac");
   }
 });
 
@@ -1194,4 +1298,5 @@ libraryList.addEventListener("change", (event) => {
   renderLibrary();
 });
 
+populateRacOptions();
 loadLibrary();

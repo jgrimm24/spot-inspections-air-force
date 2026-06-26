@@ -1180,6 +1180,41 @@ td select {
   gap: 18px;
 }
 
+.rac-calculator {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #f7faf9;
+}
+
+.rac-heading {
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: var(--nav);
+  color: #fff;
+}
+
+.rac-heading .eyebrow {
+  color: #fff;
+}
+
+.rac-heading h3 {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.rac-helper {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
 .empty-library {
   display: grid;
   gap: 6px;
