@@ -350,7 +350,10 @@ async function updateInspection(payload) {
     corrected: updateValue("corrected"),
     followUpDue: updateValue("followUpDue"),
     followUpLog: updateValue("followUpLog"),
-    racCode: updateValue("racCode")
+    racCode: updateValue("racCode"),
+    racDiscipline: updateValue("racDiscipline"),
+    racAssignedBy: updateValue("racAssignedBy"),
+    racAssignedDate: updateValue("racAssignedDate")
   };
 
   const updatedEntry = {

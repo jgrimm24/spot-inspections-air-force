@@ -21,13 +21,19 @@ const libraryReportPreview = document.querySelector("#libraryReportPreview");
 const refreshLibrary = document.querySelector("#refreshLibrary");
 const exportCsv = document.querySelector("#exportCsv");
 const followUpEditor = document.querySelector("#followUpEditor");
+const followUpEditorEyebrow = document.querySelector("#followUpEditorEyebrow");
 const followUpEditorTitle = document.querySelector("#followUpEditorTitle");
 const followUpForm = document.querySelector("#followUpForm");
+const followUpReviewerLabel = document.querySelector("#followUpReviewerLabel");
 const followUpReviewer = document.querySelector("#followUpReviewer");
+const followUpReviewDateLabel = document.querySelector("#followUpReviewDateLabel");
 const followUpReviewDate = document.querySelector("#followUpReviewDate");
+const followUpCorrectedField = document.querySelector("#followUpCorrectedField");
 const followUpCorrected = document.querySelector("#followUpCorrected");
+const followUpLogLabel = document.querySelector("#followUpLogLabel");
 const followUpLogEdit = document.querySelector("#followUpLogEdit");
 const racCalculator = document.querySelector("#racCalculator");
+const racDiscipline = document.querySelector("#racDiscipline");
 const racSeverity = document.querySelector("#racSeverity");
 const racProbability = document.querySelector("#racProbability");
 const racResult = document.querySelector("#racResult");
@@ -64,6 +70,12 @@ const racProbabilityOptions = [
   { value: "B", label: "B - Probable will occur in time" },
   { value: "C", label: "C - Possible to occur in time" },
   { value: "D", label: "D - Unlikely to occur" }
+];
+const racDisciplineOptions = [
+  "Safety",
+  "Bioenvironmental",
+  "Public Health",
+  "Fire"
 ];
 const racMatrix = {
   I: { A: 1, B: 1, C: 2, D: 3 },
@@ -293,6 +305,10 @@ function optionLabel(options, value) {
 }
 
 function populateRacOptions() {
+  racDiscipline.innerHTML = [
+    '<option value="">-- Select discipline --</option>',
+    ...racDisciplineOptions.map((option) => `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`)
+  ].join("");
   racSeverity.innerHTML = [
     '<option value="">-- Select severity --</option>',
     ...racSeverityOptions.map((option) => `<option value="${option.value}">${escapeHtml(option.label)}</option>`)
@@ -303,12 +319,22 @@ function populateRacOptions() {
   ].join("");
 }
 
-function currentRacAssignment() {
+function currentRacValue() {
   const severity = racSeverity.value;
   const probability = racProbability.value;
   const rac = racMatrix[severity]?.[probability] || "";
-  if (!severity || !probability || !rac) return null;
+  if (!severity || !probability || !rac) return "";
+  return rac;
+}
+
+function currentRacAssignment() {
+  const discipline = racDiscipline.value;
+  const severity = racSeverity.value;
+  const probability = racProbability.value;
+  const rac = currentRacValue();
+  if (!discipline || !severity || !probability || !rac) return null;
   return {
+    discipline,
     severity,
     probability,
     rac,
@@ -318,17 +344,19 @@ function currentRacAssignment() {
 }
 
 function renderRacResult() {
-  const assignment = currentRacAssignment();
-  racResult.value = assignment ? `RAC ${assignment.rac}` : "";
+  const rac = currentRacValue();
+  racResult.value = rac ? `RAC ${rac}` : "";
 }
 
-function racLogEntry(entry, reviewDate) {
+function racLogEntry(entry, assignmentDate) {
   const assignment = currentRacAssignment();
   if (!assignment) return "";
   const record = entry.record || {};
   return [
-    `RAC Assignment (SE/BIO/PH/FE) - ${reviewDate}`,
+    `RAC Assignment - ${assignmentDate}`,
     `Unit: ${record.unit || "Not documented"}`,
+    `Assigning discipline: ${assignment.discipline}`,
+    `Assigned by: ${followUpReviewer.value || "Not documented"}`,
     `Severity: ${assignment.severityLabel}`,
     `Probability: ${assignment.probabilityLabel}`,
     `Computed RAC: ${assignment.rac}`
@@ -751,6 +779,13 @@ function closeFollowUpEditor() {
   editingInspectionId = "";
   followUpEditorMode = "follow-up";
   followUpForm.reset();
+  followUpEditorEyebrow.textContent = "30-Day Update";
+  followUpReviewerLabel.textContent = "Reviewer";
+  followUpReviewDateLabel.textContent = "Review Date";
+  followUpCorrectedField.hidden = false;
+  followUpLogLabel.textContent = "Follow-up log / 30-day updates";
+  followUpLogEdit.placeholder = "Document 30-day follow-up actions, status, and any closure details.";
+  racDiscipline.value = "";
   racSeverity.value = "";
   racProbability.value = "";
   renderRacResult();
@@ -782,6 +817,9 @@ function renderReport(record) {
           <dt>Corrective Action</dt><dd>${display(record.correctiveAction)}</dd>
           <dt>Cause</dt><dd>${display(record.cause)}</dd>
           <dt>RAC / Deficiency Code</dt><dd>${display(record.racCode, "Not assigned")}</dd>
+          <dt>RAC Assigning Discipline</dt><dd>${display(record.racDiscipline, "Not assigned")}</dd>
+          <dt>RAC Assigned By</dt><dd>${display(record.racAssignedBy, "Not assigned")}</dd>
+          <dt>RAC Assigned Date</dt><dd>${display(record.racAssignedDate, "Not assigned")}</dd>
           <dt>Responsible Person</dt><dd>${display(record.responsibleName)}</dd>
           <dt>Responsible Contact</dt><dd>${display(record.responsibleContact)}</dd>
           <dt>Follow-up Due</dt><dd>${display(record.followUpDue, "Not entered")}</dd>
@@ -1019,13 +1057,22 @@ function openFollowUpEditor(entry, mode = "follow-up") {
   editingInspectionId = entry.id;
   followUpEditorMode = mode;
   const isRacMode = mode === "rac";
+  followUpEditorEyebrow.textContent = isRacMode ? "RAC Assignment" : "30-Day Update";
   followUpEditorTitle.textContent = isRacMode
     ? `Assign RAC - ${record.unit || "Spot Inspection"}`
     : `Update ${record.unit || "Spot Inspection"}`;
-  followUpReviewer.value = record.reviewer || "";
-  followUpReviewDate.value = record.reviewDate || currentDateValue();
+  followUpReviewerLabel.textContent = isRacMode ? "Assigned By" : "Reviewer";
+  followUpReviewDateLabel.textContent = isRacMode ? "Assignment Date" : "Review Date";
+  followUpCorrectedField.hidden = isRacMode;
+  followUpLogLabel.textContent = isRacMode ? "RAC assignment notes" : "Follow-up log / 30-day updates";
+  followUpLogEdit.placeholder = isRacMode
+    ? "Optional notes for the RAC assignment. This does not update the unit follow-up status."
+    : "Document 30-day follow-up actions, status, and any closure details.";
+  followUpReviewer.value = isRacMode ? (record.racAssignedBy || "") : (record.reviewer || "");
+  followUpReviewDate.value = isRacMode ? (record.racAssignedDate || currentDateValue()) : (record.reviewDate || currentDateValue());
   followUpCorrected.value = record.corrected || "No";
   followUpLogEdit.value = record.followUpLog || "";
+  racDiscipline.value = record.racDiscipline || "";
   racSeverity.value = "";
   racProbability.value = "";
   renderRacResult();
@@ -1050,28 +1097,36 @@ async function saveFollowUpUpdate(event) {
   saveFollowUpEdit.textContent = "Saving...";
 
   try {
+    const isRacMode = followUpEditorMode === "rac";
     const reviewDate = followUpReviewDate.value || currentDateValue();
-    const corrected = followUpCorrected.value || "No";
-    const followUpDue = corrected === "Yes" ? (entry.record?.followUpDue || "") : addDays(reviewDate, 30);
-    const racEntry = followUpEditorMode === "rac" ? racLogEntry(entry, reviewDate) : "";
-    if (followUpEditorMode === "rac" && !racEntry) {
-      window.alert("Select both RAC severity and probability before saving.");
-      return;
+    const recordUpdates = {};
+    if (isRacMode) {
+      const assignment = currentRacAssignment();
+      const racEntry = racLogEntry(entry, reviewDate);
+      if (!assignment || !racEntry) {
+        window.alert("Select assigning discipline, RAC severity, and probability before saving.");
+        return;
+      }
+      recordUpdates.followUpLog = appendFollowUpLog(followUpLogEdit.value, racEntry);
+      recordUpdates.racCode = String(assignment.rac);
+      recordUpdates.racDiscipline = assignment.discipline;
+      recordUpdates.racAssignedBy = followUpReviewer.value;
+      recordUpdates.racAssignedDate = reviewDate;
+    } else {
+      const corrected = followUpCorrected.value || "No";
+      recordUpdates.reviewer = followUpReviewer.value;
+      recordUpdates.reviewDate = reviewDate;
+      recordUpdates.corrected = corrected;
+      recordUpdates.followUpDue = corrected === "Yes" ? (entry.record?.followUpDue || "") : addDays(reviewDate, 30);
+      recordUpdates.followUpLog = followUpLogEdit.value;
     }
-    const followUpLog = appendFollowUpLog(followUpLogEdit.value, racEntry);
 
     const response = await fetch(apiUrl("/api/inspections"), {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         path: entry.path,
-        recordUpdates: {
-          reviewer: followUpReviewer.value,
-          reviewDate,
-          corrected,
-          followUpDue,
-          followUpLog
-        }
+        recordUpdates
       })
     });
     const result = await readApiResponse(response);
@@ -1083,7 +1138,7 @@ async function saveFollowUpUpdate(event) {
     if (index >= 0) {
       inspections[index] = result.inspection;
     }
-    libraryStatus.textContent = "Follow-up updated";
+    libraryStatus.textContent = isRacMode ? "RAC assignment saved" : "Follow-up updated";
     renderLibrary();
     renderReport(result.inspection.record || {});
     selectedInspectionId = result.inspection.id;
@@ -1093,45 +1148,6 @@ async function saveFollowUpUpdate(event) {
   } finally {
     saveFollowUpEdit.disabled = false;
     saveFollowUpEdit.textContent = followUpEditorMode === "rac" ? "Save RAC Assignment" : "Save Follow-up";
-  }
-}
-
-async function assignRacCode(entry) {
-  const record = entry.record || {};
-  if (!isOpenFinding(record)) return;
-
-  const racCode = window.prompt(
-    "Enter applicable RAC or deficiency code assigned by SE, BIO, PH, or FE.",
-    record.racCode || ""
-  );
-  if (racCode === null) return;
-
-  try {
-    const response = await fetch(apiUrl("/api/inspections"), {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        path: entry.path,
-        recordUpdates: {
-          racCode
-        }
-      })
-    });
-    const result = await readApiResponse(response);
-    if (!response.ok) {
-      throw new Error(result.error || `Unable to assign RAC/deficiency code (${response.status}).`);
-    }
-
-    const index = inspections.findIndex((item) => item.id === entry.id);
-    if (index >= 0) {
-      inspections[index] = result.inspection;
-    }
-    libraryStatus.textContent = racCode.trim() ? "RAC/deficiency code assigned" : "RAC/deficiency code cleared";
-    renderLibrary();
-    renderReport(result.inspection.record || {});
-    selectedInspectionId = result.inspection.id;
-  } catch (error) {
-    window.alert(error instanceof Error ? error.message : "Unable to assign RAC/deficiency code.");
   }
 }
 
@@ -1170,6 +1186,9 @@ function exportVisibleInspections() {
     "Corrective Action",
     "Cause",
     "RAC / Deficiency Code",
+    "RAC Assigning Discipline",
+    "RAC Assigned By",
+    "RAC Assigned Date",
     "Responsible Person",
     "Responsible Contact",
     "Follow-up Due",
@@ -1204,6 +1223,9 @@ function exportVisibleInspections() {
       record.correctiveAction,
       record.cause,
       record.racCode,
+      record.racDiscipline,
+      record.racAssignedBy,
+      record.racAssignedDate,
       record.responsibleName,
       record.responsibleContact,
       record.followUpDue,

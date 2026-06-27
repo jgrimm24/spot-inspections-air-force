@@ -1189,6 +1189,10 @@ td select {
   background: #f7faf9;
 }
 
+.rac-calculator .question-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .rac-heading {
   padding: 12px 14px;
   border-radius: 6px;
@@ -1235,6 +1239,7 @@ td select {
 @media (max-width: 920px) {
   .field-grid,
   .question-grid,
+  .rac-calculator .question-grid,
   .compact-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -1275,6 +1280,7 @@ td select {
 
   .field-grid,
   .question-grid,
+  .rac-calculator .question-grid,
   .compact-grid {
     grid-template-columns: 1fr;
   }

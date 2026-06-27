@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Completed Spot Inspections</title>
-    <link rel="stylesheet" href="styles.css?v=20260626-1" />
+    <link rel="stylesheet" href="styles.css?v=20260627-1" />
   </head>
   <body>
     <header class="app-header">
@@ -163,7 +163,7 @@
       <section class="report-panel follow-up-editor" id="followUpEditor" aria-label="Follow-up update" hidden>
         <div class="section-heading split-heading">
           <div>
-            <p class="eyebrow">30-Day Update</p>
+            <p class="eyebrow" id="followUpEditorEyebrow">30-Day Update</p>
             <h2 id="followUpEditorTitle">Update Follow-up</h2>
           </div>
           <button class="secondary-button" id="cancelFollowUpEdit" type="button">Cancel</button>
@@ -171,14 +171,14 @@
         <form id="followUpForm">
           <div class="question-grid">
             <label>
-              <span>Reviewer</span>
+              <span id="followUpReviewerLabel">Reviewer</span>
               <input id="followUpReviewer" name="followUpReviewer" type="text" placeholder="Enter reviewer name" />
             </label>
             <label>
-              <span>Review Date</span>
+              <span id="followUpReviewDateLabel">Review Date</span>
               <input id="followUpReviewDate" name="followUpReviewDate" type="date" />
             </label>
-            <label>
+            <label id="followUpCorrectedField">
               <span>Corrected / Closed</span>
               <select id="followUpCorrected" name="followUpCorrected">
                 <option value="">Select status</option>
@@ -191,10 +191,16 @@
             <div class="rac-heading">
               <div>
                 <p class="eyebrow">Risk Assessment Code (RAC) Calculation</p>
-                <h3>Computing RAC and Abatement</h3>
+                <h3>Computing RAC Assignment</h3>
               </div>
             </div>
             <div class="question-grid">
+              <label>
+                <span>Assigning discipline <em>*</em></span>
+                <select id="racDiscipline" name="racDiscipline">
+                  <option value="">-- Select discipline --</option>
+                </select>
+              </label>
               <label>
                 <span>Severity <em>*</em></span>
                 <select id="racSeverity" name="racSeverity">
@@ -212,10 +218,10 @@
                 <input id="racResult" name="racResult" type="text" readonly placeholder="Select severity and probability" />
               </label>
             </div>
-            <p class="rac-helper">The computed RAC will be added to the follow-up log when saved.</p>
+            <p class="rac-helper">The computed RAC assignment will be documented when saved.</p>
           </section>
           <label>
-            <span>Follow-up log / 30-day updates</span>
+            <span id="followUpLogLabel">Follow-up log / 30-day updates</span>
             <textarea id="followUpLogEdit" name="followUpLogEdit" rows="5" placeholder="Document 30-day follow-up actions, status, and any closure details."></textarea>
           </label>
           <div class="modal-actions">
@@ -228,6 +234,6 @@
     <script>
       window.SPOT_INSPECTION_API_URL = "https://spot-inspections-air-force.onrender.com";
     </script>
-    <script src="library.js?v=20260626-1"></script>
+    <script src="library.js?v=20260627-1"></script>
   </body>
 </html>
