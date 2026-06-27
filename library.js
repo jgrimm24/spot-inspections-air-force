@@ -453,9 +453,10 @@ function renderRankList(title, rows, emptyText) {
 function trendFilteredSourceEntries() {
   const selectedUnit = wingTrendUnit.value;
   const selectedArea = wingTrendFunctionalArea.value;
+  if (!selectedUnit) return [];
   return inspections.filter((entry) => {
     const record = entry.record || {};
-    const unitMatches = !selectedUnit || record.unit === selectedUnit;
+    const unitMatches = record.unit === selectedUnit;
     const areaMatches = !selectedArea || record.functionalArea === selectedArea;
     return unitMatches && areaMatches;
   });
@@ -468,7 +469,7 @@ function renderWingTrendFilters() {
   const areas = uniqueFunctionalAreas();
 
   wingTrendUnit.innerHTML = [
-    '<option value="">All wings</option>',
+    '<option value="">Select a wing</option>',
     ...units.map((unit) => `<option value="${escapeHtml(unit)}">${escapeHtml(unit)}</option>`)
   ].join("");
   wingTrendUnit.value = units.includes(currentUnit) ? currentUnit : "";
@@ -481,6 +482,26 @@ function renderWingTrendFilters() {
 }
 
 function renderWingTrends() {
+  if (!inspections.length) {
+    wingTrendPanel.innerHTML = `
+      <div class="empty-library">
+        <strong>No inspection records available for trend analysis.</strong>
+        <span>Save completed inspections to populate wing trend indicators.</span>
+      </div>
+    `;
+    return;
+  }
+
+  if (!wingTrendUnit.value) {
+    wingTrendPanel.innerHTML = `
+      <div class="empty-library">
+        <strong>Select a wing to view finding risk signals.</strong>
+        <span>Wing trend indicators stay blank until a specific wing is selected.</span>
+      </div>
+    `;
+    return;
+  }
+
   const range = wingTrendRange.value;
   const sourceEntries = trendFilteredSourceEntries();
   const entries = trendEntriesForRange(range, sourceEntries);
@@ -499,19 +520,9 @@ function renderWingTrends() {
   const repeatedTopics = rankedCounts(findingEntries, (entry) => entry.record?.assessmentItem)
     .filter((row) => row.count > 1);
   const filterLabel = [
-    wingTrendUnit.value || "All wings",
+    wingTrendUnit.value,
     wingTrendFunctionalArea.value || "All functional areas"
   ].join(" | ");
-
-  if (!inspections.length) {
-    wingTrendPanel.innerHTML = `
-      <div class="empty-library">
-        <strong>No inspection records available for trend analysis.</strong>
-        <span>Save completed inspections to populate wing trend indicators.</span>
-      </div>
-    `;
-    return;
-  }
 
   wingTrendPanel.innerHTML = `
     <p class="trend-filter-summary">${escapeHtml(filterLabel)}</p>
