@@ -775,6 +775,15 @@ function clearReportPreview() {
   libraryReportPreview.innerHTML = "<p>Select a completed inspection to preview it here.</p>";
 }
 
+function previewInspection(entry, shouldScroll = false) {
+  if (!entry) return;
+  selectedInspectionId = entry.id;
+  renderReport(entry.record || {});
+  if (shouldScroll) {
+    libraryReportPreview.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
 function closeFollowUpEditor() {
   editingInspectionId = "";
   followUpEditorMode = "follow-up";
@@ -1290,9 +1299,7 @@ libraryList.addEventListener("click", (event) => {
   if (!entry) return;
 
   if (button.dataset.action === "view") {
-    selectedInspectionId = entry.id;
-    renderReport(entry.record || {});
-    libraryReportPreview.scrollIntoView({ behavior: "smooth", block: "start" });
+    previewInspection(entry, true);
   }
 
   if (button.dataset.action === "delete") {
@@ -1314,8 +1321,18 @@ libraryList.addEventListener("change", (event) => {
 
   if (checkbox.checked) {
     exportSelection.add(checkbox.dataset.id);
+    const entry = inspections.find((item) => item.id === checkbox.dataset.id);
+    previewInspection(entry);
   } else {
     exportSelection.delete(checkbox.dataset.id);
+    if (selectedInspectionId === checkbox.dataset.id) {
+      const nextSelectedEntry = inspections.find((item) => exportSelection.has(item.id));
+      if (nextSelectedEntry) {
+        previewInspection(nextSelectedEntry);
+      } else {
+        clearReportPreview();
+      }
+    }
   }
   renderLibrary();
 });
