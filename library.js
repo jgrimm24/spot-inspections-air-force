@@ -970,7 +970,7 @@ function renderLibrary() {
     const record = entry.record || {};
     const status = followUpStatus(entry);
     const assignRacButton = isOpenFinding(record)
-      ? `<button class="secondary-button library-action" data-action="assign-rac" data-id="${entry.id}" type="button">Assign RAC (for SE, BIO, PH, or FE)</button>`
+      ? `<button class="secondary-button library-action" data-action="assign-rac" data-id="${entry.id}" type="button">Assign RAC (for SE, BE, PH, or FE)</button>`
       : "";
     return `
       <article class="library-card">
