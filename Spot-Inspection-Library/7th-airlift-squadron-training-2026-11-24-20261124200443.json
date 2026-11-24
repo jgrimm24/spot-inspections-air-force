@@ -1,0 +1,33 @@
+{
+  "id": "SI-1795550683023",
+  "savedAt": "2026-11-24T20:04:43.023Z",
+  "record": {
+    "unit": "7th Airlift Squadron",
+    "functionalArea": "Training",
+    "responsibleDiscipline": "Occupational Safety/USR/Supervisor",
+    "assessmentArea": "Compliance with Program Directives",
+    "assessmentItem": "Electrical Safety",
+    "inspectionFocus": "8.4 - Are high-current appliances plugged directly into wall outlets instead of extension cords or power strips?",
+    "inspectionType": "Safety spot inspection",
+    "inspectionTypeTier2": "",
+    "inspectionDate": "2026-11-24",
+    "inspectionTime": "1201",
+    "inspectorEmail": "scott.kinross.1@us.af.mil",
+    "inspectorName": "Scott Kinross",
+    "workArea": "Checked that all fridges, microwaves, shredders, printers, etc plugged into walls not extension cords. All are correctly plugged in the training office.",
+    "positiveFinding": "",
+    "hazard": "",
+    "correctiveAction": "",
+    "cause": "",
+    "responsibleName": "",
+    "responsibleContact": "",
+    "followUpDue": "2026-12-24",
+    "reviewer": "Scott kinross",
+    "reviewDate": "2026-11-24",
+    "followUpLog": "",
+    "hasFinding": "No",
+    "hasPositiveFinding": "No",
+    "corrected": ""
+  },
+  "reportText": "Spot Inspection\nUnit\n7th Airlift Squadron\nFunctional Area\nTraining\nSafety Area / Role\nOccupational Safety/USR/Supervisor\nInspection Topic\nElectrical Safety\nReference Source\nDAFMAN 91-203\nSuggested Inspection Question\n8.4 - Are high-current appliances plugged directly into wall outlets instead of extension cords or power strips?\nDate\n2026-11-24\nTime\n1201\nInspector Name\nScott Kinross\nInspector Email\nscott.kinross.1@us.af.mil\nActivity / Work Area\nChecked that all fridges, microwaves, shredders, printers, etc plugged into walls not extension cords. All are correctly plugged in the training office.\nFinding Identified\nNo\nPositive Finding\nNo\nHazard / Risk Identification\n\nNo hazard, risk, or finding was identified during this spot inspection.\n\nReview and Closeout\nReviewer\nScott kinross\nReview Date\n2026-11-24\n\nFollow-up Log: Not documented"
+}
